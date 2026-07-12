@@ -7,6 +7,7 @@ import {
   Package,
   Tags,
   FolderOpen,
+  Ruler,
   Users,
   BookOpenText,
   FileSearch,
@@ -17,6 +18,7 @@ import {
   Store,
   LogOut,
   Plus,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logoutAction } from "@/app/(auth)/actions";
@@ -43,6 +45,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/products", label: "Products", icon: Package },
       { href: "/brands", label: "Brands", icon: Tags },
       { href: "/categories", label: "Categories", icon: FolderOpen },
+      { href: "/units", label: "Units", icon: Ruler },
     ],
   },
   {
@@ -73,31 +76,45 @@ interface AppSidebarProps {
   businessName: string;
   userName: string;
   roleName: string;
+  onClose?: () => void;
 }
 
-export function AppSidebar({ businessName, userName, roleName }: AppSidebarProps) {
+export function AppSidebar({ businessName, userName, roleName, onClose }: AppSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex w-[240px] shrink-0 flex-col border-r border-slate-200 bg-white print:hidden">
+    <aside className="flex h-full w-[240px] shrink-0 flex-col border-r border-slate-200 bg-white print:hidden">
       {/* Brand + business */}
-      <div className="border-b border-slate-100 px-4 py-4">
-        <div className="flex items-center gap-2">
-          <div className="flex size-8 items-center justify-center rounded-md bg-indigo-600 text-sm font-bold text-white">
-            BK
+      <div className="border-b border-slate-100 px-4 py-4 flex items-start justify-between">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <div className="flex size-8 items-center justify-center rounded-md bg-indigo-600 text-sm font-bold text-white shrink-0">
+              BK
+            </div>
+            <span className="text-lg font-bold tracking-tight text-slate-900 truncate">BillKaro</span>
           </div>
-          <span className="text-lg font-bold tracking-tight text-slate-900">BillKaro</span>
+          <div className="mt-2.5 flex items-center gap-1.5 text-xs text-slate-500">
+            <Store className="size-3.5 shrink-0" />
+            <span className="truncate font-medium">{businessName}</span>
+          </div>
         </div>
-        <div className="mt-2.5 flex items-center gap-1.5 text-xs text-slate-500">
-          <Store className="size-3.5" />
-          <span className="truncate font-medium">{businessName}</span>
-        </div>
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 md:hidden"
+            aria-label="Close sidebar"
+          >
+            <X className="size-5" />
+          </button>
+        )}
       </div>
 
       {/* New Bill — the most prominent action */}
       <div className="px-3 pt-3">
         <Link
           href="/bill"
+          onClick={onClose}
           className={cn(
             "flex h-10 w-full items-center justify-center gap-2 rounded-md text-sm font-semibold transition-colors",
             pathname === "/bill"
@@ -127,6 +144,7 @@ export function AppSidebar({ businessName, userName, roleName }: AppSidebarProps
                   <li key={item.href}>
                     <Link
                       href={item.href}
+                      onClick={onClose}
                       className={cn(
                         "flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition-colors",
                         active

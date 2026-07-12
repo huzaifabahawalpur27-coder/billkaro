@@ -255,80 +255,143 @@ export function ProductsView({
           }
         />
       ) : (
-        <div className="rounded-lg border border-slate-200 bg-white">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Product</TableHead>
-                <TableHead>Brand</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Unit</TableHead>
-                <TableHead className="text-right">Sale Price</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-10" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>
-                    <div className="font-medium text-slate-900">{row.name}</div>
+        <>
+          {/* Desktop Table View */}
+          <div className="hidden md:block rounded-lg border border-slate-200 bg-white">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Product</TableHead>
+                  <TableHead>Brand</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Unit</TableHead>
+                  <TableHead className="text-right">Sale Price</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="w-10" />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell>
+                      <div className="font-medium text-slate-900">{row.name}</div>
+                      {(row.sku || row.barcode) && (
+                        <div className="text-xs text-slate-500">
+                          {row.sku && <span>SKU: {row.sku}</span>}
+                          {row.sku && row.barcode && <span> · </span>}
+                          {row.barcode && <span>{row.barcode}</span>}
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-slate-600">{row.brandName ?? "—"}</TableCell>
+                    <TableCell className="text-slate-600">{row.categoryName ?? "—"}</TableCell>
+                    <TableCell className="text-slate-600">{row.unitName ?? "—"}</TableCell>
+                    <TableCell className="text-right">
+                      <InlinePrice row={row} canEdit={can.changePrice} />
+                    </TableCell>
+                    <TableCell>
+                      <StatusBadge kind={row.status === "ACTIVE" ? "active" : "inactive"}>
+                        {row.status === "ACTIVE" ? "Active" : "Inactive"}
+                      </StatusBadge>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="size-8">
+                            <MoreHorizontal className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {can.edit && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setEditing(row);
+                                setFormOpen(true);
+                              }}
+                            >
+                              <Pencil className="size-4" /> Edit
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem onClick={() => openHistory(row)}>
+                            <History className="size-4" /> Price History
+                          </DropdownMenuItem>
+                          {can.del && (
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onClick={() => setDeleting(row)}
+                            >
+                              <Trash2 className="size-4" /> Delete
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-2">
+            {rows.map((row) => (
+              <div key={row.id} className="rounded-lg border border-slate-200 bg-white p-3 space-y-2 text-xs">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="font-semibold text-slate-900">{row.name}</div>
                     {(row.sku || row.barcode) && (
-                      <div className="text-xs text-slate-500">
+                      <div className="text-[10px] text-slate-500 mt-0.5">
                         {row.sku && <span>SKU: {row.sku}</span>}
                         {row.sku && row.barcode && <span> · </span>}
                         {row.barcode && <span>{row.barcode}</span>}
                       </div>
                     )}
-                  </TableCell>
-                  <TableCell className="text-slate-600">{row.brandName ?? "—"}</TableCell>
-                  <TableCell className="text-slate-600">{row.categoryName ?? "—"}</TableCell>
-                  <TableCell className="text-slate-600">{row.unitName ?? "—"}</TableCell>
-                  <TableCell className="text-right">
+                  </div>
+                  <StatusBadge kind={row.status === "ACTIVE" ? "active" : "inactive"}>
+                    {row.status === "ACTIVE" ? "Active" : "Inactive"}
+                  </StatusBadge>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-1 pt-1.5 border-t border-slate-100 text-[10px] text-slate-500">
+                  <div>
+                    <span className="block text-[8px] uppercase tracking-wider text-slate-400">Brand</span>
+                    <span className="font-medium text-slate-700">{row.brandName ?? "—"}</span>
+                  </div>
+                  <div>
+                    <span className="block text-[8px] uppercase tracking-wider text-slate-400">Category</span>
+                    <span className="font-medium text-slate-700">{row.categoryName ?? "—"}</span>
+                  </div>
+                  <div>
+                    <span className="block text-[8px] uppercase tracking-wider text-slate-400">Unit</span>
+                    <span className="font-medium text-slate-700">{row.unitName ?? "—"}</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center pt-2 border-t border-slate-100">
+                  <div>
+                    <span className="text-[9px] text-slate-400 block uppercase tracking-wider">Price</span>
                     <InlinePrice row={row} canEdit={can.changePrice} />
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge kind={row.status === "ACTIVE" ? "active" : "inactive"}>
-                      {row.status === "ACTIVE" ? "Active" : "Inactive"}
-                    </StatusBadge>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="size-8">
-                          <MoreHorizontal className="size-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        {can.edit && (
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setEditing(row);
-                              setFormOpen(true);
-                            }}
-                          >
-                            <Pencil className="size-4" /> Edit
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuItem onClick={() => openHistory(row)}>
-                          <History className="size-4" /> Price History
-                        </DropdownMenuItem>
-                        {can.del && (
-                          <DropdownMenuItem
-                            variant="destructive"
-                            onClick={() => setDeleting(row)}
-                          >
-                            <Trash2 className="size-4" /> Delete
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+                  </div>
+                  <div className="flex gap-1.5">
+                    {can.edit && (
+                      <Button variant="outline" size="sm" className="h-7 px-2 text-[10px]" onClick={() => { setEditing(row); setFormOpen(true); }}>
+                        Edit
+                      </Button>
+                    )}
+                    <Button variant="outline" size="sm" className="h-7 px-2 text-[10px]" onClick={() => openHistory(row)}>
+                      History
+                    </Button>
+                    {can.del && (
+                      <Button variant="destructive" size="sm" className="h-7 px-2 text-[10px] bg-red-50 text-red-600 hover:bg-red-100 border-none" onClick={() => setDeleting(row)}>
+                        Delete
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Pagination */}

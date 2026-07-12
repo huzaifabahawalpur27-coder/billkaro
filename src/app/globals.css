@@ -128,3 +128,48 @@
     @apply font-sans;
   }
 }
+
+/* ── Print / thermal receipt styles ─────────────────────────── */
+@media print {
+  /* Hide shell chrome */
+  aside,
+  nav,
+  header,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Reset layout so the receipt fills the page */
+  body,
+  #root,
+  main {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+    color: black !important;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  /* Thermal 80mm default — @page can be overridden per-component */
+  @page {
+    size: 80mm auto;
+    margin: 4mm;
+  }
+
+  /* Table borders remain visible on paper */
+  table,
+  th,
+  td {
+    border-color: #000 !important;
+  }
+
+  /* Ensure links print as plain text */
+  a {
+    color: black !important;
+    text-decoration: none !important;
+  }
+}

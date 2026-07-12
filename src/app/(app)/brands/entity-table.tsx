@@ -123,61 +123,114 @@ export function EntityTable({
           description={`Pehla ${entityLabel.toLowerCase()} add karein — ya product form ke andar bhi bana sakte hain.`}
         />
       ) : (
-        <div className="rounded-lg border border-slate-200 bg-white">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{entityLabel}</TableHead>
-                <TableHead className="text-right">Products</TableHead>
-                {showLastUpdate && <TableHead>Last Price Update</TableHead>}
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell className="font-medium text-slate-900">{row.name}</TableCell>
-                  <TableCell className="text-right tabular-nums">{row.productCount}</TableCell>
-                  {showLastUpdate && (
-                    <TableCell className="text-slate-600">
-                      {row.lastPriceUpdate ? formatDate(row.lastPriceUpdate) : "—"}
-                    </TableCell>
-                  )}
-                  <TableCell>
-                    <div className="flex items-center justify-end gap-1">
-                      {extraAction?.(row)}
-                      {canManage && (
-                        <>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-8"
-                            title="Rename"
-                            onClick={() => {
-                              setName(row.name);
-                              setDialog({ mode: "rename", row });
-                            }}
-                          >
-                            <Pencil className="size-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-8 text-slate-400 hover:text-red-600"
-                            title="Delete"
-                            onClick={() => setDeleting(row)}
-                          >
-                            <Trash2 className="size-4" />
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </TableCell>
+        <>
+          {/* Desktop Table View */}
+          <div className="hidden md:block rounded-lg border border-slate-200 bg-white">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{entityLabel}</TableHead>
+                  <TableHead className="text-right">Products</TableHead>
+                  {showLastUpdate && <TableHead>Last Price Update</TableHead>}
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+              </TableHeader>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell className="font-medium text-slate-900">{row.name}</TableCell>
+                    <TableCell className="text-right tabular-nums">{row.productCount}</TableCell>
+                    {showLastUpdate && (
+                      <TableCell className="text-slate-600">
+                        {row.lastPriceUpdate ? formatDate(row.lastPriceUpdate) : "—"}
+                      </TableCell>
+                    )}
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-1">
+                        {extraAction?.(row)}
+                        {canManage && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-8"
+                              title="Rename"
+                              onClick={() => {
+                                setName(row.name);
+                                setDialog({ mode: "rename", row });
+                              }}
+                            >
+                              <Pencil className="size-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-8 text-slate-400 hover:text-red-600"
+                              title="Delete"
+                              onClick={() => setDeleting(row)}
+                            >
+                              <Trash2 className="size-4" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-2">
+            {rows.map((row) => (
+              <div key={row.id} className="rounded-lg border border-slate-200 bg-white p-3 space-y-2 text-xs">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-slate-900">{row.name}</span>
+                  <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-medium">
+                    {row.productCount} products
+                  </span>
+                </div>
+                
+                {showLastUpdate && (
+                  <div className="text-[10px] text-slate-500 border-t border-slate-100 pt-1.5 flex justify-between">
+                    <span>Last Price Update:</span>
+                    <span className="font-medium text-slate-700">
+                      {row.lastPriceUpdate ? formatDate(row.lastPriceUpdate) : "—"}
+                    </span>
+                  </div>
+                )}
+                
+                <div className="flex justify-end items-center gap-1.5 pt-2 border-t border-slate-100">
+                  {extraAction?.(row)}
+                  {canManage && (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 px-2 text-[10px]"
+                        onClick={() => {
+                          setName(row.name);
+                          setDialog({ mode: "rename", row });
+                        }}
+                      >
+                        Rename
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 px-2 text-[10px] text-red-600 hover:bg-red-50 border-none"
+                        onClick={() => setDeleting(row)}
+                      >
+                        Delete
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Add / Rename dialog */}

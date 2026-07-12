@@ -394,3 +394,21 @@ export async function deleteCategory(id: string) {
   if (category._count.products > 0) throw new Error("CATEGORY_IN_USE");
   await db.category.delete({ where: { id: category.id } });
 }
+
+export async function renameUnit(id: string, name: string) {
+  const ctx = await requirePermission("EDIT_PRODUCTS");
+  const unit = await db.unit.findFirst({ where: { id, businessId: ctx.business.id } });
+  if (!unit) throw new Error("Unit not found");
+  return db.unit.update({ where: { id: unit.id }, data: { name: name.trim() } });
+}
+
+export async function deleteUnit(id: string) {
+  const ctx = await requirePermission("DELETE_PRODUCTS");
+  const unit = await db.unit.findFirst({
+    where: { id, businessId: ctx.business.id },
+    include: { _count: { select: { products: true } } },
+  });
+  if (!unit) throw new Error("Unit not found");
+  if (unit._count.products > 0) throw new Error("UNIT_IN_USE");
+  await db.unit.delete({ where: { id: unit.id } });
+}
