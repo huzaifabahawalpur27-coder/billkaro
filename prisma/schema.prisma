@@ -1,0 +1,535 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────────────────────
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum BusinessStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum MembershipStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum EntityStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum Permission {
+  VIEW_PRODUCTS
+  ADD_PRODUCTS
+  EDIT_PRODUCTS
+  DELETE_PRODUCTS
+  CHANGE_PRICES
+  BULK_PRICE_UPDATE
+  IMPORT_EXPORT
+  CREATE_BILLS
+  CANCEL_BILLS
+  APPLY_DISCOUNTS
+  CHANGE_SALE_PRICE
+  VIEW_BILLS
+  MANAGE_CUSTOMERS
+  RECEIVE_PAYMENTS
+  ADJUST_LEDGER
+  VIEW_LEDGER
+  VIEW_REPORTS
+  MANAGE_USERS
+  MANAGE_SETTINGS
+}
+
+enum PriceType {
+  SALE
+  PURCHASE
+  WHOLESALE
+}
+
+enum PriceChangeSource {
+  MANUAL
+  INLINE_EDIT
+  BRAND_BULK
+  BULK_SELECT
+  EXCEL_IMPORT
+}
+
+enum SaleStatus {
+  COMPLETED
+  CANCELLED
+}
+
+enum SalePaymentStatus {
+  PAID
+  PARTIAL
+  UDHAAR
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  BANK_TRANSFER
+  CREDIT
+  OTHER
+}
+
+enum DiscountType {
+  NONE
+  FIXED
+  PERCENT
+}
+
+enum LedgerEntryType {
+  SALE_CREDIT
+  PAYMENT_RECEIVED
+  OPENING_BALANCE
+  POSITIVE_ADJUSTMENT
+  NEGATIVE_ADJUSTMENT
+  SALE_CANCELLED_REVERSAL
+}
+
+enum ImportEntity {
+  PRODUCT
+  CUSTOMER
+}
+
+enum ImportJobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  COMPLETED_WITH_ERRORS
+  FAILED
+}
+
+enum RoundingRule {
+  NONE
+  NEAREST_1
+  NEAREST_5
+  NEAREST_10
+}
+
+enum ReceiptSize {
+  THERMAL_58
+  THERMAL_80
+  A4
+}
+
+// ─────────────────────────────────────────────────────────────
+// Identity & tenancy
+// ─────────────────────────────────────────────────────────────
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  name         String
+  phone        String?
+  status       UserStatus @default(ACTIVE)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  memberships     BusinessUser[]
+  salesAsCashier  Sale[]         @relation("SaleCashier")
+  salesCancelled  Sale[]         @relation("SaleCanceller")
+  paymentsTaken   Payment[]
+  ledgerEntries   LedgerEntry[]
+  priceChanges    PriceHistory[]
+  importJobs      ImportJob[]
+  auditLogs       AuditLog[]
+}
+
+model Business {
+  id           String         @id @default(cuid())
+  name         String
+  ownerName    String
+  phone        String?
+  address      String?
+  businessType String?
+  status       BusinessStatus @default(ACTIVE)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  settings      BusinessSettings?
+  members       BusinessUser[]
+  roles         Role[]
+  brands        Brand[]
+  categories    Category[]
+  units         Unit[]
+  products      Product[]
+  priceHistory  PriceHistory[]
+  customers     Customer[]
+  sales         Sale[]
+  saleItems     SaleItem[]
+  payments      Payment[]
+  ledgerEntries LedgerEntry[]
+  importJobs    ImportJob[]
+  auditLogs     AuditLog[]
+  counters      DocumentCounter[]
+}
+
+model BusinessUser {
+  id         String           @id @default(cuid())
+  businessId String
+  userId     String
+  roleId     String
+  status     MembershipStatus @default(ACTIVE)
+  createdAt  DateTime         @default(now())
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role     Role     @relation(fields: [roleId], references: [id])
+
+  @@unique([businessId, userId])
+  @@index([userId])
+}
+
+model Role {
+  id          String       @id @default(cuid())
+  businessId  String
+  name        String
+  isSystem    Boolean      @default(false)
+  permissions Permission[]
+  createdAt   DateTime     @default(now())
+
+  business Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  members  BusinessUser[]
+
+  @@unique([businessId, name])
+}
+
+model BusinessSettings {
+  id                   String       @id @default(cuid())
+  businessId           String       @unique
+  currencyCode         String       @default("PKR")
+  currencySymbol       String       @default("Rs.")
+  invoicePrefix        String       @default("INV")
+  receiptPrefix        String       @default("PAY")
+  defaultTaxRate       Decimal      @default(0) @db.Decimal(5, 2)
+  receiptSize          ReceiptSize  @default(THERMAL_80)
+  priceRounding        RoundingRule @default(NONE)
+  invoiceFooter        String       @default("Thank You For Shopping!")
+  logoUrl              String?
+  language             String       @default("en")
+  updatedAt            DateTime     @updatedAt
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+}
+
+// Gapless per-business document numbering (INVOICE, PAYMENT).
+// Incremented with SELECT ... FOR UPDATE inside the owning transaction.
+model DocumentCounter {
+  id         String @id @default(cuid())
+  businessId String
+  key        String
+  nextNumber Int    @default(1)
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@unique([businessId, key])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Catalogue
+// ─────────────────────────────────────────────────────────────
+
+model Brand {
+  id         String       @id @default(cuid())
+  businessId String
+  name       String
+  status     EntityStatus @default(ACTIVE)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  business Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@unique([businessId, name])
+}
+
+model Category {
+  id         String       @id @default(cuid())
+  businessId String
+  name       String
+  status     EntityStatus @default(ACTIVE)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  business Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@unique([businessId, name])
+}
+
+model Unit {
+  id         String       @id @default(cuid())
+  businessId String
+  name       String
+  status     EntityStatus @default(ACTIVE)
+  createdAt  DateTime     @default(now())
+
+  business Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@unique([businessId, name])
+}
+
+model Product {
+  id             String       @id @default(cuid())
+  businessId     String
+  name           String
+  sku            String?
+  barcode        String?
+  brandId        String?
+  categoryId     String?
+  unitId         String?
+  purchasePrice  Decimal?     @db.Decimal(12, 2)
+  salePrice      Decimal      @db.Decimal(12, 2)
+  wholesalePrice Decimal?     @db.Decimal(12, 2)
+  status         EntityStatus @default(ACTIVE)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  business     Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  brand        Brand?         @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  category     Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  unit         Unit?          @relation(fields: [unitId], references: [id], onDelete: SetNull)
+  priceHistory PriceHistory[]
+  saleItems    SaleItem[]
+
+  @@unique([businessId, sku])
+  @@unique([businessId, barcode])
+  @@index([businessId, status])
+  @@index([businessId, name])
+  @@index([businessId, brandId])
+  @@index([businessId, categoryId])
+}
+
+model PriceHistory {
+  id          String            @id @default(cuid())
+  businessId  String
+  productId   String
+  priceType   PriceType
+  oldPrice    Decimal?          @db.Decimal(12, 2)
+  newPrice    Decimal           @db.Decimal(12, 2)
+  source      PriceChangeSource
+  note        String?
+  changedById String
+  createdAt   DateTime          @default(now())
+
+  business  Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  changedBy User     @relation(fields: [changedById], references: [id])
+
+  @@index([businessId, productId, createdAt])
+  @@index([businessId, createdAt])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Customers & ledger
+// ─────────────────────────────────────────────────────────────
+
+model Customer {
+  id                String       @id @default(cuid())
+  businessId        String
+  name              String
+  phone             String?
+  address           String?
+  notes             String?
+  creditLimit       Decimal?     @db.Decimal(14, 2)
+  // Cached balance. Positive = customer owes the business (udhaar).
+  // Updated ONLY inside the same transaction that appends a LedgerEntry.
+  currentBalance    Decimal      @default(0) @db.Decimal(14, 2)
+  status            EntityStatus @default(ACTIVE)
+  lastTransactionAt DateTime?
+  lastPaymentAt     DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  business      Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  sales         Sale[]
+  payments      Payment[]
+  ledgerEntries LedgerEntry[]
+
+  @@index([businessId, name])
+  @@index([businessId, phone])
+  @@index([businessId, currentBalance])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Billing
+// ─────────────────────────────────────────────────────────────
+
+model Sale {
+  id            String            @id @default(cuid())
+  businessId    String
+  invoiceNumber String
+  customerId    String?
+  cashierId     String
+  status        SaleStatus        @default(COMPLETED)
+  paymentStatus SalePaymentStatus
+  paymentMethod PaymentMethod
+  subtotal      Decimal           @db.Decimal(14, 2)
+  discountType  DiscountType      @default(NONE)
+  discountValue Decimal           @default(0) @db.Decimal(12, 2)
+  discountAmount Decimal          @default(0) @db.Decimal(12, 2)
+  taxRate       Decimal           @default(0) @db.Decimal(5, 2)
+  taxAmount     Decimal           @default(0) @db.Decimal(12, 2)
+  grandTotal    Decimal           @db.Decimal(14, 2)
+  amountPaid    Decimal           @default(0) @db.Decimal(14, 2)
+  amountDue     Decimal           @default(0) @db.Decimal(14, 2)
+  cashReceived  Decimal?          @db.Decimal(14, 2)
+  changeDue     Decimal?          @db.Decimal(14, 2)
+  notes         String?
+  createdAt     DateTime          @default(now())
+  cancelledAt   DateTime?
+  cancelledById String?
+  cancelReason  String?
+
+  business      Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  customer      Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  cashier       User          @relation("SaleCashier", fields: [cashierId], references: [id])
+  cancelledBy   User?         @relation("SaleCanceller", fields: [cancelledById], references: [id])
+  items         SaleItem[]
+  payments      Payment[]
+  ledgerEntries LedgerEntry[]
+
+  @@unique([businessId, invoiceNumber])
+  @@index([businessId, createdAt])
+  @@index([businessId, customerId])
+  @@index([businessId, paymentStatus])
+  @@index([businessId, cashierId])
+  @@index([businessId, status])
+}
+
+model SaleItem {
+  id                  String   @id @default(cuid())
+  businessId          String
+  saleId              String
+  // Nullable: open price items have no catalogue product.
+  productId           String?
+  productNameSnapshot String
+  skuSnapshot         String?
+  cataloguePrice      Decimal? @db.Decimal(12, 2)
+  soldPrice           Decimal  @db.Decimal(12, 2)
+  quantity            Decimal  @db.Decimal(12, 3)
+  lineTotal           Decimal  @db.Decimal(14, 2)
+  isOpenItem          Boolean  @default(false)
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  sale     Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product  Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([saleId])
+  @@index([businessId, productId])
+  @@index([businessId, productNameSnapshot])
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  businessId    String
+  // PAY-000001 receipt number for standalone khata payments; null when the
+  // payment was taken as part of a sale (the invoice is the receipt).
+  receiptNumber String?
+  saleId        String?
+  customerId    String?
+  amount        Decimal       @db.Decimal(14, 2)
+  method        PaymentMethod
+  reference     String?
+  notes         String?
+  receivedById  String
+  paymentDate   DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+
+  business   Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  sale       Sale?     @relation(fields: [saleId], references: [id], onDelete: SetNull)
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  receivedBy User      @relation(fields: [receivedById], references: [id])
+
+  @@unique([businessId, receiptNumber])
+  @@index([businessId, customerId])
+  @@index([businessId, createdAt])
+}
+
+// Append-only source of truth for customer udhaar history.
+// amount is SIGNED: positive increases what the customer owes,
+// negative decreases it. balanceAfter is the customer balance
+// immediately after this entry.
+model LedgerEntry {
+  id          String          @id @default(cuid())
+  businessId  String
+  customerId  String
+  type        LedgerEntryType
+  amount      Decimal         @db.Decimal(14, 2)
+  balanceAfter Decimal        @db.Decimal(14, 2)
+  saleId      String?
+  paymentId   String?
+  description String
+  createdById String
+  createdAt   DateTime        @default(now())
+
+  business  Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  customer  Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  sale      Sale?    @relation(fields: [saleId], references: [id], onDelete: SetNull)
+  createdBy User     @relation(fields: [createdById], references: [id])
+
+  @@index([businessId, customerId, createdAt])
+  @@index([businessId, createdAt])
+  @@index([businessId, type])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Import jobs & audit
+// ─────────────────────────────────────────────────────────────
+
+model ImportJob {
+  id           String          @id @default(cuid())
+  businessId   String
+  uploadedById String
+  entity       ImportEntity
+  fileName     String
+  totalRows    Int             @default(0)
+  importedRows Int             @default(0)
+  updatedRows  Int             @default(0)
+  skippedRows  Int             @default(0)
+  failedRows   Int             @default(0)
+  status       ImportJobStatus @default(PENDING)
+  // Failed row details for the downloadable error report.
+  errorReport  Json?
+  createdAt    DateTime        @default(now())
+  completedAt  DateTime?
+
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  uploadedBy User     @relation(fields: [uploadedById], references: [id])
+
+  @@index([businessId, createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  businessId String
+  userId     String
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@index([businessId, createdAt])
+  @@index([businessId, entityType, entityId])
+}

@@ -1,0 +1,39 @@
+# ── BillKaro — one-command install ────────────────────────────────
+#   1. copy .env.example to .env and set SESSION_SECRET + POSTGRES_PASSWORD
+#   2. docker compose up -d
+#   3. open http://localhost:3000
+#
+# Works fully offline: no cloud services are used for any core feature.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: billkaro
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: billkaro
+      # UTF-8 so Urdu names store correctly
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    volumes:
+      - billkaro-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U billkaro -d billkaro"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://billkaro:${POSTGRES_PASSWORD}@db:5432/billkaro
+      SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET in .env}
+    ports:
+      - "3000:3000"
+
+volumes:
+  billkaro-db:

@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Standalone output so the Docker image only ships the compiled server.
+  output: "standalone",
 };
 
 export default nextConfig;
