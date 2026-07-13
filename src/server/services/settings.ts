@@ -15,6 +15,51 @@ export interface SettingsInput {
   language?: string;
 }
 
+export interface BusinessProfileInput {
+  name: string;
+  ownerName: string;
+  phone?: string | null;
+  address?: string | null;
+  businessType?: string | null;
+  logoUrl?: string | null;
+}
+
+/** Shop details shown on every receipt — name/owner live on Business, logo on BusinessSettings. */
+export async function updateBusinessProfile(input: BusinessProfileInput) {
+  const ctx = await requirePermission("MANAGE_SETTINGS");
+
+  const name = input.name.trim();
+  const ownerName = input.ownerName.trim();
+  if (!name || !ownerName) throw new Error("NAME_REQUIRED");
+
+  await db.$transaction(async (tx) => {
+    await tx.business.update({
+      where: { id: ctx.business.id },
+      data: {
+        name,
+        ownerName,
+        phone: input.phone?.trim() || null,
+        address: input.address?.trim() || null,
+        businessType: input.businessType?.trim() || null,
+      },
+    });
+    await tx.businessSettings.update({
+      where: { businessId: ctx.business.id },
+      data: { logoUrl: input.logoUrl?.trim() || null },
+    });
+    await tx.auditLog.create({
+      data: {
+        businessId: ctx.business.id,
+        userId: ctx.user.id,
+        action: "BUSINESS_PROFILE_UPDATED",
+        entityType: "Business",
+        entityId: ctx.business.id,
+        metadata: { name },
+      },
+    });
+  });
+}
+
 export async function getSettings() {
   const ctx = await requirePermission("MANAGE_SETTINGS");
   const settings = await db.businessSettings.findUnique({

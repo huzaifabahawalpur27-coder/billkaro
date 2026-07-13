@@ -26,13 +26,7 @@ interface Settings {
   language: string;
 }
 
-export function SettingsView({
-  settings: initial,
-  businessName,
-}: {
-  settings: Settings;
-  businessName: string;
-}) {
+export function SettingsView({ settings: initial }: { settings: Settings }) {
   const router = useRouter();
   const [s, setS] = useState<Settings>(initial);
   const [pending, startTransition] = useTransition();
@@ -57,7 +51,7 @@ export function SettingsView({
   }
 
   return (
-    <div className="max-w-2xl space-y-8">
+    <div className="space-y-8">
       {/* Currency */}
       <section className="space-y-4">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Currency</h2>
