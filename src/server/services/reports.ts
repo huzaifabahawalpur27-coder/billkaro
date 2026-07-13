@@ -107,7 +107,9 @@ export async function getUdhaarAgeing() {
   const entries = await db.ledgerEntry.findMany({
     where: {
       businessId: ctx.business.id,
-      type: "SALE_CREDIT",
+      // Every udhaar-increasing entry ages — opening balances (purana
+      // khata) and manual adjustments, not just credit sales.
+      type: { in: ["SALE_CREDIT", "OPENING_BALANCE", "POSITIVE_ADJUSTMENT"] },
       customer: { currentBalance: { gt: 0 } },
     },
     select: { amount: true, createdAt: true },

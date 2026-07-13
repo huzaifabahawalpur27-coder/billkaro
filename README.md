@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BillKaro
 
-## Getting Started
+**Digital Bill Book · Product Rate List · Udhaar Khata** — for Pakistani grocery, karyana, and general stores.
 
-First, run the development server:
+Fast direct billing, unlimited product catalogue, brand-wise bulk price updates, old bill search, customer udhaar khata with complete ledger history, and XLSX import/export. Works fully offline on a shop laptop or as an online SaaS — same code, same features.
+
+> BillKaro is **not** an inventory system. Products are rate-list entries; billing never checks or decrements stock.
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the full technical design.
+
+## Install on a shop laptop (offline, recommended)
+
+Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/). No internet is needed after installation.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# 1. Unzip / clone BillKaro, then in the BillKaro folder:
+copy .env.example .env       # (cp on Linux/Mac)
+
+# 2. Edit .env — set SESSION_SECRET and POSTGRES_PASSWORD
+#    Generate a secret with:
+#    node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# 3. Start everything (app + database):
+docker compose up -d
+
+# 4. Open the app:
+#    http://localhost:3000  →  Register your business
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Data lives in the `billkaro-db` Docker volume and survives restarts and updates. To update BillKaro: replace the app folder, then `docker compose up -d --build` — database migrations run automatically on start.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Backup:** `docker compose exec db pg_dump -U billkaro billkaro > backup.sql`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Run as online SaaS
 
-## Learn More
+Deploy the same image behind any Node host or container platform with a managed PostgreSQL 16 database. Configure via environment variables only:
 
-To learn more about Next.js, take a look at the following resources:
+| Variable | Purpose |
+|---|---|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `SESSION_SECRET` | Long random value signing login cookies |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The container entrypoint runs `prisma migrate deploy` before starting the server.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Development (no Docker needed)
 
-## Deploy on Vercel
+```bash
+npm install
+npm run dev:db      # embedded PostgreSQL on port 5433 (keep running)
+npm run db:deploy   # apply migrations (first time)
+npm run db:seed     # demo data: login babar@billkaro.pk / billkaro123
+npm run dev         # Next.js on http://localhost:3000
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Useful scripts:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Script | What it does |
+|---|---|
+| `npm run typecheck` / `npm run lint` | Static checks |
+| `npm run build` | Production build |
+| `npm run db:migrate` | Create a new migration after schema changes |
+| `npm run db:reconcile` | Rebuild cached customer balances from the ledger |
+
+## Tech stack
+
+Next.js (App Router) · TypeScript · Tailwind CSS + shadcn/ui · Prisma + PostgreSQL 16 · Decimal money math (never floats) · exceljs for XLSX · jose + bcryptjs auth (no cloud dependency) · PWA-installable.
