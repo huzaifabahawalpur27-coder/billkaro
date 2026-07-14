@@ -42,6 +42,68 @@ export default async function PlatformDashboardPage() {
         />
       </div>
 
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        {/* Signups per month */}
+        <div className="rounded-lg border bg-white p-4">
+          <div className="mb-3 flex items-baseline justify-between">
+            <h2 className="text-sm font-semibold">Signups (6 mahine)</h2>
+            <span className="text-xs text-muted-foreground">
+              Total GMV: <MoneyDisplay value={d.totalGmv} />
+            </span>
+          </div>
+          <div className="space-y-2">
+            {(() => {
+              const max = Math.max(1, ...d.signupsByMonth.map((m) => m.count));
+              return d.signupsByMonth.map((m) => (
+                <div key={m.month} className="flex items-center gap-2 text-sm">
+                  <span className="w-14 shrink-0 text-xs text-muted-foreground">{m.month}</span>
+                  <div className="flex-1 rounded bg-slate-100">
+                    <div
+                      className="h-4 rounded bg-indigo-500"
+                      style={{ width: `${(m.count / max) * 100}%` }}
+                    />
+                  </div>
+                  <span className="w-6 text-right tabular-nums text-xs">{m.count}</span>
+                </div>
+              ));
+            })()}
+          </div>
+        </div>
+
+        {/* Top tenants by 30-day sales */}
+        <div className="rounded-lg border bg-white p-4">
+          <h2 className="mb-3 text-sm font-semibold">Top Tenants (30 din sales)</h2>
+          {d.topTenants.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Abhi koi sales nahi.</p>
+          ) : (
+            <div className="space-y-2">
+              {(() => {
+                const max = Math.max(1, ...d.topTenants.map((t) => Number(t.total)));
+                return d.topTenants.map((t, i) => (
+                  <Link
+                    key={t.businessId}
+                    href={`/admin/tenants/${t.businessId}`}
+                    className="flex items-center gap-2 text-sm hover:underline"
+                  >
+                    <span className="w-4 shrink-0 text-xs text-muted-foreground">{i + 1}</span>
+                    <span className="w-40 shrink-0 truncate font-medium">{t.name}</span>
+                    <div className="flex-1 rounded bg-slate-100">
+                      <div
+                        className="h-4 rounded bg-emerald-500"
+                        style={{ width: `${(Number(t.total) / max) * 100}%` }}
+                      />
+                    </div>
+                    <span className="shrink-0 text-xs tabular-nums">
+                      <MoneyDisplay value={t.total} />
+                    </span>
+                  </Link>
+                ));
+              })()}
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="mt-6 rounded-lg border bg-white">
         <div className="border-b px-4 py-3 font-semibold text-sm">
           Upcoming Renewals (7 din) & Grace

@@ -11,7 +11,13 @@ import {
   updateTenant,
   suspendTenant,
   activateTenant,
+  createTenant,
+  deleteTenant,
 } from "@/server/services/platform/tenants";
+import {
+  resetMemberPassword,
+  setTenantMemberStatus,
+} from "@/server/services/platform/members";
 import {
   assignSubscription,
   recordPlatformPayment,
@@ -31,6 +37,102 @@ function revalidateTenant(businessId: string) {
   revalidatePath(`/admin/tenants/${businessId}`);
   revalidatePath("/admin");
   revalidatePath("/admin/subscriptions");
+}
+
+const createTenantSchema = z.object({
+  businessName: z.string().trim().min(2, "Shop ka naam kam az kam 2 harf.").max(120),
+  ownerName: z.string().trim().min(2, "Owner ka naam kam az kam 2 harf.").max(120),
+  email: z.string().trim().toLowerCase().email("Sahi email enter karein."),
+  password: z.string().min(8, "Password kam az kam 8 characters.").max(72),
+  phone: z.string().trim().max(20).optional().or(z.literal("")),
+  planId: z.string().optional().or(z.literal("")),
+  trialDays: z.coerce.number().int().min(1).max(365).optional(),
+});
+
+export async function createTenantAction(
+  raw: unknown
+): Promise<ActionResult & { businessId?: string; attachedExistingUser?: boolean }> {
+  const parsed = createTenantSchema.safeParse(raw);
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
+
+  try {
+    const result = await createTenant({
+      ...parsed.data,
+      planId: parsed.data.planId || null,
+      trialDays: parsed.data.trialDays ?? null,
+    });
+    revalidateTenant(result.businessId);
+    return { ok: true, error: null, ...result };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "";
+    if (msg === "CANNOT_ATTACH_ADMIN") {
+      return { ok: false, error: "Yeh email platform admin ka hai — tenant owner nahi ban sakta." };
+    }
+    if (msg === "PLAN_NOT_FOUND") return { ok: false, error: "Plan nahi mila ya inactive hai." };
+    return FAIL;
+  }
+}
+
+export async function deleteTenantAction(
+  businessId: string,
+  confirmName: string
+): Promise<ActionResult> {
+  try {
+    await deleteTenant(businessId, confirmName);
+    revalidatePath("/admin/tenants");
+    revalidatePath("/admin");
+    revalidatePath("/admin/subscriptions");
+    return { ok: true, error: null };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "";
+    if (msg === "NOT_SUSPENDED") {
+      return { ok: false, error: "Delete se pehle tenant ko suspend karein." };
+    }
+    if (msg === "NAME_MISMATCH") {
+      return { ok: false, error: "Naam match nahi hua — theek se type karein." };
+    }
+    if (msg === "TENANT_NOT_FOUND") return { ok: false, error: "Tenant nahi mila." };
+    return FAIL;
+  }
+}
+
+const passwordSchema = z.string().min(8, "Password kam az kam 8 characters.").max(72);
+
+export async function resetMemberPasswordAction(
+  businessId: string,
+  memberId: string,
+  password: string
+): Promise<ActionResult> {
+  const parsed = passwordSchema.safeParse(password);
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
+
+  try {
+    await resetMemberPassword(memberId, parsed.data);
+    revalidateTenant(businessId);
+    return { ok: true, error: null };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "";
+    if (msg === "MEMBER_NOT_FOUND") return { ok: false, error: "User nahi mila." };
+    if (msg === "CANNOT_EDIT_ADMIN") return { ok: false, error: "Platform admin edit nahi ho sakta." };
+    return FAIL;
+  }
+}
+
+export async function setMemberStatusAction(
+  businessId: string,
+  memberId: string,
+  active: boolean
+): Promise<ActionResult> {
+  try {
+    await setTenantMemberStatus(memberId, active);
+    revalidateTenant(businessId);
+    return { ok: true, error: null };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "";
+    if (msg === "MEMBER_NOT_FOUND") return { ok: false, error: "User nahi mila." };
+    if (msg === "CANNOT_EDIT_ADMIN") return { ok: false, error: "Platform admin edit nahi ho sakta." };
+    return FAIL;
+  }
 }
 
 const tenantSchema = z.object({

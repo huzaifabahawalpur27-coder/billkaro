@@ -4,9 +4,14 @@ import { db } from "@/server/db";
 import { requirePlatformAdmin } from "@/server/auth/guards";
 
 export type PlatformAction =
+  | "TENANT_CREATED"
   | "TENANT_UPDATED"
   | "TENANT_SUSPENDED"
   | "TENANT_ACTIVATED"
+  | "TENANT_DELETED"
+  | "USER_PASSWORD_RESET"
+  | "USER_ENABLED"
+  | "USER_DISABLED"
   | "PLAN_CREATED"
   | "PLAN_UPDATED"
   | "SUBSCRIPTION_ASSIGNED"

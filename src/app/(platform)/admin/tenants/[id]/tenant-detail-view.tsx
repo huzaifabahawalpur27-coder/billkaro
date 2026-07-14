@@ -3,7 +3,18 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { LogIn, Pencil, Ban, CheckCircle2, CreditCard, CalendarPlus } from "lucide-react";
+import {
+  LogIn,
+  Pencil,
+  Ban,
+  CheckCircle2,
+  CreditCard,
+  CalendarPlus,
+  Trash2,
+  KeyRound,
+  Wand2,
+  Copy,
+} from "lucide-react";
 import {
   updateTenantAction,
   suspendTenantAction,
@@ -12,8 +23,12 @@ import {
   recordPaymentAction,
   extendSubscriptionAction,
   impersonateTenantAction,
+  deleteTenantAction,
+  resetMemberPasswordAction,
+  setMemberStatusAction,
 } from "../actions";
-import type { getTenant } from "@/server/services/platform/tenants";
+import { generatePassword } from "@/lib/generate-password";
+import type { getTenant, TenantStats } from "@/server/services/platform/tenants";
 import type { PlanRow } from "@/server/services/platform/plans";
 import { StatusBadge, type StatusKind } from "@/components/app/status-badge";
 import { MoneyDisplay } from "@/components/app/money-display";
@@ -66,16 +81,24 @@ const METHODS = [
 export function TenantDetailView({
   detail,
   plans,
+  stats,
 }: {
   detail: TenantDetail;
   plans: PlanRow[];
+  stats: TenantStats;
 }) {
   const router = useRouter();
   const t = detail.tenant;
   const [pending, startTransition] = useTransition();
   const [dialog, setDialog] = useState<
-    "edit" | "suspend" | "plan" | "payment" | "extend" | null
+    "edit" | "suspend" | "plan" | "payment" | "extend" | "delete" | "resetPw" | null
   >(null);
+  const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [targetMember, setTargetMember] = useState<TenantDetail["members"][number] | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  // Show-once panel after a successful reset.
+  const [resetResult, setResetResult] = useState<{ email: string; password: string } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   // form state per dialog
   const [edit, setEdit] = useState({
@@ -157,7 +180,7 @@ export function TenantDetailView({
             )}
           </dd>
         </dl>
-        <div>
+        <div className="flex flex-wrap items-center gap-2">
           {t.status === "ACTIVE" ? (
             <Button variant="outline" size="sm" className="text-red-600" onClick={() => setDialog("suspend")}>
               <Ban className="h-3.5 w-3.5 mr-1" /> Suspend Tenant
@@ -172,6 +195,22 @@ export function TenantDetailView({
             >
               <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Activate Tenant
             </Button>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-red-700"
+            disabled={t.status !== "SUSPENDED"}
+            title={t.status !== "SUSPENDED" ? "Pehle suspend karein" : undefined}
+            onClick={() => {
+              setDeleteConfirm("");
+              setDialog("delete");
+            }}
+          >
+            <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete
+          </Button>
+          {t.status !== "SUSPENDED" && (
+            <span className="text-xs text-muted-foreground">Delete ke liye pehle suspend karein.</span>
           )}
         </div>
       </div>
@@ -231,6 +270,46 @@ export function TenantDetailView({
         )}
       </div>
 
+      {/* ── Usage stats ── */}
+      <div className="rounded-lg border bg-white lg:col-span-2 p-4">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          Usage
+        </h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          <div>
+            <div className="text-xs text-muted-foreground">Sales (30 din)</div>
+            <div className="font-bold"><MoneyDisplay value={stats.sales30d} /></div>
+            <div className="text-xs text-muted-foreground">{stats.bills30d} bills</div>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground">All-time GMV</div>
+            <div className="font-bold"><MoneyDisplay value={stats.gmvAllTime} /></div>
+            <div className="text-xs text-muted-foreground">{detail.totalBills} bills</div>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground">Products</div>
+            <div className="font-bold">{stats.activeProducts}</div>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground">Customers</div>
+            <div className="font-bold">{stats.activeCustomers}</div>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground">Udhaar Pending</div>
+            <div className="font-bold">
+              <MoneyDisplay value={stats.outstandingUdhaar} tone="due" />
+            </div>
+            <div className="text-xs text-muted-foreground">{stats.udhaarCustomers} customers</div>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground">Last Activity</div>
+            <div className="font-bold text-sm">
+              {detail.lastSaleAt ? formatDate(detail.lastSaleAt) : "—"}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* ── Payment ledger ── */}
       <div className="rounded-lg border bg-white lg:col-span-2">
         <div className="border-b px-4 py-3 text-sm font-semibold">Payment History</div>
@@ -278,6 +357,7 @@ export function TenantDetailView({
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -290,6 +370,38 @@ export function TenantDetailView({
                   <StatusBadge kind={m.status === "ACTIVE" ? "active" : "inactive"}>
                     {m.status}
                   </StatusBadge>
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-1.5">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => {
+                        setTargetMember(m);
+                        setNewPassword(generatePassword());
+                        setResetResult(null);
+                        setCopied(false);
+                        setDialog("resetPw");
+                      }}
+                    >
+                      <KeyRound className="h-3 w-3 mr-1" /> Reset Password
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs"
+                      disabled={pending}
+                      onClick={() =>
+                        run(
+                          () => setMemberStatusAction(t.id, m.id, m.status !== "ACTIVE"),
+                          m.status === "ACTIVE" ? "User disable ho gaya." : "User enable ho gaya."
+                        )
+                      }
+                    >
+                      {m.status === "ACTIVE" ? "Disable" : "Enable"}
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -541,6 +653,163 @@ export function TenantDetailView({
               {pending ? "…" : "Extend"}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Delete tenant dialog ── */}
+      <Dialog open={dialog === "delete"} onOpenChange={(o) => !o && setDialog(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-red-700">Tenant Hamesha Ke Liye Delete?</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 text-sm">
+            <p className="rounded-md bg-red-50 border border-red-200 p-2.5">
+              <strong>{t.name}</strong> ka SARA data delete ho jayega — bills, khata, ledger,
+              products, customers, users — aur wapas nahi aayega. Sirf audit log mein record rahega.
+            </p>
+            <div className="grid gap-1.5">
+              <Label>
+                Confirm karne ke liye shop ka poora naam type karein:{" "}
+                <span className="font-mono font-semibold">{t.name}</span>
+              </Label>
+              <Input
+                value={deleteConfirm}
+                onChange={(e) => setDeleteConfirm(e.target.value)}
+                placeholder={t.name}
+                autoComplete="off"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialog(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={pending || deleteConfirm.trim() !== t.name}
+              onClick={() =>
+                // Not run(): the detail route won't exist after success.
+                startTransition(async () => {
+                  const result = await deleteTenantAction(t.id, deleteConfirm);
+                  if (result.ok) {
+                    toast.success(`"${t.name}" delete ho gaya.`);
+                    router.push("/admin/tenants");
+                  } else {
+                    toast.error(result.error ?? "Delete fail ho gaya.");
+                  }
+                })
+              }
+            >
+              {pending ? "Deleting…" : "Delete Permanently"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Reset member password dialog ── */}
+      <Dialog
+        open={dialog === "resetPw"}
+        onOpenChange={(o) => {
+          if (!o && !resetResult) setDialog(null);
+        }}
+      >
+        <DialogContent
+          className="sm:max-w-md"
+          showCloseButton={!resetResult}
+          onInteractOutside={(e) => resetResult && e.preventDefault()}
+          onEscapeKeyDown={(e) => resetResult && e.preventDefault()}
+        >
+          {resetResult ? (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                  Password reset ho gaya
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 text-sm">
+                <p className="text-muted-foreground">
+                  Yeh password sirf ab dikhega — user ko de dein.
+                </p>
+                <div className="rounded-md border bg-slate-50 p-3 font-mono text-sm space-y-1">
+                  <div>Email: {resetResult.email}</div>
+                  <div>Password: {resetResult.password}</div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      await navigator.clipboard.writeText(
+                        `Email: ${resetResult.email}\nPassword: ${resetResult.password}`
+                      );
+                      setCopied(true);
+                    }}
+                  >
+                    <Copy className="h-3.5 w-3.5 mr-1" /> {copied ? "Copied!" : "Copy"}
+                  </Button>
+                  <Button size="sm" onClick={() => setDialog(null)}>
+                    Done
+                  </Button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <DialogHeader>
+                <DialogTitle>Reset Password — {targetMember?.name}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3">
+                {(targetMember?.membershipCount ?? 1) > 1 && (
+                  <p className="rounded-md bg-amber-50 border border-amber-200 p-2.5 text-sm">
+                    Yeh user {targetMember?.membershipCount} businesses mein hai — password sab ke
+                    liye change ho jayega.
+                  </p>
+                )}
+                <div className="grid gap-1.5">
+                  <Label>Naya Password</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Kam az kam 8 characters"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setNewPassword(generatePassword())}
+                    >
+                      <Wand2 className="h-3.5 w-3.5 mr-1" /> Generate
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button
+                  disabled={pending || newPassword.length < 8 || !targetMember}
+                  onClick={() =>
+                    // Not run(): keep the dialog open to show the password once.
+                    startTransition(async () => {
+                      if (!targetMember) return;
+                      const result = await resetMemberPasswordAction(
+                        t.id,
+                        targetMember.id,
+                        newPassword
+                      );
+                      if (result.ok) {
+                        setResetResult({ email: targetMember.email, password: newPassword });
+                        router.refresh();
+                      } else {
+                        toast.error(result.error ?? "Reset fail ho gaya.");
+                      }
+                    })
+                  }
+                >
+                  {pending ? "Resetting…" : "Reset Password"}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>

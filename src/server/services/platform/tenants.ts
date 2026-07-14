@@ -1,12 +1,18 @@
 import "server-only";
+import ExcelJS from "exceljs";
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/server/db";
 import { requirePlatformAdmin } from "@/server/auth/guards";
+import { hashPassword } from "@/server/auth/passwords";
+import { createBusinessForUser } from "@/server/services/onboarding";
+import { D } from "@/lib/money";
 import {
   computeSubscriptionState,
   type SubscriptionStatus,
 } from "@/server/platform/subscription-state";
 import { logPlatformAction } from "./audit";
+
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 export interface TenantFilters {
   search?: string;
@@ -97,7 +103,17 @@ export async function getTenant(businessId: string) {
       ...subscriptionInclude,
       settings: { select: { currencySymbol: true } },
       members: {
-        include: { user: { select: { name: true, email: true } }, role: { select: { name: true } } },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+              isPlatformAdmin: true,
+              _count: { select: { memberships: true } },
+            },
+          },
+          role: { select: { name: true } },
+        },
         orderBy: { createdAt: "asc" },
       },
     },
@@ -131,6 +147,8 @@ export async function getTenant(businessId: string) {
       email: m.user.email,
       role: m.role.name,
       status: m.status,
+      isPlatformAdmin: m.user.isPlatformAdmin,
+      membershipCount: m.user._count.memberships,
     })),
     subscription: sub
       ? {
@@ -224,4 +242,225 @@ export async function activateTenant(businessId: string) {
       targetBusinessId: businessId,
     });
   });
+}
+
+// ─────────────────────────────────────────────────────────────
+// Admin-side tenant creation
+// ─────────────────────────────────────────────────────────────
+
+export interface CreateTenantInput {
+  businessName: string;
+  ownerName: string;
+  email: string;
+  password: string;
+  phone?: string | null;
+  planId?: string | null;
+  trialDays?: number | null;
+}
+
+/**
+ * Admin-created tenant (phone onboarding). If the email already belongs to
+ * a user, that user is attached as Owner of the new business and their
+ * password is NEVER overwritten.
+ */
+export async function createTenant(input: CreateTenantInput) {
+  const { user: admin } = await requirePlatformAdmin();
+
+  const existing = await db.user.findUnique({ where: { email: input.email } });
+  if (existing?.isPlatformAdmin) throw new Error("CANNOT_ATTACH_ADMIN");
+
+  const plan = input.planId
+    ? await db.plan.findUnique({ where: { id: input.planId } })
+    : null;
+  if (input.planId && (!plan || !plan.isActive)) throw new Error("PLAN_NOT_FOUND");
+
+  // bcrypt is slow by design — hash outside the transaction.
+  const passwordHash = existing ? null : await hashPassword(input.password);
+
+  const businessId = await db.$transaction(async (tx) => {
+    const user =
+      existing ??
+      (await tx.user.create({
+        data: {
+          email: input.email,
+          passwordHash: passwordHash!,
+          name: input.ownerName.trim(),
+          phone: input.phone?.trim() || null,
+        },
+      }));
+
+    const business = await createBusinessForUser(tx, user.id, {
+      name: input.businessName.trim(),
+      ownerName: input.ownerName.trim(),
+      phone: input.phone?.trim() || undefined,
+    });
+
+    if (plan) {
+      await tx.subscription.create({
+        data: {
+          businessId: business.id,
+          planId: plan.id,
+          trialEndsAt: input.trialDays
+            ? new Date(Date.now() + input.trialDays * DAY_MS)
+            : null,
+        },
+      });
+    }
+
+    await logPlatformAction(tx, {
+      actorId: admin.id,
+      action: "TENANT_CREATED",
+      targetBusinessId: business.id,
+      metadata: {
+        name: input.businessName.trim(),
+        email: input.email,
+        attachedExistingUser: !!existing,
+        plan: plan?.name ?? null,
+        trialDays: input.trialDays ?? null,
+      },
+    });
+
+    return business.id;
+  });
+
+  return { businessId, attachedExistingUser: !!existing };
+}
+
+// ─────────────────────────────────────────────────────────────
+// Tenant deletion — hard, gated on SUSPENDED + name confirmation
+// ─────────────────────────────────────────────────────────────
+
+export async function deleteTenant(businessId: string, confirmName: string) {
+  const { user: admin } = await requirePlatformAdmin();
+
+  const business = await db.business.findUnique({
+    where: { id: businessId },
+    include: { members: { select: { userId: true } } },
+  });
+  if (!business) throw new Error("TENANT_NOT_FOUND");
+  // Suspension first: blocks logins and kills live sessions, so nobody is
+  // mid-bill while their tenant is being erased.
+  if (business.status !== "SUSPENDED") throw new Error("NOT_SUSPENDED");
+  if (confirmName.trim() !== business.name) throw new Error("NAME_MISMATCH");
+
+  const memberUserIds = business.members.map((m) => m.userId);
+  const totalBills = await db.sale.count({ where: { businessId } });
+
+  const deletedUsers = await db.$transaction(
+    async (tx) => {
+      // Must run BEFORE the cascade removes the membership rows.
+      const soleUsers = await tx.user.findMany({
+        where: {
+          id: { in: memberUserIds },
+          isPlatformAdmin: false,
+          memberships: { every: { businessId } },
+        },
+        select: { id: true },
+      });
+
+      // Cascades every tenant row, clearing the Restrict FKs
+      // (Sale.cashierId etc.) that would otherwise block user deletion.
+      await tx.business.delete({ where: { id: businessId } });
+
+      await tx.user.deleteMany({ where: { id: { in: soleUsers.map((u) => u.id) } } });
+
+      await logPlatformAction(tx, {
+        actorId: admin.id,
+        action: "TENANT_DELETED",
+        targetBusinessId: businessId,
+        metadata: {
+          name: business.name,
+          memberCount: memberUserIds.length,
+          deletedUsers: soleUsers.length,
+          totalBills,
+        },
+      });
+
+      return soleUsers.length;
+    },
+    { timeout: 30_000 }
+  );
+
+  return { deletedUsers };
+}
+
+// ─────────────────────────────────────────────────────────────
+// Per-tenant usage stats
+// ─────────────────────────────────────────────────────────────
+
+export async function getTenantStats(businessId: string) {
+  await requirePlatformAdmin();
+  const last30d = new Date(Date.now() - 30 * DAY_MS);
+
+  const [sales30d, salesAll, products, customers, udhaar] = await Promise.all([
+    db.sale.aggregate({
+      where: { businessId, status: "COMPLETED", createdAt: { gte: last30d } },
+      _count: true,
+      _sum: { grandTotal: true },
+    }),
+    db.sale.aggregate({
+      where: { businessId, status: "COMPLETED" },
+      _sum: { grandTotal: true },
+    }),
+    db.product.count({ where: { businessId, status: "ACTIVE" } }),
+    db.customer.count({ where: { businessId, status: "ACTIVE" } }),
+    db.customer.aggregate({
+      where: { businessId, currentBalance: { gt: 0 } },
+      _sum: { currentBalance: true },
+      _count: true,
+    }),
+  ]);
+
+  return {
+    sales30d: D(sales30d._sum.grandTotal ?? 0).toFixed(2),
+    bills30d: sales30d._count,
+    gmvAllTime: D(salesAll._sum.grandTotal ?? 0).toFixed(2),
+    activeProducts: products,
+    activeCustomers: customers,
+    outstandingUdhaar: D(udhaar._sum.currentBalance ?? 0).toFixed(2),
+    udhaarCustomers: udhaar._count,
+  };
+}
+
+export type TenantStats = Awaited<ReturnType<typeof getTenantStats>>;
+
+// ─────────────────────────────────────────────────────────────
+// Tenants XLSX export
+// ─────────────────────────────────────────────────────────────
+
+export async function exportTenantsXlsx(): Promise<Buffer> {
+  await requirePlatformAdmin();
+
+  const businesses = await db.business.findMany({
+    include: subscriptionInclude,
+    orderBy: { createdAt: "asc" },
+  });
+  const rows = businesses.map(toTenantRow);
+
+  const wb = new ExcelJS.Workbook();
+  wb.creator = "BillKaro Platform";
+  const ws = wb.addWorksheet("Tenants");
+  ws.columns = [
+    { header: "Business", key: "name", width: 28 },
+    { header: "Owner", key: "ownerName", width: 22 },
+    { header: "Phone", key: "phone", width: 16 },
+    { header: "Status", key: "status", width: 12 },
+    { header: "Plan", key: "planName", width: 14 },
+    { header: "Subscription", key: "subscriptionStatus", width: 14 },
+    { header: "Coverage Until", key: "effectiveUntil", width: 16 },
+    { header: "Users", key: "memberCount", width: 8 },
+    { header: "Created", key: "createdAt", width: 14 },
+  ];
+  ws.getRow(1).font = { bold: true };
+  for (const r of rows) {
+    ws.addRow({
+      ...r,
+      planName: r.planName ?? "",
+      effectiveUntil: r.effectiveUntil ? r.effectiveUntil.slice(0, 10) : "",
+      createdAt: r.createdAt.slice(0, 10),
+    });
+  }
+
+  const buf = await wb.xlsx.writeBuffer();
+  return Buffer.from(buf);
 }
