@@ -1,16 +1,20 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import Link from "next/link";
 import Decimal from "decimal.js";
 import {
   Search,
   Trash2,
   Plus,
+  Minus,
+  Printer,
   UserRound,
   X,
   CheckCircle2,
   ReceiptText,
 } from "lucide-react";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { toast } from "sonner";
 import {
   searchProductsAction,
@@ -118,11 +122,20 @@ export function BillView({
   const [cashReceived, setCashReceived] = useState("");
   const [customer, setCustomer] = useState<CustomerHit | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [localSearch, setLocalSearch] = useState("");
+  // One query drives both the grid filter and the search dropdown.
+  const [query, setQuery] = useState("");
+  const [openItemMode, setOpenItemMode] = useState(false);
   const [activeTab, setActiveTab] = useState<"PRODUCTS" | "CART">("PRODUCTS");
   const [receipt, setReceipt] = useState<SaleReceipt | null>(null);
   const [saving, startSaving] = useTransition();
   const keyRef = useRef(1);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const receivedInputRef = useRef<HTMLInputElement>(null);
+
+  const focusSearch = useCallback(() => {
+    // Delayed so it wins over Radix's own focus-restore on dialog close.
+    setTimeout(() => searchInputRef.current?.focus(), 80);
+  }, []);
 
   // Totals — display only; the server recomputes everything.
   const totals = useMemo(() => {
@@ -156,16 +169,17 @@ export function BillView({
       : null;
 
   const filteredProducts = useMemo(() => {
+    const q = query.trim().toLowerCase();
     return initialProducts.filter((p) => {
       const matchesCategory = !selectedCategory || p.categoryId === selectedCategory;
       const matchesSearch =
-        !localSearch.trim() ||
-        p.name.toLowerCase().includes(localSearch.toLowerCase()) ||
-        (p.sku && p.sku.toLowerCase().includes(localSearch.toLowerCase())) ||
-        (p.barcode && p.barcode.includes(localSearch));
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        (p.sku && p.sku.toLowerCase().includes(q)) ||
+        (p.barcode && p.barcode.includes(q));
       return matchesCategory && matchesSearch;
     });
-  }, [initialProducts, selectedCategory, localSearch]);
+  }, [initialProducts, selectedCategory, query]);
 
   const cartQuantities = useMemo(() => {
     const map = new Map<string, number>();
@@ -221,7 +235,21 @@ export function BillView({
 
   const updateLine = (key: number, patch: Partial<CartLine>) =>
     setLines((prev) => prev.map((l) => (l.key === key ? { ...l, ...patch } : l)));
-  const removeLine = (key: number) => setLines((prev) => prev.filter((l) => l.key !== key));
+
+  const removeLine = (key: number) => {
+    const next = lines.filter((l) => l.key !== key);
+    setLines(next);
+    if (next.length === 0) {
+      // A stale manual "Received" makes no sense against an empty bill.
+      setPaidTouched(false);
+      setAmountPaid("");
+    }
+  };
+
+  const resetPaid = () => {
+    setPaidTouched(false);
+    setAmountPaid("");
+  };
 
   const resetBill = () => {
     setLines([]);
@@ -233,9 +261,11 @@ export function BillView({
     setCashReceived("");
     setCustomer(null);
     setReceipt(null);
+    focusSearch();
   };
 
   const submit = () => {
+    if (saving || receipt) return;
     if (!lines.length) {
       toast.error("Pehle bill mein items add karein.");
       return;
@@ -267,6 +297,14 @@ export function BillView({
       }
     });
   };
+
+  useKeyboardShortcuts([
+    { key: "F2", handler: () => searchInputRef.current?.focus(), allowInInputs: true },
+    { key: "F4", handler: () => submit(), allowInInputs: true },
+    { key: "F6", handler: () => setOpenItemMode((v) => !v), allowInInputs: true },
+    { key: "F8", handler: () => receivedInputRef.current?.focus(), allowInInputs: true },
+    { key: "/", handler: () => searchInputRef.current?.focus() },
+  ]);
 
   if (!can.createBill) {
     return (
@@ -310,7 +348,23 @@ export function BillView({
           
           {/* Cart items list */}
           <div className={cn("space-y-4 min-w-0", activeTab === "PRODUCTS" ? "hidden md:block" : "block")}>
-            <ProductSearch onPick={addProduct} onOpenItem={addOpenItem} />
+            <ProductSearch
+              query={query}
+              onQueryChange={setQuery}
+              preloaded={initialProducts}
+              openItemMode={openItemMode}
+              onOpenItemModeChange={setOpenItemMode}
+              onPick={addProduct}
+              onOpenItem={addOpenItem}
+              inputRef={searchInputRef}
+              onRequestFocus={focusSearch}
+            />
+            <div className="hidden md:flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-muted-foreground">
+              <span><kbd className="rounded border px-1">F2</kbd> Search</span>
+              <span><kbd className="rounded border px-1">F4</kbd> Complete Bill</span>
+              <span><kbd className="rounded border px-1">F6</kbd> Open Item</span>
+              <span><kbd className="rounded border px-1">F8</kbd> Received</span>
+            </div>
 
           {lines.length === 0 ? (
             <EmptyState
@@ -349,12 +403,10 @@ export function BillView({
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Input
-                            inputMode="decimal"
-                            className="h-7 px-1.5 text-xs text-center"
+                          <QtyStepper
                             value={line.quantity}
-                            onChange={(e) => updateLine(line.key, { quantity: e.target.value })}
-                            aria-label={`${line.name} quantity`}
+                            label={`${line.name} quantity`}
+                            onChange={(quantity) => updateLine(line.key, { quantity })}
                           />
                         </TableCell>
                         <TableCell>
@@ -363,7 +415,13 @@ export function BillView({
                             className="h-7 px-1.5 text-xs text-center"
                             value={line.soldPrice}
                             disabled={!line.isOpenItem && !can.changePrice}
+                            aria-invalid={D(line.soldPrice).lte(0)}
                             onChange={(e) => updateLine(line.key, { soldPrice: e.target.value })}
+                            onBlur={() => {
+                              if (D(line.soldPrice).lte(0) && line.cataloguePrice) {
+                                updateLine(line.key, { soldPrice: line.cataloguePrice });
+                              }
+                            }}
                             aria-label={`${line.name} price`}
                           />
                         </TableCell>
@@ -422,15 +480,13 @@ export function BillView({
                     <div className="flex items-center justify-between gap-4 pt-1.5 border-t border-slate-100">
                       <div className="flex items-center gap-1.5">
                         <span className="text-[10px] text-slate-400 uppercase tracking-wider">Qty</span>
-                        <Input
-                          inputMode="decimal"
-                          className="h-7 w-16 text-xs text-center px-1"
+                        <QtyStepper
                           value={line.quantity}
-                          onChange={(e) => updateLine(line.key, { quantity: e.target.value })}
-                          aria-label={`${line.name} quantity`}
+                          label={`${line.name} quantity`}
+                          onChange={(quantity) => updateLine(line.key, { quantity })}
                         />
                       </div>
-                      
+
                       <div className="flex items-center gap-1.5">
                         <span className="text-[10px] text-slate-400 uppercase tracking-wider">Price</span>
                         <Input
@@ -438,7 +494,13 @@ export function BillView({
                           className="h-7 w-20 text-xs text-center px-1"
                           value={line.soldPrice}
                           disabled={!line.isOpenItem && !can.changePrice}
+                          aria-invalid={D(line.soldPrice).lte(0)}
                           onChange={(e) => updateLine(line.key, { soldPrice: e.target.value })}
+                          onBlur={() => {
+                            if (D(line.soldPrice).lte(0) && line.cataloguePrice) {
+                              updateLine(line.key, { soldPrice: line.cataloguePrice });
+                            }
+                          }}
                           aria-label={`${line.name} price`}
                         />
                       </div>
@@ -466,17 +528,6 @@ export function BillView({
             <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-muted-foreground">
               {filteredProducts.length} items
             </span>
-          </div>
-
-          {/* Local filter input */}
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
-            <Input
-              placeholder="List filter/search karein..."
-              className="pl-8 h-8 text-xs"
-              value={localSearch}
-              onChange={(e) => setLocalSearch(e.target.value)}
-            />
           </div>
 
           {/* Category Tabs */}
@@ -524,7 +575,10 @@ export function BillView({
                     <button
                       key={p.id}
                       type="button"
-                      onClick={() => addProduct(p)}
+                      onClick={() => {
+                        addProduct(p);
+                        focusSearch();
+                      }}
                       className={cn(
                         "flex flex-col text-left p-2.5 rounded-lg border transition-all text-xs relative group",
                         qty > 0
@@ -633,6 +687,7 @@ export function BillView({
           <div className="grid gap-1.5">
             <Label>Received now</Label>
             <Input
+              ref={receivedInputRef}
               inputMode="decimal"
               value={paidTouched ? amountPaid : totals.grand.toFixed(2)}
               onChange={(e) => {
@@ -641,6 +696,20 @@ export function BillView({
               }}
               aria-label="Amount received"
             />
+            {paidTouched && lines.length > 0 && !effectivePaid.eq(totals.grand) && (
+              <div className="flex items-center justify-between gap-2 rounded-md bg-slate-50 dark:bg-slate-900 border p-2 text-xs">
+                <span>
+                  Received {formatMoney(effectivePaid.toFixed(2), currencySymbol)} ≠ Total{" "}
+                  {formatMoney(totals.grand.toFixed(2), currencySymbol)}
+                  {effectivePaid.lt(totals.grand)
+                    ? ` — farq ${formatMoney(amountDue.toFixed(2), currencySymbol)} udhaar banega`
+                    : " — zyada amount, change wapas karein"}
+                </span>
+                <Button variant="outline" size="sm" className="h-6 px-2 text-xs shrink-0" onClick={resetPaid}>
+                  = Total
+                </Button>
+              </div>
+            )}
           </div>
 
           {paymentMethod === "CASH" && !isUdhaar && (
@@ -696,9 +765,15 @@ export function BillView({
       )}
     </div>
 
-    {/* ── Success dialog ── */}
-      <Dialog open={!!receipt} onOpenChange={(open) => !open && resetBill()}>
-        <DialogContent className="sm:max-w-sm">
+    {/* ── Success dialog — explicit buttons are the only way out, so an
+         accidental backdrop click can't wipe the receipt ── */}
+      <Dialog open={!!receipt}>
+        <DialogContent
+          className="sm:max-w-sm"
+          showCloseButton={false}
+          onInteractOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-emerald-600" />
@@ -733,9 +808,23 @@ export function BillView({
                   <MoneyDisplay value={receipt.changeDue} symbol={currencySymbol} />
                 </div>
               )}
-              <Button className="w-full mt-2" onClick={resetBill}>
-                <Plus className="h-4 w-4 mr-1" /> New Bill
-              </Button>
+              <div className="space-y-2 pt-2">
+                <Button
+                  className="w-full"
+                  autoFocus
+                  onClick={() => window.open(`/bills/${receipt.saleId}/print`, "_blank")}
+                >
+                  <Printer className="h-4 w-4 mr-1" /> Print Receipt
+                </Button>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button variant="outline" asChild>
+                    <Link href={`/bills/${receipt.saleId}`}>View Bill</Link>
+                  </Button>
+                  <Button variant="secondary" onClick={resetBill}>
+                    <Plus className="h-4 w-4 mr-1" /> New Bill
+                  </Button>
+                </div>
+              </div>
             </div>
           )}
         </DialogContent>
@@ -747,54 +836,115 @@ export function BillView({
 // ── Product search box ───────────────────────────────────────
 
 function ProductSearch({
+  query,
+  onQueryChange,
+  preloaded,
+  openItemMode,
+  onOpenItemModeChange,
   onPick,
   onOpenItem,
+  inputRef,
+  onRequestFocus,
 }: {
+  query: string;
+  onQueryChange: (value: string) => void;
+  preloaded: ProductHit[];
+  openItemMode: boolean;
+  onOpenItemModeChange: (open: boolean) => void;
   onPick: (p: ProductHit) => void;
   onOpenItem: (name: string, price: string) => void;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+  onRequestFocus: () => void;
 }) {
-  const [query, setQuery] = useState("");
-  const [hits, setHits] = useState<ProductHit[]>([]);
-  const [open, setOpen] = useState(false);
+  // Server results are tagged with the query they answer; anything tagged
+  // with an older query is simply ignored at merge time — no invalidation.
+  const [serverResults, setServerResults] = useState<{ q: string; hits: ProductHit[] }>({
+    q: "",
+    hits: [],
+  });
   const [highlight, setHighlight] = useState(0);
-  const [openItemMode, setOpenItemMode] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
   const [openPrice, setOpenPrice] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-  const seqRef = useRef(0);
 
   useEffect(() => {
     inputRef.current?.focus();
-  }, []);
+  }, [inputRef, openItemMode]);
 
+  // Instant matches from the preloaded catalogue slice.
+  const localHits = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    return preloaded
+      .filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          (p.sku && p.sku.toLowerCase().includes(q)) ||
+          (p.barcode && p.barcode.includes(query.trim()))
+      )
+      .slice(0, 8);
+  }, [preloaded, query]);
+
+  // Debounced server search surfaces products beyond the preloaded slice.
   useEffect(() => {
     const q = query.trim();
     if (!q) return;
-    const seq = ++seqRef.current;
     const t = setTimeout(async () => {
       const results = await searchProductsAction(q);
-      if (seq !== seqRef.current) return;
-      setHits(results);
-      setHighlight(0);
-      setOpen(true);
+      setServerResults({ q, hits: results });
     }, 200);
     return () => clearTimeout(t);
   }, [query]);
 
-  const setQueryAndReset = (value: string) => {
-    setQuery(value);
-    if (!value.trim()) {
-      seqRef.current++;
-      setHits([]);
-      setOpen(false);
-    }
+  const merged = useMemo(() => {
+    const fresh = serverResults.q === query.trim() ? serverResults.hits : [];
+    const seen = new Set(localHits.map((h) => h.id));
+    return [...localHits, ...fresh.filter((h) => !seen.has(h.id))].slice(0, 12);
+  }, [localHits, serverResults, query]);
+
+  const open = !openItemMode && !dismissed && query.trim() !== "";
+
+  const setQuery = (value: string) => {
+    onQueryChange(value);
+    setDismissed(false);
+    setHighlight(0);
   };
 
   const pick = (p: ProductHit) => {
     onPick(p);
     setQuery("");
-    setHits([]);
-    setOpen(false);
-    inputRef.current?.focus();
+    onRequestFocus();
+  };
+
+  const findExact = (list: ProductHit[], q: string) => {
+    const lower = q.toLowerCase();
+    return list.find((p) => p.barcode === q || p.sku?.toLowerCase() === lower);
+  };
+
+  /**
+   * Scanner-safe Enter: exact local match adds synchronously; otherwise the
+   * debounce is cancelled and the server is asked immediately, so a scanner's
+   * trailing Enter can never act on an empty or stale list.
+   */
+  const handleEnter = async () => {
+    const q = query.trim();
+    if (!q) return;
+    const exactLocal = findExact(preloaded, q);
+    if (exactLocal) {
+      pick(exactLocal);
+      return;
+    }
+    if (merged[highlight]) {
+      pick(merged[highlight]);
+      return;
+    }
+    // Skip the debounce — a scanner's trailing Enter must resolve now.
+    const results = await searchProductsAction(q);
+    const exact = findExact(results, q);
+    if (exact || results.length === 1) {
+      pick(exact ?? results[0]);
+      return;
+    }
+    setServerResults({ q, hits: results });
   };
 
   const submitOpenItem = () => {
@@ -807,8 +957,8 @@ function ProductSearch({
     onOpenItem(name, price);
     setQuery("");
     setOpenPrice("");
-    setOpenItemMode(false);
-    inputRef.current?.focus();
+    onOpenItemModeChange(false);
+    onRequestFocus();
   };
 
   return (
@@ -821,20 +971,26 @@ function ProductSearch({
             className="pl-8"
             placeholder="Product ka naam, SKU ya barcode… (scanner bhi chalega)"
             value={query}
-            onChange={(e) => setQueryAndReset(e.target.value)}
+            onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
-              if (openItemMode) return;
+              if (openItemMode) {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  submitOpenItem();
+                }
+                return;
+              }
               if (e.key === "ArrowDown") {
                 e.preventDefault();
-                setHighlight((h) => Math.min(h + 1, hits.length - 1));
+                setHighlight((h) => Math.min(h + 1, merged.length - 1));
               } else if (e.key === "ArrowUp") {
                 e.preventDefault();
                 setHighlight((h) => Math.max(h - 1, 0));
-              } else if (e.key === "Enter" && open && hits[highlight]) {
+              } else if (e.key === "Enter") {
                 e.preventDefault();
-                pick(hits[highlight]);
+                void handleEnter();
               } else if (e.key === "Escape") {
-                setOpen(false);
+                setDismissed(true);
               }
             }}
             aria-label="Product search"
@@ -852,31 +1008,30 @@ function ProductSearch({
               aria-label="Open item price"
             />
             <Button onClick={submitOpenItem}>Add</Button>
-            <Button variant="ghost" size="icon" onClick={() => setOpenItemMode(false)} aria-label="Cancel open item">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onOpenItemModeChange(false)}
+              aria-label="Cancel open item"
+            >
               <X className="h-4 w-4" />
             </Button>
           </>
         ) : (
-          <Button
-            variant="outline"
-            onClick={() => {
-              setOpenItemMode(true);
-              setOpen(false);
-            }}
-          >
+          <Button variant="outline" onClick={() => onOpenItemModeChange(true)}>
             <Plus className="h-4 w-4 mr-1" /> Open Item
           </Button>
         )}
       </div>
 
-      {open && !openItemMode && (
+      {open && (
         <div className="absolute z-20 mt-1 w-full rounded-md border bg-popover shadow-md max-h-80 overflow-y-auto">
-          {hits.length === 0 ? (
+          {merged.length === 0 ? (
             <div className="p-3 text-sm text-muted-foreground">
               Koi product nahi mila. &ldquo;Open Item&rdquo; use karein.
             </div>
           ) : (
-            hits.map((p, i) => (
+            merged.map((p, i) => (
               <button
                 key={p.id}
                 type="button"
@@ -1060,6 +1215,59 @@ function CustomerPicker({
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+// ── Quantity stepper ─────────────────────────────────────────
+
+function QtyStepper({
+  value,
+  onChange,
+  label,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  label: string;
+}) {
+  const step = (delta: number) => {
+    const next = D(value).add(delta);
+    onChange(next.lt(1) ? "1" : next.toString());
+  };
+
+  return (
+    <div className="flex items-center gap-0.5">
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        className="h-7 w-7 shrink-0"
+        onClick={() => step(-1)}
+        disabled={D(value).lte(1)}
+        aria-label={`Decrease ${label}`}
+      >
+        <Minus className="h-3 w-3" />
+      </Button>
+      <Input
+        inputMode="decimal"
+        className="h-7 w-12 px-1 text-xs text-center"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onBlur={() => {
+          if (D(value).lte(0)) onChange("1");
+        }}
+        aria-label={label}
+      />
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        className="h-7 w-7 shrink-0"
+        onClick={() => step(1)}
+        aria-label={`Increase ${label}`}
+      >
+        <Plus className="h-3 w-3" />
+      </Button>
     </div>
   );
 }
