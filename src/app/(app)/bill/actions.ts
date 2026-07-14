@@ -11,6 +11,7 @@ import {
   searchCustomersForBilling,
   quickCreateCustomer,
 } from "@/server/services/customers";
+import { SubscriptionExpiredError } from "@/server/auth/guards";
 
 export interface ActionResult<T = undefined> {
   ok: boolean;
@@ -107,6 +108,12 @@ export async function createSaleAction(input: unknown): Promise<ActionResult<Sal
   } catch (e) {
     if (e instanceof SaleValidationError) {
       return { ok: false, error: SALE_ERRORS[e.code] ?? "Bill save nahi ho saka." };
+    }
+    if (e instanceof SubscriptionExpiredError) {
+      return {
+        ok: false,
+        error: "Subscription khatam ho gayi hai — abhi sirf dekh sakte hain. Renew karne ke liye rabta karein.",
+      };
     }
     console.error("createSaleAction failed:", e);
     return { ok: false, error: "Bill save nahi ho saka. Dubara try karein." };

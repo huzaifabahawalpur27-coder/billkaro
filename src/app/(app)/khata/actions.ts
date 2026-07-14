@@ -5,6 +5,7 @@ import { z } from "zod";
 import { receivePayment } from "@/server/services/payments";
 import { setOpeningBalance, adjustBalance } from "@/server/services/ledger";
 import { cancelBill } from "@/server/services/bills";
+import { SubscriptionExpiredError } from "@/server/auth/guards";
 
 export interface ActionResult<T = undefined> {
   ok: boolean;
@@ -13,6 +14,9 @@ export interface ActionResult<T = undefined> {
 }
 
 const decimalStr = z.string().trim().regex(/^\d+(\.\d{1,2})?$/, "Sahi number darj karein");
+
+const READONLY_ERROR =
+  "Subscription khatam ho gayi hai — abhi sirf dekh sakte hain. Renew karne ke liye rabta karein.";
 
 export async function receivePaymentAction(
   customerId: string,
@@ -33,6 +37,7 @@ export async function receivePaymentAction(
     revalidatePath("/khata");
     return { ok: true, error: null, data: { receiptNumber: result.receiptNumber, newBalance: result.newBalance } };
   } catch (e) {
+    if (e instanceof SubscriptionExpiredError) return { ok: false, error: READONLY_ERROR };
     const msg = e instanceof Error ? e.message : "";
     if (msg === "CUSTOMER_NOT_FOUND") return { ok: false, error: "Customer nahi mila." };
     if (msg === "INVALID_AMOUNT") return { ok: false, error: "Amount sahi nahi hai." };
@@ -49,7 +54,8 @@ export async function setOpeningBalanceAction(customerId: string, amount: string
     revalidatePath(`/khata/${customerId}`);
     revalidatePath("/khata");
     return { ok: true, error: null };
-  } catch {
+  } catch (e) {
+    if (e instanceof SubscriptionExpiredError) return { ok: false, error: READONLY_ERROR };
     return { ok: false, error: "Opening balance set nahi ho saka." };
   }
 }
@@ -68,7 +74,8 @@ export async function adjustBalanceAction(
     revalidatePath(`/khata/${customerId}`);
     revalidatePath("/khata");
     return { ok: true, error: null };
-  } catch {
+  } catch (e) {
+    if (e instanceof SubscriptionExpiredError) return { ok: false, error: READONLY_ERROR };
     return { ok: false, error: "Adjustment nahi ho saki." };
   }
 }
@@ -80,6 +87,7 @@ export async function cancelBillAction(saleId: string, reason: string, customerI
     if (customerId) revalidatePath(`/khata/${customerId}`);
     return { ok: true, error: null };
   } catch (e) {
+    if (e instanceof SubscriptionExpiredError) return { ok: false, error: READONLY_ERROR };
     const msg = e instanceof Error ? e.message : "";
     if (msg === "ALREADY_CANCELLED") return { ok: false, error: "Yeh bill pehle se cancel ho chuka hai." };
     if (msg === "BILL_NOT_FOUND") return { ok: false, error: "Bill nahi mila." };
