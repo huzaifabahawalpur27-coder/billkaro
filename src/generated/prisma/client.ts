@@ -131,3 +131,23 @@ export type ImportJob = Prisma.ImportJobModel
  * 
  */
 export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model Plan
+ * 
+ */
+export type Plan = Prisma.PlanModel
+/**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model PlatformPayment
+ * 
+ */
+export type PlatformPayment = Prisma.PlatformPaymentModel
+/**
+ * Model PlatformAuditLog
+ * 
+ */
+export type PlatformAuditLog = Prisma.PlatformAuditLogModel

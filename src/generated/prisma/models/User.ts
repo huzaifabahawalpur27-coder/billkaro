@@ -31,6 +31,7 @@ export type UserMinAggregateOutputType = {
   name: string | null
   phone: string | null
   status: $Enums.UserStatus | null
+  isPlatformAdmin: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -42,6 +43,7 @@ export type UserMaxAggregateOutputType = {
   name: string | null
   phone: string | null
   status: $Enums.UserStatus | null
+  isPlatformAdmin: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -53,6 +55,7 @@ export type UserCountAggregateOutputType = {
   name: number
   phone: number
   status: number
+  isPlatformAdmin: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -66,6 +69,7 @@ export type UserMinAggregateInputType = {
   name?: true
   phone?: true
   status?: true
+  isPlatformAdmin?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -77,6 +81,7 @@ export type UserMaxAggregateInputType = {
   name?: true
   phone?: true
   status?: true
+  isPlatformAdmin?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -88,6 +93,7 @@ export type UserCountAggregateInputType = {
   name?: true
   phone?: true
   status?: true
+  isPlatformAdmin?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -172,6 +178,7 @@ export type UserGroupByOutputType = {
   name: string
   phone: string | null
   status: $Enums.UserStatus
+  isPlatformAdmin: boolean
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -204,6 +211,7 @@ export type UserWhereInput = {
   name?: Prisma.StringFilter<"User"> | string
   phone?: Prisma.StringNullableFilter<"User"> | string | null
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   memberships?: Prisma.BusinessUserListRelationFilter
@@ -214,6 +222,8 @@ export type UserWhereInput = {
   priceChanges?: Prisma.PriceHistoryListRelationFilter
   importJobs?: Prisma.ImportJobListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  platformPaymentsRecorded?: Prisma.PlatformPaymentListRelationFilter
+  platformAuditLogs?: Prisma.PlatformAuditLogListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -223,6 +233,7 @@ export type UserOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  isPlatformAdmin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   memberships?: Prisma.BusinessUserOrderByRelationAggregateInput
@@ -233,6 +244,8 @@ export type UserOrderByWithRelationInput = {
   priceChanges?: Prisma.PriceHistoryOrderByRelationAggregateInput
   importJobs?: Prisma.ImportJobOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentOrderByRelationAggregateInput
+  platformAuditLogs?: Prisma.PlatformAuditLogOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -245,6 +258,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"User"> | string
   phone?: Prisma.StringNullableFilter<"User"> | string | null
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   memberships?: Prisma.BusinessUserListRelationFilter
@@ -255,6 +269,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   priceChanges?: Prisma.PriceHistoryListRelationFilter
   importJobs?: Prisma.ImportJobListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  platformPaymentsRecorded?: Prisma.PlatformPaymentListRelationFilter
+  platformAuditLogs?: Prisma.PlatformAuditLogListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -264,6 +280,7 @@ export type UserOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  isPlatformAdmin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -281,6 +298,7 @@ export type UserScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"User"> | string
   phone?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   status?: Prisma.EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -292,6 +310,7 @@ export type UserCreateInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserCreateNestedManyWithoutUserInput
@@ -302,6 +321,8 @@ export type UserCreateInput = {
   priceChanges?: Prisma.PriceHistoryCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -311,6 +332,7 @@ export type UserUncheckedCreateInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutUserInput
@@ -321,6 +343,8 @@ export type UserUncheckedCreateInput = {
   priceChanges?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserUpdateInput = {
@@ -330,6 +354,7 @@ export type UserUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUpdateManyWithoutUserNestedInput
@@ -340,6 +365,8 @@ export type UserUpdateInput = {
   priceChanges?: Prisma.PriceHistoryUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -349,6 +376,7 @@ export type UserUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUncheckedUpdateManyWithoutUserNestedInput
@@ -359,6 +387,8 @@ export type UserUncheckedUpdateInput = {
   priceChanges?: Prisma.PriceHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -368,6 +398,7 @@ export type UserCreateManyInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -379,6 +410,7 @@ export type UserUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -390,6 +422,7 @@ export type UserUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -401,6 +434,7 @@ export type UserCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isPlatformAdmin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -412,6 +446,7 @@ export type UserMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isPlatformAdmin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -423,6 +458,7 @@ export type UserMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isPlatformAdmin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -447,6 +483,10 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type EnumUserStatusFieldUpdateOperationsInput = {
   set?: $Enums.UserStatus
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -567,6 +607,34 @@ export type UserUpdateOneRequiredWithoutAuditLogsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.UserUpdateWithoutAuditLogsInput>, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
 }
 
+export type UserCreateNestedOneWithoutPlatformPaymentsRecordedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPlatformPaymentsRecordedInput, Prisma.UserUncheckedCreateWithoutPlatformPaymentsRecordedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPlatformPaymentsRecordedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPlatformPaymentsRecordedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPlatformPaymentsRecordedInput, Prisma.UserUncheckedCreateWithoutPlatformPaymentsRecordedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPlatformPaymentsRecordedInput
+  upsert?: Prisma.UserUpsertWithoutPlatformPaymentsRecordedInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPlatformPaymentsRecordedInput, Prisma.UserUpdateWithoutPlatformPaymentsRecordedInput>, Prisma.UserUncheckedUpdateWithoutPlatformPaymentsRecordedInput>
+}
+
+export type UserCreateNestedOneWithoutPlatformAuditLogsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPlatformAuditLogsInput, Prisma.UserUncheckedCreateWithoutPlatformAuditLogsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPlatformAuditLogsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPlatformAuditLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPlatformAuditLogsInput, Prisma.UserUncheckedCreateWithoutPlatformAuditLogsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPlatformAuditLogsInput
+  upsert?: Prisma.UserUpsertWithoutPlatformAuditLogsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPlatformAuditLogsInput, Prisma.UserUpdateWithoutPlatformAuditLogsInput>, Prisma.UserUncheckedUpdateWithoutPlatformAuditLogsInput>
+}
+
 export type UserCreateWithoutMembershipsInput = {
   id?: string
   email: string
@@ -574,6 +642,7 @@ export type UserCreateWithoutMembershipsInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   salesAsCashier?: Prisma.SaleCreateNestedManyWithoutCashierInput
@@ -583,6 +652,8 @@ export type UserCreateWithoutMembershipsInput = {
   priceChanges?: Prisma.PriceHistoryCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -592,6 +663,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   salesAsCashier?: Prisma.SaleUncheckedCreateNestedManyWithoutCashierInput
@@ -601,6 +673,8 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   priceChanges?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -626,6 +700,7 @@ export type UserUpdateWithoutMembershipsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   salesAsCashier?: Prisma.SaleUpdateManyWithoutCashierNestedInput
@@ -635,6 +710,8 @@ export type UserUpdateWithoutMembershipsInput = {
   priceChanges?: Prisma.PriceHistoryUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -644,6 +721,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   salesAsCashier?: Prisma.SaleUncheckedUpdateManyWithoutCashierNestedInput
@@ -653,6 +731,8 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   priceChanges?: Prisma.PriceHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateWithoutPriceChangesInput = {
@@ -662,6 +742,7 @@ export type UserCreateWithoutPriceChangesInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserCreateNestedManyWithoutUserInput
@@ -671,6 +752,8 @@ export type UserCreateWithoutPriceChangesInput = {
   ledgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutCreatedByInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutPriceChangesInput = {
@@ -680,6 +763,7 @@ export type UserUncheckedCreateWithoutPriceChangesInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutUserInput
@@ -689,6 +773,8 @@ export type UserUncheckedCreateWithoutPriceChangesInput = {
   ledgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutCreatedByInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutPriceChangesInput = {
@@ -714,6 +800,7 @@ export type UserUpdateWithoutPriceChangesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUpdateManyWithoutUserNestedInput
@@ -723,6 +810,8 @@ export type UserUpdateWithoutPriceChangesInput = {
   ledgerEntries?: Prisma.LedgerEntryUpdateManyWithoutCreatedByNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPriceChangesInput = {
@@ -732,6 +821,7 @@ export type UserUncheckedUpdateWithoutPriceChangesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUncheckedUpdateManyWithoutUserNestedInput
@@ -741,6 +831,8 @@ export type UserUncheckedUpdateWithoutPriceChangesInput = {
   ledgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutCreatedByNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateWithoutSalesAsCashierInput = {
@@ -750,6 +842,7 @@ export type UserCreateWithoutSalesAsCashierInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserCreateNestedManyWithoutUserInput
@@ -759,6 +852,8 @@ export type UserCreateWithoutSalesAsCashierInput = {
   priceChanges?: Prisma.PriceHistoryCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutSalesAsCashierInput = {
@@ -768,6 +863,7 @@ export type UserUncheckedCreateWithoutSalesAsCashierInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutUserInput
@@ -777,6 +873,8 @@ export type UserUncheckedCreateWithoutSalesAsCashierInput = {
   priceChanges?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutSalesAsCashierInput = {
@@ -791,6 +889,7 @@ export type UserCreateWithoutSalesCancelledInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserCreateNestedManyWithoutUserInput
@@ -800,6 +899,8 @@ export type UserCreateWithoutSalesCancelledInput = {
   priceChanges?: Prisma.PriceHistoryCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutSalesCancelledInput = {
@@ -809,6 +910,7 @@ export type UserUncheckedCreateWithoutSalesCancelledInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutUserInput
@@ -818,6 +920,8 @@ export type UserUncheckedCreateWithoutSalesCancelledInput = {
   priceChanges?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutSalesCancelledInput = {
@@ -843,6 +947,7 @@ export type UserUpdateWithoutSalesAsCashierInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUpdateManyWithoutUserNestedInput
@@ -852,6 +957,8 @@ export type UserUpdateWithoutSalesAsCashierInput = {
   priceChanges?: Prisma.PriceHistoryUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSalesAsCashierInput = {
@@ -861,6 +968,7 @@ export type UserUncheckedUpdateWithoutSalesAsCashierInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUncheckedUpdateManyWithoutUserNestedInput
@@ -870,6 +978,8 @@ export type UserUncheckedUpdateWithoutSalesAsCashierInput = {
   priceChanges?: Prisma.PriceHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserUpsertWithoutSalesCancelledInput = {
@@ -890,6 +1000,7 @@ export type UserUpdateWithoutSalesCancelledInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUpdateManyWithoutUserNestedInput
@@ -899,6 +1010,8 @@ export type UserUpdateWithoutSalesCancelledInput = {
   priceChanges?: Prisma.PriceHistoryUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSalesCancelledInput = {
@@ -908,6 +1021,7 @@ export type UserUncheckedUpdateWithoutSalesCancelledInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUncheckedUpdateManyWithoutUserNestedInput
@@ -917,6 +1031,8 @@ export type UserUncheckedUpdateWithoutSalesCancelledInput = {
   priceChanges?: Prisma.PriceHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateWithoutPaymentsTakenInput = {
@@ -926,6 +1042,7 @@ export type UserCreateWithoutPaymentsTakenInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserCreateNestedManyWithoutUserInput
@@ -935,6 +1052,8 @@ export type UserCreateWithoutPaymentsTakenInput = {
   priceChanges?: Prisma.PriceHistoryCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutPaymentsTakenInput = {
@@ -944,6 +1063,7 @@ export type UserUncheckedCreateWithoutPaymentsTakenInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutUserInput
@@ -953,6 +1073,8 @@ export type UserUncheckedCreateWithoutPaymentsTakenInput = {
   priceChanges?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutPaymentsTakenInput = {
@@ -978,6 +1100,7 @@ export type UserUpdateWithoutPaymentsTakenInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUpdateManyWithoutUserNestedInput
@@ -987,6 +1110,8 @@ export type UserUpdateWithoutPaymentsTakenInput = {
   priceChanges?: Prisma.PriceHistoryUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPaymentsTakenInput = {
@@ -996,6 +1121,7 @@ export type UserUncheckedUpdateWithoutPaymentsTakenInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUncheckedUpdateManyWithoutUserNestedInput
@@ -1005,6 +1131,8 @@ export type UserUncheckedUpdateWithoutPaymentsTakenInput = {
   priceChanges?: Prisma.PriceHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateWithoutLedgerEntriesInput = {
@@ -1014,6 +1142,7 @@ export type UserCreateWithoutLedgerEntriesInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserCreateNestedManyWithoutUserInput
@@ -1023,6 +1152,8 @@ export type UserCreateWithoutLedgerEntriesInput = {
   priceChanges?: Prisma.PriceHistoryCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutLedgerEntriesInput = {
@@ -1032,6 +1163,7 @@ export type UserUncheckedCreateWithoutLedgerEntriesInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutUserInput
@@ -1041,6 +1173,8 @@ export type UserUncheckedCreateWithoutLedgerEntriesInput = {
   priceChanges?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUploadedByInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutLedgerEntriesInput = {
@@ -1066,6 +1200,7 @@ export type UserUpdateWithoutLedgerEntriesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUpdateManyWithoutUserNestedInput
@@ -1075,6 +1210,8 @@ export type UserUpdateWithoutLedgerEntriesInput = {
   priceChanges?: Prisma.PriceHistoryUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLedgerEntriesInput = {
@@ -1084,6 +1221,7 @@ export type UserUncheckedUpdateWithoutLedgerEntriesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUncheckedUpdateManyWithoutUserNestedInput
@@ -1093,6 +1231,8 @@ export type UserUncheckedUpdateWithoutLedgerEntriesInput = {
   priceChanges?: Prisma.PriceHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUploadedByNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateWithoutImportJobsInput = {
@@ -1102,6 +1242,7 @@ export type UserCreateWithoutImportJobsInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserCreateNestedManyWithoutUserInput
@@ -1111,6 +1252,8 @@ export type UserCreateWithoutImportJobsInput = {
   ledgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutCreatedByInput
   priceChanges?: Prisma.PriceHistoryCreateNestedManyWithoutChangedByInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutImportJobsInput = {
@@ -1120,6 +1263,7 @@ export type UserUncheckedCreateWithoutImportJobsInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutUserInput
@@ -1129,6 +1273,8 @@ export type UserUncheckedCreateWithoutImportJobsInput = {
   ledgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutCreatedByInput
   priceChanges?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutChangedByInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutImportJobsInput = {
@@ -1154,6 +1300,7 @@ export type UserUpdateWithoutImportJobsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUpdateManyWithoutUserNestedInput
@@ -1163,6 +1310,8 @@ export type UserUpdateWithoutImportJobsInput = {
   ledgerEntries?: Prisma.LedgerEntryUpdateManyWithoutCreatedByNestedInput
   priceChanges?: Prisma.PriceHistoryUpdateManyWithoutChangedByNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutImportJobsInput = {
@@ -1172,6 +1321,7 @@ export type UserUncheckedUpdateWithoutImportJobsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUncheckedUpdateManyWithoutUserNestedInput
@@ -1181,6 +1331,8 @@ export type UserUncheckedUpdateWithoutImportJobsInput = {
   ledgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutCreatedByNestedInput
   priceChanges?: Prisma.PriceHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -1190,6 +1342,7 @@ export type UserCreateWithoutAuditLogsInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserCreateNestedManyWithoutUserInput
@@ -1199,6 +1352,8 @@ export type UserCreateWithoutAuditLogsInput = {
   ledgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutCreatedByInput
   priceChanges?: Prisma.PriceHistoryCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUploadedByInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -1208,6 +1363,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   name: string
   phone?: string | null
   status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutUserInput
@@ -1217,6 +1373,8 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   ledgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutCreatedByInput
   priceChanges?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutChangedByInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUploadedByInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -1242,6 +1400,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUpdateManyWithoutUserNestedInput
@@ -1251,6 +1410,8 @@ export type UserUpdateWithoutAuditLogsInput = {
   ledgerEntries?: Prisma.LedgerEntryUpdateManyWithoutCreatedByNestedInput
   priceChanges?: Prisma.PriceHistoryUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutUploadedByNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -1260,6 +1421,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.BusinessUserUncheckedUpdateManyWithoutUserNestedInput
@@ -1269,6 +1431,208 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   ledgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutCreatedByNestedInput
   priceChanges?: Prisma.PriceHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUploadedByNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type UserCreateWithoutPlatformPaymentsRecordedInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  name: string
+  phone?: string | null
+  status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.BusinessUserCreateNestedManyWithoutUserInput
+  salesAsCashier?: Prisma.SaleCreateNestedManyWithoutCashierInput
+  salesCancelled?: Prisma.SaleCreateNestedManyWithoutCancelledByInput
+  paymentsTaken?: Prisma.PaymentCreateNestedManyWithoutReceivedByInput
+  ledgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutCreatedByInput
+  priceChanges?: Prisma.PriceHistoryCreateNestedManyWithoutChangedByInput
+  importJobs?: Prisma.ImportJobCreateNestedManyWithoutUploadedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  platformAuditLogs?: Prisma.PlatformAuditLogCreateNestedManyWithoutActorInput
+}
+
+export type UserUncheckedCreateWithoutPlatformPaymentsRecordedInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  name: string
+  phone?: string | null
+  status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutUserInput
+  salesAsCashier?: Prisma.SaleUncheckedCreateNestedManyWithoutCashierInput
+  salesCancelled?: Prisma.SaleUncheckedCreateNestedManyWithoutCancelledByInput
+  paymentsTaken?: Prisma.PaymentUncheckedCreateNestedManyWithoutReceivedByInput
+  ledgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutCreatedByInput
+  priceChanges?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUploadedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type UserCreateOrConnectWithoutPlatformPaymentsRecordedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPlatformPaymentsRecordedInput, Prisma.UserUncheckedCreateWithoutPlatformPaymentsRecordedInput>
+}
+
+export type UserUpsertWithoutPlatformPaymentsRecordedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPlatformPaymentsRecordedInput, Prisma.UserUncheckedUpdateWithoutPlatformPaymentsRecordedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPlatformPaymentsRecordedInput, Prisma.UserUncheckedCreateWithoutPlatformPaymentsRecordedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPlatformPaymentsRecordedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPlatformPaymentsRecordedInput, Prisma.UserUncheckedUpdateWithoutPlatformPaymentsRecordedInput>
+}
+
+export type UserUpdateWithoutPlatformPaymentsRecordedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.BusinessUserUpdateManyWithoutUserNestedInput
+  salesAsCashier?: Prisma.SaleUpdateManyWithoutCashierNestedInput
+  salesCancelled?: Prisma.SaleUpdateManyWithoutCancelledByNestedInput
+  paymentsTaken?: Prisma.PaymentUpdateManyWithoutReceivedByNestedInput
+  ledgerEntries?: Prisma.LedgerEntryUpdateManyWithoutCreatedByNestedInput
+  priceChanges?: Prisma.PriceHistoryUpdateManyWithoutChangedByNestedInput
+  importJobs?: Prisma.ImportJobUpdateManyWithoutUploadedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUpdateManyWithoutActorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPlatformPaymentsRecordedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.BusinessUserUncheckedUpdateManyWithoutUserNestedInput
+  salesAsCashier?: Prisma.SaleUncheckedUpdateManyWithoutCashierNestedInput
+  salesCancelled?: Prisma.SaleUncheckedUpdateManyWithoutCancelledByNestedInput
+  paymentsTaken?: Prisma.PaymentUncheckedUpdateManyWithoutReceivedByNestedInput
+  ledgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutCreatedByNestedInput
+  priceChanges?: Prisma.PriceHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUploadedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  platformAuditLogs?: Prisma.PlatformAuditLogUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type UserCreateWithoutPlatformAuditLogsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  name: string
+  phone?: string | null
+  status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.BusinessUserCreateNestedManyWithoutUserInput
+  salesAsCashier?: Prisma.SaleCreateNestedManyWithoutCashierInput
+  salesCancelled?: Prisma.SaleCreateNestedManyWithoutCancelledByInput
+  paymentsTaken?: Prisma.PaymentCreateNestedManyWithoutReceivedByInput
+  ledgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutCreatedByInput
+  priceChanges?: Prisma.PriceHistoryCreateNestedManyWithoutChangedByInput
+  importJobs?: Prisma.ImportJobCreateNestedManyWithoutUploadedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentCreateNestedManyWithoutRecordedByInput
+}
+
+export type UserUncheckedCreateWithoutPlatformAuditLogsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  name: string
+  phone?: string | null
+  status?: $Enums.UserStatus
+  isPlatformAdmin?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutUserInput
+  salesAsCashier?: Prisma.SaleUncheckedCreateNestedManyWithoutCashierInput
+  salesCancelled?: Prisma.SaleUncheckedCreateNestedManyWithoutCancelledByInput
+  paymentsTaken?: Prisma.PaymentUncheckedCreateNestedManyWithoutReceivedByInput
+  ledgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutCreatedByInput
+  priceChanges?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUploadedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+}
+
+export type UserCreateOrConnectWithoutPlatformAuditLogsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPlatformAuditLogsInput, Prisma.UserUncheckedCreateWithoutPlatformAuditLogsInput>
+}
+
+export type UserUpsertWithoutPlatformAuditLogsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPlatformAuditLogsInput, Prisma.UserUncheckedUpdateWithoutPlatformAuditLogsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPlatformAuditLogsInput, Prisma.UserUncheckedCreateWithoutPlatformAuditLogsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPlatformAuditLogsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPlatformAuditLogsInput, Prisma.UserUncheckedUpdateWithoutPlatformAuditLogsInput>
+}
+
+export type UserUpdateWithoutPlatformAuditLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.BusinessUserUpdateManyWithoutUserNestedInput
+  salesAsCashier?: Prisma.SaleUpdateManyWithoutCashierNestedInput
+  salesCancelled?: Prisma.SaleUpdateManyWithoutCancelledByNestedInput
+  paymentsTaken?: Prisma.PaymentUpdateManyWithoutReceivedByNestedInput
+  ledgerEntries?: Prisma.LedgerEntryUpdateManyWithoutCreatedByNestedInput
+  priceChanges?: Prisma.PriceHistoryUpdateManyWithoutChangedByNestedInput
+  importJobs?: Prisma.ImportJobUpdateManyWithoutUploadedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUpdateManyWithoutRecordedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPlatformAuditLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isPlatformAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.BusinessUserUncheckedUpdateManyWithoutUserNestedInput
+  salesAsCashier?: Prisma.SaleUncheckedUpdateManyWithoutCashierNestedInput
+  salesCancelled?: Prisma.SaleUncheckedUpdateManyWithoutCancelledByNestedInput
+  paymentsTaken?: Prisma.PaymentUncheckedUpdateManyWithoutReceivedByNestedInput
+  ledgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutCreatedByNestedInput
+  priceChanges?: Prisma.PriceHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUploadedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  platformPaymentsRecorded?: Prisma.PlatformPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
 }
 
 
@@ -1285,6 +1649,8 @@ export type UserCountOutputType = {
   priceChanges: number
   importJobs: number
   auditLogs: number
+  platformPaymentsRecorded: number
+  platformAuditLogs: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1296,6 +1662,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   priceChanges?: boolean | UserCountOutputTypeCountPriceChangesArgs
   importJobs?: boolean | UserCountOutputTypeCountImportJobsArgs
   auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
+  platformPaymentsRecorded?: boolean | UserCountOutputTypeCountPlatformPaymentsRecordedArgs
+  platformAuditLogs?: boolean | UserCountOutputTypeCountPlatformAuditLogsArgs
 }
 
 /**
@@ -1364,6 +1732,20 @@ export type UserCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.AuditLogWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPlatformPaymentsRecordedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PlatformPaymentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPlatformAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PlatformAuditLogWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1372,6 +1754,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   name?: boolean
   phone?: boolean
   status?: boolean
+  isPlatformAdmin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
@@ -1382,6 +1765,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   priceChanges?: boolean | Prisma.User$priceChangesArgs<ExtArgs>
   importJobs?: boolean | Prisma.User$importJobsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
+  platformPaymentsRecorded?: boolean | Prisma.User$platformPaymentsRecordedArgs<ExtArgs>
+  platformAuditLogs?: boolean | Prisma.User$platformAuditLogsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1392,6 +1777,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   phone?: boolean
   status?: boolean
+  isPlatformAdmin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1403,6 +1789,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   phone?: boolean
   status?: boolean
+  isPlatformAdmin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1414,11 +1801,12 @@ export type UserSelectScalar = {
   name?: boolean
   phone?: boolean
   status?: boolean
+  isPlatformAdmin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "name" | "phone" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "name" | "phone" | "status" | "isPlatformAdmin" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
   salesAsCashier?: boolean | Prisma.User$salesAsCashierArgs<ExtArgs>
@@ -1428,6 +1816,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   priceChanges?: boolean | Prisma.User$priceChangesArgs<ExtArgs>
   importJobs?: boolean | Prisma.User$importJobsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
+  platformPaymentsRecorded?: boolean | Prisma.User$platformPaymentsRecordedArgs<ExtArgs>
+  platformAuditLogs?: boolean | Prisma.User$platformAuditLogsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1444,6 +1834,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     priceChanges: Prisma.$PriceHistoryPayload<ExtArgs>[]
     importJobs: Prisma.$ImportJobPayload<ExtArgs>[]
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+    platformPaymentsRecorded: Prisma.$PlatformPaymentPayload<ExtArgs>[]
+    platformAuditLogs: Prisma.$PlatformAuditLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1452,6 +1844,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     name: string
     phone: string | null
     status: $Enums.UserStatus
+    isPlatformAdmin: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1856,6 +2249,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   priceChanges<T extends Prisma.User$priceChangesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$priceChangesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PriceHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   importJobs<T extends Prisma.User$importJobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$importJobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ImportJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.User$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  platformPaymentsRecorded<T extends Prisma.User$platformPaymentsRecordedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$platformPaymentsRecordedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlatformPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  platformAuditLogs<T extends Prisma.User$platformAuditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$platformAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlatformAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1891,6 +2286,7 @@ export interface UserFieldRefs {
   readonly name: Prisma.FieldRef<"User", 'String'>
   readonly phone: Prisma.FieldRef<"User", 'String'>
   readonly status: Prisma.FieldRef<"User", 'UserStatus'>
+  readonly isPlatformAdmin: Prisma.FieldRef<"User", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -2475,6 +2871,54 @@ export type User$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
+}
+
+/**
+ * User.platformPaymentsRecorded
+ */
+export type User$platformPaymentsRecordedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PlatformPayment
+   */
+  select?: Prisma.PlatformPaymentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PlatformPayment
+   */
+  omit?: Prisma.PlatformPaymentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlatformPaymentInclude<ExtArgs> | null
+  where?: Prisma.PlatformPaymentWhereInput
+  orderBy?: Prisma.PlatformPaymentOrderByWithRelationInput | Prisma.PlatformPaymentOrderByWithRelationInput[]
+  cursor?: Prisma.PlatformPaymentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PlatformPaymentScalarFieldEnum | Prisma.PlatformPaymentScalarFieldEnum[]
+}
+
+/**
+ * User.platformAuditLogs
+ */
+export type User$platformAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PlatformAuditLog
+   */
+  select?: Prisma.PlatformAuditLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PlatformAuditLog
+   */
+  omit?: Prisma.PlatformAuditLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlatformAuditLogInclude<ExtArgs> | null
+  where?: Prisma.PlatformAuditLogWhereInput
+  orderBy?: Prisma.PlatformAuditLogOrderByWithRelationInput | Prisma.PlatformAuditLogOrderByWithRelationInput[]
+  cursor?: Prisma.PlatformAuditLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PlatformAuditLogScalarFieldEnum | Prisma.PlatformAuditLogScalarFieldEnum[]
 }
 
 /**

@@ -61,7 +61,7 @@ export async function updateBusinessProfile(input: BusinessProfileInput) {
 }
 
 export async function getSettings() {
-  const ctx = await requirePermission("MANAGE_SETTINGS");
+  const ctx = await requirePermission("MANAGE_SETTINGS", { read: true });
   const settings = await db.businessSettings.findUnique({
     where: { businessId: ctx.business.id },
   });

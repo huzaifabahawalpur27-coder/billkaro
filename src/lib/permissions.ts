@@ -22,6 +22,17 @@ export const ALL_PERMISSIONS: Permission[] = [
   "MANAGE_SETTINGS",
 ];
 
+/**
+ * Pure-read permissions stay available when a SaaS subscription has
+ * expired (read-only mode). Everything else counts as a write.
+ */
+export const READ_PERMISSIONS: Set<Permission> = new Set([
+  "VIEW_PRODUCTS",
+  "VIEW_BILLS",
+  "VIEW_LEDGER",
+  "VIEW_REPORTS",
+]);
+
 /** System roles created for every new business. Owner has everything. */
 export const SYSTEM_ROLES: Record<string, Permission[]> = {
   Owner: ALL_PERMISSIONS,

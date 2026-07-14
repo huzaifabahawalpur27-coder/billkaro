@@ -419,10 +419,6 @@ export type RoleCreatepermissionsInput = {
   set: $Enums.Permission[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type RoleUpdatepermissionsInput = {
   set?: $Enums.Permission[]
   push?: $Enums.Permission | $Enums.Permission[]

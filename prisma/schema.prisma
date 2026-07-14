@@ -127,19 +127,36 @@ enum ReceiptSize {
   A4
 }
 
+enum BillingCycle {
+  MONTHLY
+  QUARTERLY
+  YEARLY
+  LIFETIME
+}
+
+enum PlatformPaymentMethod {
+  CASH
+  BANK_TRANSFER
+  JAZZCASH
+  EASYPAISA
+  OTHER
+}
+
 // ─────────────────────────────────────────────────────────────
 // Identity & tenancy
 // ─────────────────────────────────────────────────────────────
 
 model User {
-  id           String     @id @default(cuid())
-  email        String     @unique
-  passwordHash String
-  name         String
-  phone        String?
-  status       UserStatus @default(ACTIVE)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id              String     @id @default(cuid())
+  email           String     @unique
+  passwordHash    String
+  name            String
+  phone           String?
+  status          UserStatus @default(ACTIVE)
+  // Platform (SaaS) superadmin — orthogonal to per-business roles.
+  isPlatformAdmin Boolean    @default(false)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 
   memberships     BusinessUser[]
   salesAsCashier  Sale[]         @relation("SaleCashier")
@@ -149,20 +166,25 @@ model User {
   priceChanges    PriceHistory[]
   importJobs      ImportJob[]
   auditLogs       AuditLog[]
+  platformPaymentsRecorded PlatformPayment[]
+  platformAuditLogs        PlatformAuditLog[]
 }
 
 model Business {
-  id           String         @id @default(cuid())
-  name         String
-  ownerName    String
-  phone        String?
-  address      String?
-  businessType String?
-  status       BusinessStatus @default(ACTIVE)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id              String         @id @default(cuid())
+  name            String
+  ownerName       String
+  phone           String?
+  address         String?
+  businessType    String?
+  status          BusinessStatus @default(ACTIVE)
+  suspendedAt     DateTime?
+  suspendedReason String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 
   settings      BusinessSettings?
+  subscription  Subscription?
   members       BusinessUser[]
   roles         Role[]
   brands        Brand[]
@@ -532,4 +554,88 @@ model AuditLog {
 
   @@index([businessId, createdAt])
   @@index([businessId, entityType, entityId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Platform (SaaS mode only) — plans, subscriptions, payments
+// ─────────────────────────────────────────────────────────────
+
+model Plan {
+  id           String       @id @default(cuid())
+  name         String       @unique
+  price        Decimal      @db.Decimal(12, 2)
+  billingCycle BillingCycle @default(MONTHLY)
+  maxUsers     Int? // null = unlimited
+  maxProducts  Int?
+  features     Json? // string[] of feature flag keys
+  isActive     Boolean      @default(true)
+  sortOrder    Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  subscriptions Subscription[]
+}
+
+// One per tenant. Status is DERIVED from dates at read time
+// (computeSubscriptionState) — no state column, no cron:
+// now <= max(paidUntil, trialEndsAt)            -> ACTIVE/TRIAL
+// now <= that + graceDays                        -> GRACE
+// else                                           -> EXPIRED
+// No row at all                                  -> NONE (unrestricted)
+model Subscription {
+  id          String    @id @default(cuid())
+  businessId  String    @unique
+  planId      String
+  startedAt   DateTime  @default(now())
+  trialEndsAt DateTime?
+  paidUntil   DateTime?
+  graceDays   Int       @default(7)
+  cancelledAt DateTime?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  business Business          @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  plan     Plan              @relation(fields: [planId], references: [id])
+  payments PlatformPayment[]
+
+  @@index([paidUntil])
+}
+
+// Manual payment ledger (cash / bank / JazzCash) — no gateway.
+model PlatformPayment {
+  id             String                @id @default(cuid())
+  subscriptionId String
+  businessId     String // denormalized for per-tenant ledger queries
+  amount         Decimal               @db.Decimal(12, 2)
+  method         PlatformPaymentMethod
+  reference      String?
+  notes          String?
+  // Coverage window this payment bought.
+  periodStart    DateTime
+  periodEnd      DateTime
+  recordedById   String
+  createdAt      DateTime              @default(now())
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  recordedBy   User         @relation(fields: [recordedById], references: [id])
+
+  @@index([businessId, createdAt])
+  @@index([createdAt])
+}
+
+model PlatformAuditLog {
+  id               String   @id @default(cuid())
+  actorId          String
+  action           String // TENANT_SUSPENDED, PAYMENT_RECORDED, IMPERSONATION_STARTED, ...
+  targetBusinessId String?
+  targetType       String?
+  targetId         String?
+  metadata         Json?
+  createdAt        DateTime @default(now())
+
+  actor User @relation(fields: [actorId], references: [id])
+
+  @@index([createdAt])
+  @@index([targetBusinessId, createdAt])
 }

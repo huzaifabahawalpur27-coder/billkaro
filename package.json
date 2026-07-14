@@ -13,7 +13,8 @@
     "db:deploy": "prisma migrate deploy",
     "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
-    "db:reconcile": "tsx scripts/reconcile-balances.ts"
+    "db:reconcile": "tsx scripts/reconcile-balances.ts",
+    "admin:create": "tsx --env-file=.env scripts/create-platform-admin.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

@@ -4,7 +4,7 @@ import { requirePermission } from "@/server/auth/guards";
 import { hashPassword } from "@/server/auth/passwords";
 
 export async function listMembers() {
-  const ctx = await requirePermission("MANAGE_USERS");
+  const ctx = await requirePermission("MANAGE_USERS", { read: true });
   const members = await db.businessUser.findMany({
     where: { businessId: ctx.business.id },
     include: {

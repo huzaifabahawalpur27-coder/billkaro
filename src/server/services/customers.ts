@@ -8,7 +8,7 @@ import { D } from "@/lib/money";
 
 /** Customer picker on the billing screen. Name or phone. */
 export async function searchCustomersForBilling(query: string) {
-  const ctx = await requirePermission("CREATE_BILLS");
+  const ctx = await requirePermission("CREATE_BILLS", { read: true });
   const q = query.trim();
 
   const customers = await db.customer.findMany({
@@ -69,7 +69,7 @@ export interface CustomerFilters {
 }
 
 export async function listCustomers(filters: CustomerFilters = {}) {
-  const ctx = await requirePermission("MANAGE_CUSTOMERS");
+  const ctx = await requirePermission("MANAGE_CUSTOMERS", { read: true });
   const page = Math.max(1, filters.page ?? 1);
   const pageSize = Math.min(100, Math.max(10, filters.pageSize ?? 25));
 
@@ -181,7 +181,7 @@ export async function setCustomerStatus(customerId: string, active: boolean) {
 }
 
 export async function getCustomerSummary(customerId: string) {
-  const ctx = await requirePermission("MANAGE_CUSTOMERS");
+  const ctx = await requirePermission("MANAGE_CUSTOMERS", { read: true });
   const customer = await db.customer.findFirst({
     where: { id: customerId, businessId: ctx.business.id },
     include: {

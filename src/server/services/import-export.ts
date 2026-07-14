@@ -9,7 +9,7 @@ import { D } from "@/lib/money";
 // ─────────────────────────────────────────────────────────────
 
 export async function exportProductsXlsx(): Promise<Buffer> {
-  const ctx = await requirePermission("IMPORT_EXPORT");
+  const ctx = await requirePermission("IMPORT_EXPORT", { read: true });
 
   const products = await db.product.findMany({
     where: { businessId: ctx.business.id },
@@ -171,7 +171,7 @@ export async function importProductsXlsx(buffer: Buffer): Promise<ImportResult> 
 // ─────────────────────────────────────────────────────────────
 
 export async function exportCustomersXlsx(): Promise<Buffer> {
-  const ctx = await requirePermission("IMPORT_EXPORT");
+  const ctx = await requirePermission("IMPORT_EXPORT", { read: true });
 
   const customers = await db.customer.findMany({
     where: { businessId: ctx.business.id },

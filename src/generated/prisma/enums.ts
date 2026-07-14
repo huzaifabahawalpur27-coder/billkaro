@@ -171,3 +171,24 @@ export const ReceiptSize = {
 } as const
 
 export type ReceiptSize = (typeof ReceiptSize)[keyof typeof ReceiptSize]
+
+
+export const BillingCycle = {
+  MONTHLY: 'MONTHLY',
+  QUARTERLY: 'QUARTERLY',
+  YEARLY: 'YEARLY',
+  LIFETIME: 'LIFETIME'
+} as const
+
+export type BillingCycle = (typeof BillingCycle)[keyof typeof BillingCycle]
+
+
+export const PlatformPaymentMethod = {
+  CASH: 'CASH',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  JAZZCASH: 'JAZZCASH',
+  EASYPAISA: 'EASYPAISA',
+  OTHER: 'OTHER'
+} as const
+
+export type PlatformPaymentMethod = (typeof PlatformPaymentMethod)[keyof typeof PlatformPaymentMethod]

@@ -8,6 +8,7 @@ import { hashPassword, verifyPassword } from "@/server/auth/passwords";
 import { createSession, destroySession } from "@/server/auth/session";
 import { checkRateLimit } from "@/server/auth/rate-limit";
 import { createBusinessForUser } from "@/server/services/onboarding";
+import { isSaasMode, trialDays } from "@/lib/platform";
 
 export interface AuthFormState {
   error: string | null;
@@ -66,6 +67,25 @@ export async function registerAction(
       ownerName: input.ownerName,
       phone: input.phone || undefined,
     });
+
+    // SaaS signups start on a trial of the cheapest active plan. If no
+    // plans exist yet the tenant simply has no subscription (unrestricted).
+    if (isSaasMode()) {
+      const plan = await tx.plan.findFirst({
+        where: { isActive: true },
+        orderBy: [{ price: "asc" }, { sortOrder: "asc" }],
+      });
+      if (plan) {
+        await tx.subscription.create({
+          data: {
+            businessId: business.id,
+            planId: plan.id,
+            trialEndsAt: new Date(Date.now() + trialDays() * 24 * 60 * 60 * 1000),
+          },
+        });
+      }
+    }
+
     return { userId: user.id, businessId: business.id };
   });
 
@@ -92,10 +112,25 @@ export async function loginAction(
     return { error: "Email ya password ghalat hai." };
   }
 
+  if (isSaasMode() && user.isPlatformAdmin) {
+    await createSession({ userId: user.id, businessId: null });
+    redirect("/admin");
+  }
+
   const membership = await db.businessUser.findFirst({
     where: { userId: user.id, status: "ACTIVE", business: { status: "ACTIVE" } },
     orderBy: { createdAt: "asc" },
   });
+
+  if (!membership) {
+    // Distinguish "suspended business" from "no business at all".
+    const suspended = await db.businessUser.findFirst({
+      where: { userId: user.id, status: "ACTIVE", business: { status: "SUSPENDED" } },
+    });
+    if (suspended) {
+      return { error: "Aap ka business account suspend hai. Support se rabta karein." };
+    }
+  }
 
   await createSession({ userId: user.id, businessId: membership?.businessId ?? null });
   redirect("/dashboard");

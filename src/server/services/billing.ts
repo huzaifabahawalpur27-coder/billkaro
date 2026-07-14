@@ -10,7 +10,7 @@ import { D, round2, lineTotal, calculateBill } from "@/lib/money";
 
 /** Fast search for the billing screen. Exact barcode/SKU hit first, then name. */
 export async function searchProductsForBilling(query: string) {
-  const ctx = await requirePermission("CREATE_BILLS");
+  const ctx = await requirePermission("CREATE_BILLS", { read: true });
   const q = query.trim();
   if (!q) return [];
 

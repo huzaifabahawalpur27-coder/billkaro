@@ -68,7 +68,11 @@ export const ModelName = {
   Payment: 'Payment',
   LedgerEntry: 'LedgerEntry',
   ImportJob: 'ImportJob',
-  AuditLog: 'AuditLog'
+  AuditLog: 'AuditLog',
+  Plan: 'Plan',
+  Subscription: 'Subscription',
+  PlatformPayment: 'PlatformPayment',
+  PlatformAuditLog: 'PlatformAuditLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -94,6 +98,7 @@ export const UserScalarFieldEnum = {
   name: 'name',
   phone: 'phone',
   status: 'status',
+  isPlatformAdmin: 'isPlatformAdmin',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -109,6 +114,8 @@ export const BusinessScalarFieldEnum = {
   address: 'address',
   businessType: 'businessType',
   status: 'status',
+  suspendedAt: 'suspendedAt',
+  suspendedReason: 'suspendedReason',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -373,6 +380,71 @@ export const AuditLogScalarFieldEnum = {
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+export const PlanScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  price: 'price',
+  billingCycle: 'billingCycle',
+  maxUsers: 'maxUsers',
+  maxProducts: 'maxProducts',
+  features: 'features',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PlanScalarFieldEnum = (typeof PlanScalarFieldEnum)[keyof typeof PlanScalarFieldEnum]
+
+
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  businessId: 'businessId',
+  planId: 'planId',
+  startedAt: 'startedAt',
+  trialEndsAt: 'trialEndsAt',
+  paidUntil: 'paidUntil',
+  graceDays: 'graceDays',
+  cancelledAt: 'cancelledAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const PlatformPaymentScalarFieldEnum = {
+  id: 'id',
+  subscriptionId: 'subscriptionId',
+  businessId: 'businessId',
+  amount: 'amount',
+  method: 'method',
+  reference: 'reference',
+  notes: 'notes',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  recordedById: 'recordedById',
+  createdAt: 'createdAt'
+} as const
+
+export type PlatformPaymentScalarFieldEnum = (typeof PlatformPaymentScalarFieldEnum)[keyof typeof PlatformPaymentScalarFieldEnum]
+
+
+export const PlatformAuditLogScalarFieldEnum = {
+  id: 'id',
+  actorId: 'actorId',
+  action: 'action',
+  targetBusinessId: 'targetBusinessId',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type PlatformAuditLogScalarFieldEnum = (typeof PlatformAuditLogScalarFieldEnum)[keyof typeof PlatformAuditLogScalarFieldEnum]
 
 
 export const SortOrder = {
