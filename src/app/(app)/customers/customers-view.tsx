@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { UserRound, Plus, Pencil, BookOpenText, ToggleLeft, ToggleRight, Search } from "lucide-react";
+import { UserRound, Plus, Pencil, BookOpenText, ToggleLeft, ToggleRight, Search, Download, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { createCustomerAction, updateCustomerAction, setCustomerStatusAction } from "./actions";
 import { Button } from "@/components/ui/button";
@@ -63,6 +63,46 @@ export function CustomersView({
   const [editing, setEditing] = useState<CustomerRow | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [pending, startTransition] = useTransition();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const toastId = toast.loading("Excel sheet import ho rahi hai...");
+
+    fetch("/api/import/customers", {
+      method: "POST",
+      body: formData,
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Import failed");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        toast.success(
+          `Excel Import Kamyab! ${data.imported} customers add aur ${data.updated} update huay.`,
+          { id: toastId, duration: 5000 }
+        );
+        router.refresh();
+      })
+      .catch((err) => {
+        toast.error(err instanceof Error ? err.message : "Import failed", { id: toastId });
+      })
+      .finally(() => {
+        e.target.value = "";
+      });
+  }
+
+  function handleExport() {
+    window.location.href = "/api/export/customers";
+  }
 
   const q = searchParams.get("q") ?? "";
 
@@ -141,11 +181,24 @@ export function CustomersView({
             onChange={(e) => search(e.target.value)}
           />
         </div>
+        <Button variant="outline" onClick={handleExport} title="Export to Excel">
+          <Download className="h-4 w-4 mr-1" /> Export
+        </Button>
+        <Button variant="outline" onClick={() => fileInputRef.current?.click()} title="Import from Excel">
+          <Upload className="h-4 w-4 mr-1" /> Import
+        </Button>
         {can.manage && (
           <Button onClick={openAdd}>
             <Plus className="h-4 w-4 mr-1" /> Add Customer
           </Button>
         )}
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleImport}
+          accept=".xlsx"
+          className="hidden"
+        />
       </div>
 
       {/* Table */}

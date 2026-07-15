@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Package, Plus, Search, MoreHorizontal, History, Pencil, Trash2 } from "lucide-react";
+import { Package, Plus, Search, MoreHorizontal, History, Pencil, Trash2, Copy, Download, Upload } from "lucide-react";
 import { toast } from "sonner";
 import {
   deleteProductAction,
@@ -112,6 +112,46 @@ export function ProductsView({
   const [deleting, setDeleting] = useState<ProductRow | null>(null);
   const [history, setHistory] = useState<{ productName: string; rows: PriceHistoryRow[] } | null>(null);
   const [pending, startTransition] = useTransition();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const toastId = toast.loading("Excel sheet import ho rahi hai...");
+
+    fetch("/api/import/products", {
+      method: "POST",
+      body: formData,
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Import failed");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        toast.success(
+          `Excel Import Kamyab! ${data.imported} products add aur ${data.updated} update huay.`,
+          { id: toastId, duration: 5000 }
+        );
+        router.refresh();
+      })
+      .catch((err) => {
+        toast.error(err instanceof Error ? err.message : "Import failed", { id: toastId });
+      })
+      .finally(() => {
+        e.target.value = "";
+      });
+  }
+
+  function handleExport() {
+    window.location.href = "/api/export/products";
+  }
 
   // Debounced search
   const [search, setSearch] = useState(searchParams.get("q") ?? "");
@@ -217,6 +257,14 @@ export function ProductsView({
             <SelectItem value="INACTIVE">Inactive</SelectItem>
           </SelectContent>
         </Select>
+        <Button variant="outline" onClick={handleExport} title="Export to Excel">
+          <Download className="size-4" />
+          Export
+        </Button>
+        <Button variant="outline" onClick={() => fileInputRef.current?.click()} title="Import from Excel">
+          <Upload className="size-4" />
+          Import
+        </Button>
         {can.add && (
           <Button
             onClick={() => {
@@ -228,6 +276,13 @@ export function ProductsView({
             Add Product
           </Button>
         )}
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleImport}
+          accept=".xlsx"
+          className="hidden"
+        />
       </div>
 
       {/* Table */}
@@ -310,6 +365,24 @@ export function ProductsView({
                               }}
                             >
                               <Pencil className="size-4" /> Edit
+                            </DropdownMenuItem>
+                          )}
+                          {can.add && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                // Duplicate = open the create sheet prefilled from this row
+                                // with sku/barcode cleared (unique per business).
+                                setEditing({
+                                  ...row,
+                                  id: "",
+                                  name: `${row.name} (Copy)`,
+                                  sku: null,
+                                  barcode: null,
+                                });
+                                setFormOpen(true);
+                              }}
+                            >
+                              <Copy className="size-4" /> Duplicate
                             </DropdownMenuItem>
                           )}
                           <DropdownMenuItem onClick={() => openHistory(row)}>
