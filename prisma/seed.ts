@@ -163,7 +163,7 @@ async function main() {
         });
       }
     }
-  });
+  }, { timeout: 60_000 });
 
   console.log("Seed complete.");
   console.log("  Business: Babar General Store");
