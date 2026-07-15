@@ -72,7 +72,9 @@ export const ModelName = {
   Plan: 'Plan',
   Subscription: 'Subscription',
   PlatformPayment: 'PlatformPayment',
-  PlatformAuditLog: 'PlatformAuditLog'
+  PlatformAuditLog: 'PlatformAuditLog',
+  Announcement: 'Announcement',
+  AnnouncementSeen: 'AnnouncementSeen'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -445,6 +447,31 @@ export const PlatformAuditLogScalarFieldEnum = {
 } as const
 
 export type PlatformAuditLogScalarFieldEnum = (typeof PlatformAuditLogScalarFieldEnum)[keyof typeof PlatformAuditLogScalarFieldEnum]
+
+
+export const AnnouncementScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  body: 'body',
+  type: 'type',
+  targetBusinessId: 'targetBusinessId',
+  isActive: 'isActive',
+  expiresAt: 'expiresAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+} as const
+
+export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
+
+
+export const AnnouncementSeenScalarFieldEnum = {
+  id: 'id',
+  announcementId: 'announcementId',
+  userId: 'userId',
+  seenAt: 'seenAt'
+} as const
+
+export type AnnouncementSeenScalarFieldEnum = (typeof AnnouncementSeenScalarFieldEnum)[keyof typeof AnnouncementSeenScalarFieldEnum]
 
 
 export const SortOrder = {

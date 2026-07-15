@@ -151,3 +151,13 @@ export type PlatformPayment = Prisma.PlatformPaymentModel
  * 
  */
 export type PlatformAuditLog = Prisma.PlatformAuditLogModel
+/**
+ * Model Announcement
+ * 
+ */
+export type Announcement = Prisma.AnnouncementModel
+/**
+ * Model AnnouncementSeen
+ * 
+ */
+export type AnnouncementSeen = Prisma.AnnouncementSeenModel

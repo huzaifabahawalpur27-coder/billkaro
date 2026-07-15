@@ -405,7 +405,9 @@ export const ModelName = {
   Plan: 'Plan',
   Subscription: 'Subscription',
   PlatformPayment: 'PlatformPayment',
-  PlatformAuditLog: 'PlatformAuditLog'
+  PlatformAuditLog: 'PlatformAuditLog',
+  Announcement: 'Announcement',
+  AnnouncementSeen: 'AnnouncementSeen'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -421,7 +423,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "business" | "businessUser" | "role" | "businessSettings" | "documentCounter" | "brand" | "category" | "unit" | "product" | "priceHistory" | "customer" | "sale" | "saleItem" | "payment" | "ledgerEntry" | "importJob" | "auditLog" | "plan" | "subscription" | "platformPayment" | "platformAuditLog"
+    modelProps: "user" | "business" | "businessUser" | "role" | "businessSettings" | "documentCounter" | "brand" | "category" | "unit" | "product" | "priceHistory" | "customer" | "sale" | "saleItem" | "payment" | "ledgerEntry" | "importJob" | "auditLog" | "plan" | "subscription" | "platformPayment" | "platformAuditLog" | "announcement" | "announcementSeen"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2053,6 +2055,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Announcement: {
+      payload: Prisma.$AnnouncementPayload<ExtArgs>
+      fields: Prisma.AnnouncementFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AnnouncementFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AnnouncementFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementPayload>
+        }
+        findFirst: {
+          args: Prisma.AnnouncementFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AnnouncementFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementPayload>
+        }
+        findMany: {
+          args: Prisma.AnnouncementFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementPayload>[]
+        }
+        create: {
+          args: Prisma.AnnouncementCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementPayload>
+        }
+        createMany: {
+          args: Prisma.AnnouncementCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AnnouncementCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementPayload>[]
+        }
+        delete: {
+          args: Prisma.AnnouncementDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementPayload>
+        }
+        update: {
+          args: Prisma.AnnouncementUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementPayload>
+        }
+        deleteMany: {
+          args: Prisma.AnnouncementDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AnnouncementUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AnnouncementUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementPayload>[]
+        }
+        upsert: {
+          args: Prisma.AnnouncementUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementPayload>
+        }
+        aggregate: {
+          args: Prisma.AnnouncementAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAnnouncement>
+        }
+        groupBy: {
+          args: Prisma.AnnouncementGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AnnouncementGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AnnouncementCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AnnouncementCountAggregateOutputType> | number
+        }
+      }
+    }
+    AnnouncementSeen: {
+      payload: Prisma.$AnnouncementSeenPayload<ExtArgs>
+      fields: Prisma.AnnouncementSeenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AnnouncementSeenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementSeenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AnnouncementSeenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementSeenPayload>
+        }
+        findFirst: {
+          args: Prisma.AnnouncementSeenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementSeenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AnnouncementSeenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementSeenPayload>
+        }
+        findMany: {
+          args: Prisma.AnnouncementSeenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementSeenPayload>[]
+        }
+        create: {
+          args: Prisma.AnnouncementSeenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementSeenPayload>
+        }
+        createMany: {
+          args: Prisma.AnnouncementSeenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AnnouncementSeenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementSeenPayload>[]
+        }
+        delete: {
+          args: Prisma.AnnouncementSeenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementSeenPayload>
+        }
+        update: {
+          args: Prisma.AnnouncementSeenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementSeenPayload>
+        }
+        deleteMany: {
+          args: Prisma.AnnouncementSeenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AnnouncementSeenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AnnouncementSeenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementSeenPayload>[]
+        }
+        upsert: {
+          args: Prisma.AnnouncementSeenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnnouncementSeenPayload>
+        }
+        aggregate: {
+          args: Prisma.AnnouncementSeenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAnnouncementSeen>
+        }
+        groupBy: {
+          args: Prisma.AnnouncementSeenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AnnouncementSeenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AnnouncementSeenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AnnouncementSeenCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2448,6 +2598,31 @@ export const PlatformAuditLogScalarFieldEnum = {
 export type PlatformAuditLogScalarFieldEnum = (typeof PlatformAuditLogScalarFieldEnum)[keyof typeof PlatformAuditLogScalarFieldEnum]
 
 
+export const AnnouncementScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  body: 'body',
+  type: 'type',
+  targetBusinessId: 'targetBusinessId',
+  isActive: 'isActive',
+  expiresAt: 'expiresAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+} as const
+
+export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
+
+
+export const AnnouncementSeenScalarFieldEnum = {
+  id: 'id',
+  announcementId: 'announcementId',
+  userId: 'userId',
+  seenAt: 'seenAt'
+} as const
+
+export type AnnouncementSeenScalarFieldEnum = (typeof AnnouncementSeenScalarFieldEnum)[keyof typeof AnnouncementSeenScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2825,6 +3000,20 @@ export type ListEnumPlatformPaymentMethodFieldRefInput<$PrismaModel> = FieldRefI
 
 
 /**
+ * Reference to a field of type 'AnnouncementType'
+ */
+export type EnumAnnouncementTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementType'>
+    
+
+
+/**
+ * Reference to a field of type 'AnnouncementType[]'
+ */
+export type ListEnumAnnouncementTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementType[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -2969,6 +3158,8 @@ export type GlobalOmitConfig = {
   subscription?: Prisma.SubscriptionOmit
   platformPayment?: Prisma.PlatformPaymentOmit
   platformAuditLog?: Prisma.PlatformAuditLogOmit
+  announcement?: Prisma.AnnouncementOmit
+  announcementSeen?: Prisma.AnnouncementSeenOmit
 }
 
 /* Types for Logging */

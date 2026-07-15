@@ -7,6 +7,7 @@ import {
   Store,
   CreditCard,
   Layers,
+  Megaphone,
   ScrollText,
   ShieldCheck,
 } from "lucide-react";
@@ -17,6 +18,7 @@ const NAV = [
   { href: "/admin/tenants", label: "Tenants", icon: Store },
   { href: "/admin/subscriptions", label: "Subscriptions", icon: CreditCard },
   { href: "/admin/plans", label: "Plans", icon: Layers },
+  { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
   { href: "/admin/audit", label: "Audit Log", icon: ScrollText },
 ];
 

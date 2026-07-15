@@ -1,10 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, X, Plus } from "lucide-react";
+import { Menu, Plus, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
+import { logoutAction } from "@/app/(auth)/actions";
+import type { MyAnnouncement } from "@/server/services/announcements";
 import { AppSidebar } from "@/components/app/app-sidebar";
+import { AnnouncementsBell } from "@/components/app/announcements-bell";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 interface AppLayoutClientProps {
@@ -14,6 +26,8 @@ interface AppLayoutClientProps {
   impersonating?: boolean;
   exitImpersonation?: () => Promise<void>;
   subscriptionBanner?: { status: "GRACE" | "EXPIRED"; daysLeft: number } | null;
+  announcements?: MyAnnouncement[];
+  markAnnouncementsSeen?: (ids: string[]) => Promise<void>;
   children: React.ReactNode;
 }
 
@@ -24,9 +38,27 @@ export function AppLayoutClient({
   impersonating = false,
   exitImpersonation,
   subscriptionBanner = null,
+  announcements = [],
+  markAnnouncementsSeen,
   children,
 }: AppLayoutClientProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const initials = userName
+    .split(/\s+/)
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
+  // Desktop instance owns the toast side-effect; the mobile one is display-only
+  // (both are mounted regardless of viewport — CSS hides, React doesn't).
+  const desktopBell = markAnnouncementsSeen ? (
+    <AnnouncementsBell announcements={announcements} markSeen={markAnnouncementsSeen} toastOnMount />
+  ) : null;
+  const mobileBell = markAnnouncementsSeen ? (
+    <AnnouncementsBell announcements={announcements} markSeen={markAnnouncementsSeen} />
+  ) : null;
 
   return (
     <div className="flex min-h-screen bg-slate-50 relative overflow-hidden">
@@ -84,6 +116,53 @@ export function AppLayoutClient({
           </div>
         )}
 
+        {/* Desktop Top Bar */}
+        <header className="hidden md:flex h-14 items-center justify-between border-b border-slate-200 bg-white px-6 shrink-0 print:hidden">
+          <div className="text-sm text-muted-foreground">{formatDate(new Date())}</div>
+          <div className="flex items-center gap-2">
+            {desktopBell}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="flex items-center gap-2 rounded-full p-1 pr-2 hover:bg-slate-100"
+                  aria-label="User menu"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                    {initials}
+                  </span>
+                  <span className="hidden lg:block text-left leading-tight">
+                    <span className="block text-sm font-medium">{userName}</span>
+                    <span className="block text-[10px] text-muted-foreground">{roleName}</span>
+                  </span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuLabel>
+                  <div className="text-sm">{userName}</div>
+                  <div className="text-xs font-normal text-muted-foreground">
+                    {roleName} · {businessName}
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/settings">
+                    <Settings className="h-4 w-4 mr-2" /> Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <form action={logoutAction}>
+                  <DropdownMenuItem asChild>
+                    <button type="submit" className="w-full">
+                      <LogOut className="h-4 w-4 mr-2" /> Logout
+                    </button>
+                  </DropdownMenuItem>
+                </form>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </header>
+
         {/* Mobile Header Bar */}
         <header className="flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 md:hidden shrink-0 print:hidden">
           <div className="flex items-center gap-3">
@@ -98,13 +177,16 @@ export function AppLayoutClient({
             <span className="font-bold text-sm text-slate-800">{businessName}</span>
           </div>
 
-          <Link
-            href="/bill"
-            className="inline-flex h-8 items-center justify-center gap-1 rounded bg-indigo-600 px-3 text-xs font-semibold text-white hover:bg-indigo-700 transition-colors"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span>Naya Bill</span>
-          </Link>
+          <div className="flex items-center gap-1">
+            {mobileBell}
+            <Link
+              href="/bill"
+              className="inline-flex h-8 items-center justify-center gap-1 rounded bg-indigo-600 px-3 text-xs font-semibold text-white hover:bg-indigo-700 transition-colors"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span>Naya Bill</span>
+            </Link>
+          </div>
         </header>
 
         {/* Page content scroll container */}

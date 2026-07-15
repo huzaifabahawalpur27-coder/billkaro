@@ -192,3 +192,12 @@ export const PlatformPaymentMethod = {
 } as const
 
 export type PlatformPaymentMethod = (typeof PlatformPaymentMethod)[keyof typeof PlatformPaymentMethod]
+
+
+export const AnnouncementType = {
+  INFO: 'INFO',
+  WARNING: 'WARNING',
+  URGENT: 'URGENT'
+} as const
+
+export type AnnouncementType = (typeof AnnouncementType)[keyof typeof AnnouncementType]

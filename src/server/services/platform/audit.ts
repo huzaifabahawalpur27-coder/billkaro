@@ -18,7 +18,9 @@ export type PlatformAction =
   | "SUBSCRIPTION_EXTENDED"
   | "PAYMENT_RECORDED"
   | "IMPERSONATION_STARTED"
-  | "IMPERSONATION_ENDED";
+  | "IMPERSONATION_ENDED"
+  | "ANNOUNCEMENT_CREATED"
+  | "ANNOUNCEMENT_DEACTIVATED";
 
 /** Write a platform audit row. Pass `tx` when inside a transaction. */
 export function logPlatformAction(
