@@ -94,6 +94,15 @@ export const SaleStatus = {
 export type SaleStatus = (typeof SaleStatus)[keyof typeof SaleStatus]
 
 
+export const QuotationStatus = {
+  ACTIVE: 'ACTIVE',
+  CONVERTED: 'CONVERTED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type QuotationStatus = (typeof QuotationStatus)[keyof typeof QuotationStatus]
+
+
 export const SalePaymentStatus = {
   PAID: 'PAID',
   PARTIAL: 'PARTIAL',

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 
 interface Settings {
   currencyCode: string;
@@ -24,6 +25,10 @@ interface Settings {
   priceRounding: string;
   invoiceFooter: string;
   language: string;
+  quotationsEnabled: boolean;
+  quotationPrefix: string;
+  quotationValidityDays: string;
+  quotationFooter: string;
 }
 
 export function SettingsView({ settings: initial }: { settings: Settings }) {
@@ -167,6 +172,64 @@ export function SettingsView({ settings: initial }: { settings: Settings }) {
             rows={2}
           />
         </div>
+      </section>
+
+      <Separator />
+
+      {/* Quotations */}
+      <section className="space-y-4">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Quotation</h2>
+        <div className="flex items-center justify-between rounded-md border border-slate-200 p-3">
+          <div>
+            <Label>Quotation feature</Label>
+            <p className="text-xs text-muted-foreground">
+              POS par &ldquo;Save as Quotation&rdquo; aur Quotations page enable karta hai. Quotation
+              bill nahi hoti — khata/ledger par asar nahi.
+            </p>
+          </div>
+          <Switch
+            checked={s.quotationsEnabled}
+            onCheckedChange={(v) => update("quotationsEnabled", v)}
+          />
+        </div>
+        {s.quotationsEnabled && (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="qt-prefix">Quotation Prefix</Label>
+                <Input
+                  id="qt-prefix"
+                  value={s.quotationPrefix}
+                  onChange={(e) => update("quotationPrefix", e.target.value.toUpperCase())}
+                  placeholder="QT"
+                />
+                <p className="text-xs text-muted-foreground">Example: {s.quotationPrefix || "QT"}-000001</p>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="qt-validity">Default Validity (din)</Label>
+                <Input
+                  id="qt-validity"
+                  inputMode="numeric"
+                  value={s.quotationValidityDays}
+                  onChange={(e) => update("quotationValidityDays", e.target.value)}
+                  placeholder="7"
+                />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="qt-footer">Quotation Footer Text</Label>
+              <Textarea
+                id="qt-footer"
+                value={s.quotationFooter}
+                onChange={(e) => update("quotationFooter", e.target.value)}
+                rows={2}
+              />
+              <p className="text-xs text-muted-foreground">
+                Har printed quotation ke neeche chapta hai.
+              </p>
+            </div>
+          </>
+        )}
       </section>
 
       <Separator />

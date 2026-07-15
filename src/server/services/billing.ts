@@ -31,7 +31,7 @@ export async function searchProductsForBilling(query: string) {
       sku: true,
       barcode: true,
       salePrice: true,
-      unit: { select: { name: true } },
+      unit: { select: { name: true, isFractional: true } },
     },
     orderBy: { name: "asc" },
     take: 12,
@@ -52,6 +52,7 @@ export async function searchProductsForBilling(query: string) {
       barcode: p.barcode,
       salePrice: p.salePrice.toFixed(2),
       unitName: p.unit?.name ?? null,
+      isFractional: p.unit?.isFractional ?? false,
     }));
 }
 
@@ -79,6 +80,8 @@ export interface CreateSaleInput {
   /** Cash tendered (CASH only) — used to compute change, display only. */
   cashReceived?: string | null;
   notes?: string | null;
+  /** Set when this bill was made from a quotation — marks it CONVERTED. */
+  quotationId?: string | null;
 }
 
 export class SaleValidationError extends Error {
@@ -261,6 +264,15 @@ export async function createSale(input: CreateSaleInput) {
       await tx.customer.update({
         where: { id: customer.id },
         data: { lastTransactionAt: new Date() },
+      });
+    }
+
+    // Quotation link-back: best-effort — an already-converted/cancelled
+    // quotation never fails the sale (updateMany matches zero rows).
+    if (input.quotationId) {
+      await tx.quotation.updateMany({
+        where: { id: input.quotationId, businessId, status: "ACTIVE" },
+        data: { status: "CONVERTED", convertedSaleId: sale.id },
       });
     }
 

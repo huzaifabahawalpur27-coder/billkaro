@@ -247,6 +247,8 @@ export type BusinessWhereInput = {
   importJobs?: Prisma.ImportJobListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
   counters?: Prisma.DocumentCounterListRelationFilter
+  quotations?: Prisma.QuotationListRelationFilter
+  quotationItems?: Prisma.QuotationItemListRelationFilter
 }
 
 export type BusinessOrderByWithRelationInput = {
@@ -278,6 +280,8 @@ export type BusinessOrderByWithRelationInput = {
   importJobs?: Prisma.ImportJobOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
   counters?: Prisma.DocumentCounterOrderByRelationAggregateInput
+  quotations?: Prisma.QuotationOrderByRelationAggregateInput
+  quotationItems?: Prisma.QuotationItemOrderByRelationAggregateInput
 }
 
 export type BusinessWhereUniqueInput = Prisma.AtLeast<{
@@ -312,6 +316,8 @@ export type BusinessWhereUniqueInput = Prisma.AtLeast<{
   importJobs?: Prisma.ImportJobListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
   counters?: Prisma.DocumentCounterListRelationFilter
+  quotations?: Prisma.QuotationListRelationFilter
+  quotationItems?: Prisma.QuotationItemListRelationFilter
 }, "id">
 
 export type BusinessOrderByWithAggregationInput = {
@@ -377,6 +383,8 @@ export type BusinessCreateInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateInput = {
@@ -408,6 +416,8 @@ export type BusinessUncheckedCreateInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUpdateInput = {
@@ -439,6 +449,8 @@ export type BusinessUpdateInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateInput = {
@@ -470,6 +482,8 @@ export type BusinessUncheckedUpdateInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateManyInput = {
@@ -807,6 +821,34 @@ export type BusinessUpdateOneRequiredWithoutSubscriptionNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BusinessUpdateToOneWithWhereWithoutSubscriptionInput, Prisma.BusinessUpdateWithoutSubscriptionInput>, Prisma.BusinessUncheckedUpdateWithoutSubscriptionInput>
 }
 
+export type BusinessCreateNestedOneWithoutQuotationsInput = {
+  create?: Prisma.XOR<Prisma.BusinessCreateWithoutQuotationsInput, Prisma.BusinessUncheckedCreateWithoutQuotationsInput>
+  connectOrCreate?: Prisma.BusinessCreateOrConnectWithoutQuotationsInput
+  connect?: Prisma.BusinessWhereUniqueInput
+}
+
+export type BusinessUpdateOneRequiredWithoutQuotationsNestedInput = {
+  create?: Prisma.XOR<Prisma.BusinessCreateWithoutQuotationsInput, Prisma.BusinessUncheckedCreateWithoutQuotationsInput>
+  connectOrCreate?: Prisma.BusinessCreateOrConnectWithoutQuotationsInput
+  upsert?: Prisma.BusinessUpsertWithoutQuotationsInput
+  connect?: Prisma.BusinessWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BusinessUpdateToOneWithWhereWithoutQuotationsInput, Prisma.BusinessUpdateWithoutQuotationsInput>, Prisma.BusinessUncheckedUpdateWithoutQuotationsInput>
+}
+
+export type BusinessCreateNestedOneWithoutQuotationItemsInput = {
+  create?: Prisma.XOR<Prisma.BusinessCreateWithoutQuotationItemsInput, Prisma.BusinessUncheckedCreateWithoutQuotationItemsInput>
+  connectOrCreate?: Prisma.BusinessCreateOrConnectWithoutQuotationItemsInput
+  connect?: Prisma.BusinessWhereUniqueInput
+}
+
+export type BusinessUpdateOneRequiredWithoutQuotationItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.BusinessCreateWithoutQuotationItemsInput, Prisma.BusinessUncheckedCreateWithoutQuotationItemsInput>
+  connectOrCreate?: Prisma.BusinessCreateOrConnectWithoutQuotationItemsInput
+  upsert?: Prisma.BusinessUpsertWithoutQuotationItemsInput
+  connect?: Prisma.BusinessWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BusinessUpdateToOneWithWhereWithoutQuotationItemsInput, Prisma.BusinessUpdateWithoutQuotationItemsInput>, Prisma.BusinessUncheckedUpdateWithoutQuotationItemsInput>
+}
+
 export type BusinessCreateWithoutMembersInput = {
   id?: string
   name: string
@@ -835,6 +877,8 @@ export type BusinessCreateWithoutMembersInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutMembersInput = {
@@ -865,6 +909,8 @@ export type BusinessUncheckedCreateWithoutMembersInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutMembersInput = {
@@ -911,6 +957,8 @@ export type BusinessUpdateWithoutMembersInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutMembersInput = {
@@ -941,6 +989,8 @@ export type BusinessUncheckedUpdateWithoutMembersInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutRolesInput = {
@@ -971,6 +1021,8 @@ export type BusinessCreateWithoutRolesInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutRolesInput = {
@@ -1001,6 +1053,8 @@ export type BusinessUncheckedCreateWithoutRolesInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutRolesInput = {
@@ -1047,6 +1101,8 @@ export type BusinessUpdateWithoutRolesInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutRolesInput = {
@@ -1077,6 +1133,8 @@ export type BusinessUncheckedUpdateWithoutRolesInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutSettingsInput = {
@@ -1107,6 +1165,8 @@ export type BusinessCreateWithoutSettingsInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutSettingsInput = {
@@ -1137,6 +1197,8 @@ export type BusinessUncheckedCreateWithoutSettingsInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutSettingsInput = {
@@ -1183,6 +1245,8 @@ export type BusinessUpdateWithoutSettingsInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutSettingsInput = {
@@ -1213,6 +1277,8 @@ export type BusinessUncheckedUpdateWithoutSettingsInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutCountersInput = {
@@ -1243,6 +1309,8 @@ export type BusinessCreateWithoutCountersInput = {
   ledgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutBusinessInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutCountersInput = {
@@ -1273,6 +1341,8 @@ export type BusinessUncheckedCreateWithoutCountersInput = {
   ledgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutBusinessInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutCountersInput = {
@@ -1319,6 +1389,8 @@ export type BusinessUpdateWithoutCountersInput = {
   ledgerEntries?: Prisma.LedgerEntryUpdateManyWithoutBusinessNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutCountersInput = {
@@ -1349,6 +1421,8 @@ export type BusinessUncheckedUpdateWithoutCountersInput = {
   ledgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutBusinessNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutBrandsInput = {
@@ -1379,6 +1453,8 @@ export type BusinessCreateWithoutBrandsInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutBrandsInput = {
@@ -1409,6 +1485,8 @@ export type BusinessUncheckedCreateWithoutBrandsInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutBrandsInput = {
@@ -1455,6 +1533,8 @@ export type BusinessUpdateWithoutBrandsInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutBrandsInput = {
@@ -1485,6 +1565,8 @@ export type BusinessUncheckedUpdateWithoutBrandsInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutCategoriesInput = {
@@ -1515,6 +1597,8 @@ export type BusinessCreateWithoutCategoriesInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutCategoriesInput = {
@@ -1545,6 +1629,8 @@ export type BusinessUncheckedCreateWithoutCategoriesInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutCategoriesInput = {
@@ -1591,6 +1677,8 @@ export type BusinessUpdateWithoutCategoriesInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutCategoriesInput = {
@@ -1621,6 +1709,8 @@ export type BusinessUncheckedUpdateWithoutCategoriesInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutUnitsInput = {
@@ -1651,6 +1741,8 @@ export type BusinessCreateWithoutUnitsInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutUnitsInput = {
@@ -1681,6 +1773,8 @@ export type BusinessUncheckedCreateWithoutUnitsInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutUnitsInput = {
@@ -1727,6 +1821,8 @@ export type BusinessUpdateWithoutUnitsInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutUnitsInput = {
@@ -1757,6 +1853,8 @@ export type BusinessUncheckedUpdateWithoutUnitsInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutProductsInput = {
@@ -1787,6 +1885,8 @@ export type BusinessCreateWithoutProductsInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutProductsInput = {
@@ -1817,6 +1917,8 @@ export type BusinessUncheckedCreateWithoutProductsInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutProductsInput = {
@@ -1863,6 +1965,8 @@ export type BusinessUpdateWithoutProductsInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutProductsInput = {
@@ -1893,6 +1997,8 @@ export type BusinessUncheckedUpdateWithoutProductsInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutPriceHistoryInput = {
@@ -1923,6 +2029,8 @@ export type BusinessCreateWithoutPriceHistoryInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutPriceHistoryInput = {
@@ -1953,6 +2061,8 @@ export type BusinessUncheckedCreateWithoutPriceHistoryInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutPriceHistoryInput = {
@@ -1999,6 +2109,8 @@ export type BusinessUpdateWithoutPriceHistoryInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutPriceHistoryInput = {
@@ -2029,6 +2141,8 @@ export type BusinessUncheckedUpdateWithoutPriceHistoryInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutCustomersInput = {
@@ -2059,6 +2173,8 @@ export type BusinessCreateWithoutCustomersInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutCustomersInput = {
@@ -2089,6 +2205,8 @@ export type BusinessUncheckedCreateWithoutCustomersInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutCustomersInput = {
@@ -2135,6 +2253,8 @@ export type BusinessUpdateWithoutCustomersInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutCustomersInput = {
@@ -2165,6 +2285,8 @@ export type BusinessUncheckedUpdateWithoutCustomersInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutSalesInput = {
@@ -2195,6 +2317,8 @@ export type BusinessCreateWithoutSalesInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutSalesInput = {
@@ -2225,6 +2349,8 @@ export type BusinessUncheckedCreateWithoutSalesInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutSalesInput = {
@@ -2271,6 +2397,8 @@ export type BusinessUpdateWithoutSalesInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutSalesInput = {
@@ -2301,6 +2429,8 @@ export type BusinessUncheckedUpdateWithoutSalesInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutSaleItemsInput = {
@@ -2331,6 +2461,8 @@ export type BusinessCreateWithoutSaleItemsInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutSaleItemsInput = {
@@ -2361,6 +2493,8 @@ export type BusinessUncheckedCreateWithoutSaleItemsInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutSaleItemsInput = {
@@ -2407,6 +2541,8 @@ export type BusinessUpdateWithoutSaleItemsInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutSaleItemsInput = {
@@ -2437,6 +2573,8 @@ export type BusinessUncheckedUpdateWithoutSaleItemsInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutPaymentsInput = {
@@ -2467,6 +2605,8 @@ export type BusinessCreateWithoutPaymentsInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutPaymentsInput = {
@@ -2497,6 +2637,8 @@ export type BusinessUncheckedCreateWithoutPaymentsInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutPaymentsInput = {
@@ -2543,6 +2685,8 @@ export type BusinessUpdateWithoutPaymentsInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutPaymentsInput = {
@@ -2573,6 +2717,8 @@ export type BusinessUncheckedUpdateWithoutPaymentsInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutLedgerEntriesInput = {
@@ -2603,6 +2749,8 @@ export type BusinessCreateWithoutLedgerEntriesInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutLedgerEntriesInput = {
@@ -2633,6 +2781,8 @@ export type BusinessUncheckedCreateWithoutLedgerEntriesInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutLedgerEntriesInput = {
@@ -2679,6 +2829,8 @@ export type BusinessUpdateWithoutLedgerEntriesInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutLedgerEntriesInput = {
@@ -2709,6 +2861,8 @@ export type BusinessUncheckedUpdateWithoutLedgerEntriesInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutImportJobsInput = {
@@ -2739,6 +2893,8 @@ export type BusinessCreateWithoutImportJobsInput = {
   ledgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutImportJobsInput = {
@@ -2769,6 +2925,8 @@ export type BusinessUncheckedCreateWithoutImportJobsInput = {
   ledgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutImportJobsInput = {
@@ -2815,6 +2973,8 @@ export type BusinessUpdateWithoutImportJobsInput = {
   ledgerEntries?: Prisma.LedgerEntryUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutImportJobsInput = {
@@ -2845,6 +3005,8 @@ export type BusinessUncheckedUpdateWithoutImportJobsInput = {
   ledgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutAuditLogsInput = {
@@ -2875,6 +3037,8 @@ export type BusinessCreateWithoutAuditLogsInput = {
   ledgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutBusinessInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutAuditLogsInput = {
@@ -2905,6 +3069,8 @@ export type BusinessUncheckedCreateWithoutAuditLogsInput = {
   ledgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutBusinessInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutAuditLogsInput = {
@@ -2951,6 +3117,8 @@ export type BusinessUpdateWithoutAuditLogsInput = {
   ledgerEntries?: Prisma.LedgerEntryUpdateManyWithoutBusinessNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutAuditLogsInput = {
@@ -2981,6 +3149,8 @@ export type BusinessUncheckedUpdateWithoutAuditLogsInput = {
   ledgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutBusinessNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutSubscriptionInput = {
@@ -3011,6 +3181,8 @@ export type BusinessCreateWithoutSubscriptionInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutSubscriptionInput = {
@@ -3041,6 +3213,8 @@ export type BusinessUncheckedCreateWithoutSubscriptionInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutSubscriptionInput = {
@@ -3087,6 +3261,8 @@ export type BusinessUpdateWithoutSubscriptionInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutSubscriptionInput = {
@@ -3117,6 +3293,296 @@ export type BusinessUncheckedUpdateWithoutSubscriptionInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+}
+
+export type BusinessCreateWithoutQuotationsInput = {
+  id?: string
+  name: string
+  ownerName: string
+  phone?: string | null
+  address?: string | null
+  businessType?: string | null
+  status?: $Enums.BusinessStatus
+  suspendedAt?: Date | string | null
+  suspendedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  settings?: Prisma.BusinessSettingsCreateNestedOneWithoutBusinessInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutBusinessInput
+  members?: Prisma.BusinessUserCreateNestedManyWithoutBusinessInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBusinessInput
+  brands?: Prisma.BrandCreateNestedManyWithoutBusinessInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutBusinessInput
+  units?: Prisma.UnitCreateNestedManyWithoutBusinessInput
+  products?: Prisma.ProductCreateNestedManyWithoutBusinessInput
+  priceHistory?: Prisma.PriceHistoryCreateNestedManyWithoutBusinessInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutBusinessInput
+  sales?: Prisma.SaleCreateNestedManyWithoutBusinessInput
+  saleItems?: Prisma.SaleItemCreateNestedManyWithoutBusinessInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutBusinessInput
+  ledgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutBusinessInput
+  importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
+  counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+}
+
+export type BusinessUncheckedCreateWithoutQuotationsInput = {
+  id?: string
+  name: string
+  ownerName: string
+  phone?: string | null
+  address?: string | null
+  businessType?: string | null
+  status?: $Enums.BusinessStatus
+  suspendedAt?: Date | string | null
+  suspendedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  settings?: Prisma.BusinessSettingsUncheckedCreateNestedOneWithoutBusinessInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutBusinessInput
+  members?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutBusinessInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBusinessInput
+  brands?: Prisma.BrandUncheckedCreateNestedManyWithoutBusinessInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutBusinessInput
+  units?: Prisma.UnitUncheckedCreateNestedManyWithoutBusinessInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutBusinessInput
+  priceHistory?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutBusinessInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutBusinessInput
+  sales?: Prisma.SaleUncheckedCreateNestedManyWithoutBusinessInput
+  saleItems?: Prisma.SaleItemUncheckedCreateNestedManyWithoutBusinessInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBusinessInput
+  ledgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutBusinessInput
+  importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
+  counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+}
+
+export type BusinessCreateOrConnectWithoutQuotationsInput = {
+  where: Prisma.BusinessWhereUniqueInput
+  create: Prisma.XOR<Prisma.BusinessCreateWithoutQuotationsInput, Prisma.BusinessUncheckedCreateWithoutQuotationsInput>
+}
+
+export type BusinessUpsertWithoutQuotationsInput = {
+  update: Prisma.XOR<Prisma.BusinessUpdateWithoutQuotationsInput, Prisma.BusinessUncheckedUpdateWithoutQuotationsInput>
+  create: Prisma.XOR<Prisma.BusinessCreateWithoutQuotationsInput, Prisma.BusinessUncheckedCreateWithoutQuotationsInput>
+  where?: Prisma.BusinessWhereInput
+}
+
+export type BusinessUpdateToOneWithWhereWithoutQuotationsInput = {
+  where?: Prisma.BusinessWhereInput
+  data: Prisma.XOR<Prisma.BusinessUpdateWithoutQuotationsInput, Prisma.BusinessUncheckedUpdateWithoutQuotationsInput>
+}
+
+export type BusinessUpdateWithoutQuotationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.BusinessSettingsUpdateOneWithoutBusinessNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutBusinessNestedInput
+  members?: Prisma.BusinessUserUpdateManyWithoutBusinessNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBusinessNestedInput
+  brands?: Prisma.BrandUpdateManyWithoutBusinessNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutBusinessNestedInput
+  units?: Prisma.UnitUpdateManyWithoutBusinessNestedInput
+  products?: Prisma.ProductUpdateManyWithoutBusinessNestedInput
+  priceHistory?: Prisma.PriceHistoryUpdateManyWithoutBusinessNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutBusinessNestedInput
+  sales?: Prisma.SaleUpdateManyWithoutBusinessNestedInput
+  saleItems?: Prisma.SaleItemUpdateManyWithoutBusinessNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutBusinessNestedInput
+  ledgerEntries?: Prisma.LedgerEntryUpdateManyWithoutBusinessNestedInput
+  importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
+  counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+}
+
+export type BusinessUncheckedUpdateWithoutQuotationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.BusinessSettingsUncheckedUpdateOneWithoutBusinessNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutBusinessNestedInput
+  members?: Prisma.BusinessUserUncheckedUpdateManyWithoutBusinessNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBusinessNestedInput
+  brands?: Prisma.BrandUncheckedUpdateManyWithoutBusinessNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutBusinessNestedInput
+  units?: Prisma.UnitUncheckedUpdateManyWithoutBusinessNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutBusinessNestedInput
+  priceHistory?: Prisma.PriceHistoryUncheckedUpdateManyWithoutBusinessNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutBusinessNestedInput
+  sales?: Prisma.SaleUncheckedUpdateManyWithoutBusinessNestedInput
+  saleItems?: Prisma.SaleItemUncheckedUpdateManyWithoutBusinessNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutBusinessNestedInput
+  ledgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
+  counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+}
+
+export type BusinessCreateWithoutQuotationItemsInput = {
+  id?: string
+  name: string
+  ownerName: string
+  phone?: string | null
+  address?: string | null
+  businessType?: string | null
+  status?: $Enums.BusinessStatus
+  suspendedAt?: Date | string | null
+  suspendedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  settings?: Prisma.BusinessSettingsCreateNestedOneWithoutBusinessInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutBusinessInput
+  members?: Prisma.BusinessUserCreateNestedManyWithoutBusinessInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBusinessInput
+  brands?: Prisma.BrandCreateNestedManyWithoutBusinessInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutBusinessInput
+  units?: Prisma.UnitCreateNestedManyWithoutBusinessInput
+  products?: Prisma.ProductCreateNestedManyWithoutBusinessInput
+  priceHistory?: Prisma.PriceHistoryCreateNestedManyWithoutBusinessInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutBusinessInput
+  sales?: Prisma.SaleCreateNestedManyWithoutBusinessInput
+  saleItems?: Prisma.SaleItemCreateNestedManyWithoutBusinessInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutBusinessInput
+  ledgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutBusinessInput
+  importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
+  counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+}
+
+export type BusinessUncheckedCreateWithoutQuotationItemsInput = {
+  id?: string
+  name: string
+  ownerName: string
+  phone?: string | null
+  address?: string | null
+  businessType?: string | null
+  status?: $Enums.BusinessStatus
+  suspendedAt?: Date | string | null
+  suspendedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  settings?: Prisma.BusinessSettingsUncheckedCreateNestedOneWithoutBusinessInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutBusinessInput
+  members?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutBusinessInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBusinessInput
+  brands?: Prisma.BrandUncheckedCreateNestedManyWithoutBusinessInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutBusinessInput
+  units?: Prisma.UnitUncheckedCreateNestedManyWithoutBusinessInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutBusinessInput
+  priceHistory?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutBusinessInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutBusinessInput
+  sales?: Prisma.SaleUncheckedCreateNestedManyWithoutBusinessInput
+  saleItems?: Prisma.SaleItemUncheckedCreateNestedManyWithoutBusinessInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBusinessInput
+  ledgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutBusinessInput
+  importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
+  counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+}
+
+export type BusinessCreateOrConnectWithoutQuotationItemsInput = {
+  where: Prisma.BusinessWhereUniqueInput
+  create: Prisma.XOR<Prisma.BusinessCreateWithoutQuotationItemsInput, Prisma.BusinessUncheckedCreateWithoutQuotationItemsInput>
+}
+
+export type BusinessUpsertWithoutQuotationItemsInput = {
+  update: Prisma.XOR<Prisma.BusinessUpdateWithoutQuotationItemsInput, Prisma.BusinessUncheckedUpdateWithoutQuotationItemsInput>
+  create: Prisma.XOR<Prisma.BusinessCreateWithoutQuotationItemsInput, Prisma.BusinessUncheckedCreateWithoutQuotationItemsInput>
+  where?: Prisma.BusinessWhereInput
+}
+
+export type BusinessUpdateToOneWithWhereWithoutQuotationItemsInput = {
+  where?: Prisma.BusinessWhereInput
+  data: Prisma.XOR<Prisma.BusinessUpdateWithoutQuotationItemsInput, Prisma.BusinessUncheckedUpdateWithoutQuotationItemsInput>
+}
+
+export type BusinessUpdateWithoutQuotationItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.BusinessSettingsUpdateOneWithoutBusinessNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutBusinessNestedInput
+  members?: Prisma.BusinessUserUpdateManyWithoutBusinessNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBusinessNestedInput
+  brands?: Prisma.BrandUpdateManyWithoutBusinessNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutBusinessNestedInput
+  units?: Prisma.UnitUpdateManyWithoutBusinessNestedInput
+  products?: Prisma.ProductUpdateManyWithoutBusinessNestedInput
+  priceHistory?: Prisma.PriceHistoryUpdateManyWithoutBusinessNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutBusinessNestedInput
+  sales?: Prisma.SaleUpdateManyWithoutBusinessNestedInput
+  saleItems?: Prisma.SaleItemUpdateManyWithoutBusinessNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutBusinessNestedInput
+  ledgerEntries?: Prisma.LedgerEntryUpdateManyWithoutBusinessNestedInput
+  importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
+  counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+}
+
+export type BusinessUncheckedUpdateWithoutQuotationItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.BusinessSettingsUncheckedUpdateOneWithoutBusinessNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutBusinessNestedInput
+  members?: Prisma.BusinessUserUncheckedUpdateManyWithoutBusinessNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBusinessNestedInput
+  brands?: Prisma.BrandUncheckedUpdateManyWithoutBusinessNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutBusinessNestedInput
+  units?: Prisma.UnitUncheckedUpdateManyWithoutBusinessNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutBusinessNestedInput
+  priceHistory?: Prisma.PriceHistoryUncheckedUpdateManyWithoutBusinessNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutBusinessNestedInput
+  sales?: Prisma.SaleUncheckedUpdateManyWithoutBusinessNestedInput
+  saleItems?: Prisma.SaleItemUncheckedUpdateManyWithoutBusinessNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutBusinessNestedInput
+  ledgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
+  counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 
@@ -3140,6 +3606,8 @@ export type BusinessCountOutputType = {
   importJobs: number
   auditLogs: number
   counters: number
+  quotations: number
+  quotationItems: number
 }
 
 export type BusinessCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3158,6 +3626,8 @@ export type BusinessCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   importJobs?: boolean | BusinessCountOutputTypeCountImportJobsArgs
   auditLogs?: boolean | BusinessCountOutputTypeCountAuditLogsArgs
   counters?: boolean | BusinessCountOutputTypeCountCountersArgs
+  quotations?: boolean | BusinessCountOutputTypeCountQuotationsArgs
+  quotationItems?: boolean | BusinessCountOutputTypeCountQuotationItemsArgs
 }
 
 /**
@@ -3275,6 +3745,20 @@ export type BusinessCountOutputTypeCountCountersArgs<ExtArgs extends runtime.Typ
   where?: Prisma.DocumentCounterWhereInput
 }
 
+/**
+ * BusinessCountOutputType without action
+ */
+export type BusinessCountOutputTypeCountQuotationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.QuotationWhereInput
+}
+
+/**
+ * BusinessCountOutputType without action
+ */
+export type BusinessCountOutputTypeCountQuotationItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.QuotationItemWhereInput
+}
+
 
 export type BusinessSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3305,6 +3789,8 @@ export type BusinessSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   importJobs?: boolean | Prisma.Business$importJobsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Business$auditLogsArgs<ExtArgs>
   counters?: boolean | Prisma.Business$countersArgs<ExtArgs>
+  quotations?: boolean | Prisma.Business$quotationsArgs<ExtArgs>
+  quotationItems?: boolean | Prisma.Business$quotationItemsArgs<ExtArgs>
   _count?: boolean | Prisma.BusinessCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["business"]>
 
@@ -3369,6 +3855,8 @@ export type BusinessInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   importJobs?: boolean | Prisma.Business$importJobsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Business$auditLogsArgs<ExtArgs>
   counters?: boolean | Prisma.Business$countersArgs<ExtArgs>
+  quotations?: boolean | Prisma.Business$quotationsArgs<ExtArgs>
+  quotationItems?: boolean | Prisma.Business$quotationItemsArgs<ExtArgs>
   _count?: boolean | Prisma.BusinessCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BusinessIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3394,6 +3882,8 @@ export type $BusinessPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     importJobs: Prisma.$ImportJobPayload<ExtArgs>[]
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
     counters: Prisma.$DocumentCounterPayload<ExtArgs>[]
+    quotations: Prisma.$QuotationPayload<ExtArgs>[]
+    quotationItems: Prisma.$QuotationItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3818,6 +4308,8 @@ export interface Prisma__BusinessClient<T, Null = never, ExtArgs extends runtime
   importJobs<T extends Prisma.Business$importJobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$importJobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ImportJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.Business$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   counters<T extends Prisma.Business$countersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$countersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentCounterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  quotations<T extends Prisma.Business$quotationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$quotationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuotationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  quotationItems<T extends Prisma.Business$quotationItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$quotationItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuotationItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4646,6 +5138,54 @@ export type Business$countersArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.DocumentCounterScalarFieldEnum | Prisma.DocumentCounterScalarFieldEnum[]
+}
+
+/**
+ * Business.quotations
+ */
+export type Business$quotationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Quotation
+   */
+  select?: Prisma.QuotationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Quotation
+   */
+  omit?: Prisma.QuotationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.QuotationInclude<ExtArgs> | null
+  where?: Prisma.QuotationWhereInput
+  orderBy?: Prisma.QuotationOrderByWithRelationInput | Prisma.QuotationOrderByWithRelationInput[]
+  cursor?: Prisma.QuotationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.QuotationScalarFieldEnum | Prisma.QuotationScalarFieldEnum[]
+}
+
+/**
+ * Business.quotationItems
+ */
+export type Business$quotationItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the QuotationItem
+   */
+  select?: Prisma.QuotationItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the QuotationItem
+   */
+  omit?: Prisma.QuotationItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.QuotationItemInclude<ExtArgs> | null
+  where?: Prisma.QuotationItemWhereInput
+  orderBy?: Prisma.QuotationItemOrderByWithRelationInput | Prisma.QuotationItemOrderByWithRelationInput[]
+  cursor?: Prisma.QuotationItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.QuotationItemScalarFieldEnum | Prisma.QuotationItemScalarFieldEnum[]
 }
 
 /**

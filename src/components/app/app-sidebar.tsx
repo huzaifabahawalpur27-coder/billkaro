@@ -16,6 +16,7 @@ import {
   UserCog,
   Settings,
   Store,
+  FileClock,
   LogOut,
   Plus,
   X,
@@ -27,6 +28,8 @@ interface NavItem {
   href: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
+  /** Only shown when the quotations feature toggle is on. */
+  requiresQuotations?: boolean;
 }
 
 interface NavGroup {
@@ -59,6 +62,7 @@ const NAV_GROUPS: NavGroup[] = [
     label: "Transactions",
     items: [
       { href: "/bills", label: "Bills", icon: FileSearch },
+      { href: "/quotations", label: "Quotations", icon: FileClock, requiresQuotations: true },
       { href: "/ledger", label: "Ledger", icon: ScrollText },
       { href: "/reports", label: "Reports", icon: BarChart3 },
     ],
@@ -76,10 +80,17 @@ interface AppSidebarProps {
   businessName: string;
   userName: string;
   roleName: string;
+  quotationsEnabled?: boolean;
   onClose?: () => void;
 }
 
-export function AppSidebar({ businessName, userName, roleName, onClose }: AppSidebarProps) {
+export function AppSidebar({
+  businessName,
+  userName,
+  roleName,
+  quotationsEnabled = false,
+  onClose,
+}: AppSidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -137,7 +148,9 @@ export function AppSidebar({ businessName, userName, roleName, onClose }: AppSid
               </div>
             )}
             <ul className="space-y-0.5">
-              {group.items.map((item) => {
+              {group.items
+                .filter((item) => !item.requiresQuotations || quotationsEnabled)
+                .map((item) => {
                 const active =
                   pathname === item.href || pathname.startsWith(item.href + "/");
                 return (

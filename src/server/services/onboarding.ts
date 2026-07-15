@@ -34,6 +34,7 @@ export async function createBusinessForUser(
           data: [
             { key: "INVOICE", nextNumber: 1 },
             { key: "PAYMENT", nextNumber: 1 },
+            { key: "QUOTATION", nextNumber: 1 },
           ],
         },
       },

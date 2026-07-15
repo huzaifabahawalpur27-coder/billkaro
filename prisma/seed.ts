@@ -17,6 +17,8 @@ const db = new PrismaClient({ adapter });
 const BRANDS = ["Unilever", "Nestlé", "Coca-Cola", "PepsiCo", "National", "Shan", "Colgate", "Reckitt"];
 const CATEGORIES = ["Soap", "Detergent", "Beverages", "Milk", "Spices", "Grocery", "Toothpaste", "Snacks"];
 const UNITS = ["Piece", "Pack", "Bottle", "Kg", "Gram", "Liter", "ml", "Dozen"];
+// Loose/weight units where the POS allows fractional quantities.
+const FRACTIONAL_UNITS = new Set(["Kg", "Gram", "Liter", "ml"]);
 
 // [name, sku, barcode, brand, category, unit, purchase, sale, wholesale]
 const PRODUCTS: [string, string, string, string, string, string, number, number, number][] = [
@@ -115,7 +117,9 @@ async function main() {
     }
     const unitIds = new Map<string, string>();
     for (const name of UNITS) {
-      const u = await tx.unit.create({ data: { businessId: business.id, name } });
+      const u = await tx.unit.create({
+        data: { businessId: business.id, name, isFractional: FRACTIONAL_UNITS.has(name) },
+      });
       unitIds.set(name, u.id);
     }
 

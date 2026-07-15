@@ -2,7 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { createUnit, renameUnit, deleteUnit } from "@/server/services/catalogue";
+import {
+  createUnit,
+  renameUnit,
+  deleteUnit,
+  setUnitFractional,
+} from "@/server/services/catalogue";
 
 export interface ActionResult {
   ok: boolean;
@@ -33,6 +38,20 @@ export async function renameUnitAction(id: string, name: string): Promise<Action
     return { ok: false, error: "Rename nahi ho saka." };
   }
   revalidatePath("/units");
+  return { ok: true, error: null };
+}
+
+export async function setUnitFractionalAction(
+  id: string,
+  isFractional: boolean
+): Promise<ActionResult> {
+  try {
+    await setUnitFractional(id, isFractional);
+  } catch {
+    return { ok: false, error: "Update nahi ho saka." };
+  }
+  revalidatePath("/units");
+  revalidatePath("/bill");
   return { ok: true, error: null };
 }
 

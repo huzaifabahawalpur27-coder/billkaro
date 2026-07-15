@@ -45,7 +45,7 @@ export async function listProducts(filters: ProductFilters) {
       include: {
         brand: { select: { id: true, name: true } },
         category: { select: { id: true, name: true } },
-        unit: { select: { id: true, name: true } },
+        unit: { select: { id: true, name: true, isFractional: true } },
       },
       orderBy: { name: "asc" },
       skip: (page - 1) * pageSize,
@@ -268,7 +268,7 @@ export async function listUnitOptions() {
   const ctx = await requireBusiness();
   return db.unit.findMany({
     where: { businessId: ctx.business.id, status: "ACTIVE" },
-    select: { id: true, name: true },
+    select: { id: true, name: true, isFractional: true },
     orderBy: { name: "asc" },
   });
 }
@@ -305,6 +305,14 @@ export async function createUnit(name: string) {
   });
   if (existing) return existing;
   return db.unit.create({ data: { businessId: ctx.business.id, name: trimmed } });
+}
+
+/** Toggle loose/weight (fractional quantities) on a unit. */
+export async function setUnitFractional(id: string, isFractional: boolean) {
+  const ctx = await requirePermission("EDIT_PRODUCTS");
+  const unit = await db.unit.findFirst({ where: { id, businessId: ctx.business.id } });
+  if (!unit) throw new Error("Unit not found");
+  return db.unit.update({ where: { id: unit.id }, data: { isFractional } });
 }
 
 export async function listBrandsWithStats() {

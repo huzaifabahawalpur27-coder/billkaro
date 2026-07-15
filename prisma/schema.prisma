@@ -72,6 +72,12 @@ enum SaleStatus {
   CANCELLED
 }
 
+enum QuotationStatus {
+  ACTIVE
+  CONVERTED
+  CANCELLED
+}
+
 enum SalePaymentStatus {
   PAID
   PARTIAL
@@ -170,6 +176,7 @@ model User {
   platformAuditLogs        PlatformAuditLog[]
   announcementsCreated     Announcement[]
   announcementsSeen        AnnouncementSeen[]
+  quotationsCreated        Quotation[]
 }
 
 model Business {
@@ -202,6 +209,8 @@ model Business {
   importJobs    ImportJob[]
   auditLogs     AuditLog[]
   counters      DocumentCounter[]
+  quotations    Quotation[]
+  quotationItems QuotationItem[]
 }
 
 model BusinessUser {
@@ -245,6 +254,10 @@ model BusinessSettings {
   receiptSize          ReceiptSize  @default(THERMAL_80)
   priceRounding        RoundingRule @default(NONE)
   invoiceFooter        String       @default("Thank You For Shopping!")
+  quotationsEnabled    Boolean      @default(false)
+  quotationPrefix      String       @default("QT")
+  quotationValidityDays Int         @default(7)
+  quotationFooter      String       @default("Yeh quotation hai — bill nahi. Prices sirf validity tak fixed hain.")
   logoUrl              String?
   language             String       @default("en")
   updatedAt            DateTime     @updatedAt
@@ -301,6 +314,8 @@ model Unit {
   id         String       @id @default(cuid())
   businessId String
   name       String
+  // Loose/weight units (Kg, Liter): POS allows fractional quantities.
+  isFractional Boolean    @default(false)
   status     EntityStatus @default(ACTIVE)
   createdAt  DateTime     @default(now())
 
@@ -332,6 +347,7 @@ model Product {
   unit         Unit?          @relation(fields: [unitId], references: [id], onDelete: SetNull)
   priceHistory PriceHistory[]
   saleItems    SaleItem[]
+  quotationItems QuotationItem[]
 
   @@unique([businessId, sku])
   @@unique([businessId, barcode])
@@ -386,6 +402,7 @@ model Customer {
   sales         Sale[]
   payments      Payment[]
   ledgerEntries LedgerEntry[]
+  quotations    Quotation[]
 
   @@index([businessId, name])
   @@index([businessId, phone])
@@ -679,4 +696,61 @@ model AnnouncementSeen {
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([announcementId, userId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Quotations — a rate estimate, deliberately NOT a bill: no
+// payment, no ledger, no customer-balance effects. EXPIRED is
+// derived from validUntil at read time.
+// ─────────────────────────────────────────────────────────────
+
+model Quotation {
+  id              String          @id @default(cuid())
+  businessId      String
+  quotationNumber String
+  customerId      String?
+  // Walk-in / non-khata customer free-text name.
+  customerName    String?
+  createdById     String
+  status          QuotationStatus @default(ACTIVE)
+  subtotal        Decimal         @db.Decimal(14, 2)
+  discountType    DiscountType    @default(NONE)
+  discountValue   Decimal         @default(0) @db.Decimal(12, 2)
+  discountAmount  Decimal         @default(0) @db.Decimal(12, 2)
+  taxRate         Decimal         @default(0) @db.Decimal(5, 2)
+  taxAmount       Decimal         @default(0) @db.Decimal(12, 2)
+  grandTotal      Decimal         @db.Decimal(14, 2)
+  validUntil      DateTime
+  notes           String?
+  convertedSaleId String?
+  createdAt       DateTime        @default(now())
+
+  business  Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  customer  Customer?      @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  createdBy User           @relation(fields: [createdById], references: [id])
+  items     QuotationItem[]
+
+  @@unique([businessId, quotationNumber])
+  @@index([businessId, createdAt])
+  @@index([businessId, status])
+}
+
+model QuotationItem {
+  id                  String   @id @default(cuid())
+  businessId          String
+  quotationId         String
+  productId           String?
+  productNameSnapshot String
+  skuSnapshot         String?
+  cataloguePrice      Decimal? @db.Decimal(12, 2)
+  soldPrice           Decimal  @db.Decimal(12, 2)
+  quantity            Decimal  @db.Decimal(12, 3)
+  lineTotal           Decimal  @db.Decimal(14, 2)
+  isOpenItem          Boolean  @default(false)
+
+  business  Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  quotation Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  product   Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([quotationId])
 }

@@ -74,7 +74,9 @@ export const ModelName = {
   PlatformPayment: 'PlatformPayment',
   PlatformAuditLog: 'PlatformAuditLog',
   Announcement: 'Announcement',
-  AnnouncementSeen: 'AnnouncementSeen'
+  AnnouncementSeen: 'AnnouncementSeen',
+  Quotation: 'Quotation',
+  QuotationItem: 'QuotationItem'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -160,6 +162,10 @@ export const BusinessSettingsScalarFieldEnum = {
   receiptSize: 'receiptSize',
   priceRounding: 'priceRounding',
   invoiceFooter: 'invoiceFooter',
+  quotationsEnabled: 'quotationsEnabled',
+  quotationPrefix: 'quotationPrefix',
+  quotationValidityDays: 'quotationValidityDays',
+  quotationFooter: 'quotationFooter',
   logoUrl: 'logoUrl',
   language: 'language',
   updatedAt: 'updatedAt'
@@ -206,6 +212,7 @@ export const UnitScalarFieldEnum = {
   id: 'id',
   businessId: 'businessId',
   name: 'name',
+  isFractional: 'isFractional',
   status: 'status',
   createdAt: 'createdAt'
 } as const
@@ -472,6 +479,47 @@ export const AnnouncementSeenScalarFieldEnum = {
 } as const
 
 export type AnnouncementSeenScalarFieldEnum = (typeof AnnouncementSeenScalarFieldEnum)[keyof typeof AnnouncementSeenScalarFieldEnum]
+
+
+export const QuotationScalarFieldEnum = {
+  id: 'id',
+  businessId: 'businessId',
+  quotationNumber: 'quotationNumber',
+  customerId: 'customerId',
+  customerName: 'customerName',
+  createdById: 'createdById',
+  status: 'status',
+  subtotal: 'subtotal',
+  discountType: 'discountType',
+  discountValue: 'discountValue',
+  discountAmount: 'discountAmount',
+  taxRate: 'taxRate',
+  taxAmount: 'taxAmount',
+  grandTotal: 'grandTotal',
+  validUntil: 'validUntil',
+  notes: 'notes',
+  convertedSaleId: 'convertedSaleId',
+  createdAt: 'createdAt'
+} as const
+
+export type QuotationScalarFieldEnum = (typeof QuotationScalarFieldEnum)[keyof typeof QuotationScalarFieldEnum]
+
+
+export const QuotationItemScalarFieldEnum = {
+  id: 'id',
+  businessId: 'businessId',
+  quotationId: 'quotationId',
+  productId: 'productId',
+  productNameSnapshot: 'productNameSnapshot',
+  skuSnapshot: 'skuSnapshot',
+  cataloguePrice: 'cataloguePrice',
+  soldPrice: 'soldPrice',
+  quantity: 'quantity',
+  lineTotal: 'lineTotal',
+  isOpenItem: 'isOpenItem'
+} as const
+
+export type QuotationItemScalarFieldEnum = (typeof QuotationItemScalarFieldEnum)[keyof typeof QuotationItemScalarFieldEnum]
 
 
 export const SortOrder = {

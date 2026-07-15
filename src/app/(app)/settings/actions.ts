@@ -19,6 +19,10 @@ const settingsSchema = z.object({
   priceRounding: z.enum(["NONE", "NEAREST_1", "NEAREST_5", "NEAREST_10"]).optional(),
   invoiceFooter: z.string().trim().max(500).optional(),
   language: z.string().trim().max(10).optional(),
+  quotationsEnabled: z.boolean().optional(),
+  quotationPrefix: z.string().trim().min(1).max(20).optional(),
+  quotationValidityDays: z.coerce.number().int().min(1).max(365).optional(),
+  quotationFooter: z.string().trim().max(500).optional(),
 });
 
 const businessProfileSchema = z.object({

@@ -20,6 +20,7 @@ export default async function AppLayout({
       roleName={ctx.role.name}
       announcements={announcements}
       markAnnouncementsSeen={markAnnouncementsSeenAction}
+      quotationsEnabled={ctx.settings.quotationsEnabled}
       impersonating={ctx.impersonating}
       exitImpersonation={exitImpersonationAction}
       subscriptionBanner={

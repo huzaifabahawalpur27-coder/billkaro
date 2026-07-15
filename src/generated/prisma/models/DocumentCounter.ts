@@ -387,14 +387,6 @@ export type DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput = {
   deleteMany?: Prisma.DocumentCounterScalarWhereInput | Prisma.DocumentCounterScalarWhereInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type DocumentCounterCreateWithoutBusinessInput = {
   id?: string
   key: string

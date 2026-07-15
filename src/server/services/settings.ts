@@ -13,6 +13,10 @@ export interface SettingsInput {
   priceRounding?: RoundingRule;
   invoiceFooter?: string;
   language?: string;
+  quotationsEnabled?: boolean;
+  quotationPrefix?: string;
+  quotationValidityDays?: number;
+  quotationFooter?: string;
 }
 
 export interface BusinessProfileInput {
@@ -84,6 +88,12 @@ export async function updateSettings(input: SettingsInput) {
       ...(input.priceRounding !== undefined ? { priceRounding: input.priceRounding } : {}),
       ...(input.invoiceFooter !== undefined ? { invoiceFooter: input.invoiceFooter.trim() } : {}),
       ...(input.language !== undefined ? { language: input.language } : {}),
+      ...(input.quotationsEnabled !== undefined ? { quotationsEnabled: input.quotationsEnabled } : {}),
+      ...(input.quotationPrefix !== undefined ? { quotationPrefix: input.quotationPrefix.trim().toUpperCase() } : {}),
+      ...(input.quotationValidityDays !== undefined
+        ? { quotationValidityDays: Math.min(365, Math.max(1, Math.trunc(input.quotationValidityDays))) }
+        : {}),
+      ...(input.quotationFooter !== undefined ? { quotationFooter: input.quotationFooter.trim() } : {}),
     },
   });
 

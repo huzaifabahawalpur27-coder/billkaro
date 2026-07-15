@@ -28,6 +28,7 @@ interface AppLayoutClientProps {
   subscriptionBanner?: { status: "GRACE" | "EXPIRED"; daysLeft: number } | null;
   announcements?: MyAnnouncement[];
   markAnnouncementsSeen?: (ids: string[]) => Promise<void>;
+  quotationsEnabled?: boolean;
   children: React.ReactNode;
 }
 
@@ -40,6 +41,7 @@ export function AppLayoutClient({
   subscriptionBanner = null,
   announcements = [],
   markAnnouncementsSeen,
+  quotationsEnabled = false,
   children,
 }: AppLayoutClientProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -82,6 +84,7 @@ export function AppLayoutClient({
           businessName={businessName}
           userName={userName}
           roleName={roleName}
+          quotationsEnabled={quotationsEnabled}
           onClose={() => setSidebarOpen(false)}
         />
       </div>

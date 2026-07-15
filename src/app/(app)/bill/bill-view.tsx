@@ -13,15 +13,19 @@ import {
   X,
   CheckCircle2,
   ReceiptText,
+  FileClock,
 } from "lucide-react";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import {
   searchProductsAction,
   searchCustomersAction,
   quickAddCustomerAction,
   createSaleAction,
+  createQuotationAction,
   type SaleReceipt,
+  type QuotationReceipt,
 } from "./actions";
 import { MoneyDisplay } from "@/components/app/money-display";
 import { EmptyState } from "@/components/app/empty-state";
@@ -50,7 +54,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { formatMoney } from "@/lib/format";
+import { formatMoney, formatQty, formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 // ── Types ────────────────────────────────────────────────────
@@ -62,6 +66,8 @@ interface ProductHit {
   barcode: string | null;
   salePrice: string;
   unitName: string | null;
+  /** Weight/loose unit — POS allows fractional quantities. */
+  isFractional?: boolean;
 }
 
 interface CustomerHit {
@@ -76,10 +82,28 @@ interface CartLine {
   productId: string | null;
   name: string;
   unitName: string | null;
+  isFractional: boolean;
   cataloguePrice: string | null;
   soldPrice: string;
   quantity: string;
   isOpenItem: boolean;
+}
+
+export interface SourceQuotation {
+  id: string;
+  quotationNumber: string;
+  status: string;
+  lines: {
+    productId: string | null;
+    name: string;
+    unitName: string | null;
+    isFractional: boolean;
+    cataloguePrice: string | null;
+    soldPrice: string;
+    quantity: string;
+    isOpenItem: boolean;
+  }[];
+  customer: CustomerHit | null;
 }
 
 interface Can {
@@ -105,32 +129,47 @@ export function BillView({
   categories = [],
   taxRate,
   currencySymbol,
+  quotationsEnabled = false,
+  defaultValidityDays = 7,
+  sourceQuotation = null,
   can,
 }: {
   initialProducts?: (ProductHit & { categoryId: string | null })[];
   categories?: { id: string; name: string }[];
   taxRate: string;
   currencySymbol: string;
+  quotationsEnabled?: boolean;
+  defaultValidityDays?: number;
+  sourceQuotation?: SourceQuotation | null;
   can: Can;
 }) {
-  const [lines, setLines] = useState<CartLine[]>([]);
+  const [lines, setLines] = useState<CartLine[]>(() =>
+    (sourceQuotation?.lines ?? []).map((l, i) => ({ ...l, key: i + 1 }))
+  );
   const [discountType, setDiscountType] = useState<"NONE" | "FIXED" | "PERCENT">("NONE");
   const [discountValue, setDiscountValue] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("CASH");
   const [amountPaid, setAmountPaid] = useState("");
   const [paidTouched, setPaidTouched] = useState(false);
   const [cashReceived, setCashReceived] = useState("");
-  const [customer, setCustomer] = useState<CustomerHit | null>(null);
+  const [customer, setCustomer] = useState<CustomerHit | null>(
+    sourceQuotation?.customer ?? null
+  );
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   // One query drives both the grid filter and the search dropdown.
   const [query, setQuery] = useState("");
   const [openItemMode, setOpenItemMode] = useState(false);
   const [activeTab, setActiveTab] = useState<"PRODUCTS" | "CART">("PRODUCTS");
   const [receipt, setReceipt] = useState<SaleReceipt | null>(null);
+  const [quotationReceipt, setQuotationReceipt] = useState<QuotationReceipt | null>(null);
+  const [quotationDialog, setQuotationDialog] = useState(false);
+  const [validityDays, setValidityDays] = useState(String(defaultValidityDays));
   const [saving, startSaving] = useTransition();
-  const keyRef = useRef(1);
+  const keyRef = useRef((sourceQuotation?.lines.length ?? 0) + 1);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const receivedInputRef = useRef<HTMLInputElement>(null);
+
+  const router = useRouter();
 
   const focusSearch = useCallback(() => {
     // Delayed so it wins over Radix's own focus-restore on dialog close.
@@ -208,6 +247,7 @@ export function BillView({
           productId: p.id,
           name: p.name,
           unitName: p.unitName,
+          isFractional: p.isFractional ?? false,
           cataloguePrice: p.salePrice,
           soldPrice: p.salePrice,
           quantity: "1",
@@ -225,6 +265,7 @@ export function BillView({
         productId: null,
         name,
         unitName: null,
+        isFractional: false,
         cataloguePrice: null,
         soldPrice: price,
         quantity: "1",
@@ -261,11 +302,42 @@ export function BillView({
     setCashReceived("");
     setCustomer(null);
     setReceipt(null);
+    setQuotationReceipt(null);
+    if (sourceQuotation) router.replace("/bill");
     focusSearch();
   };
 
+  const saveQuotation = () => {
+    if (saving || quotationReceipt) return;
+    if (!lines.length) {
+      toast.error("Pehle items add karein.");
+      return;
+    }
+    startSaving(async () => {
+      const result = await createQuotationAction({
+        items: lines.map((l) => ({
+          productId: l.productId,
+          name: l.isOpenItem ? l.name : undefined,
+          soldPrice: D(l.soldPrice).toFixed(2),
+          quantity: D(l.quantity).toString(),
+        })),
+        discountType,
+        discountValue: discountValue.trim(),
+        customerId: customer?.id ?? null,
+        validityDays: parseInt(validityDays, 10) || undefined,
+        notes: null,
+      });
+      if (result.ok && result.data) {
+        setQuotationDialog(false);
+        setQuotationReceipt(result.data);
+      } else {
+        toast.error(result.error ?? "Quotation save nahi ho saki.");
+      }
+    });
+  };
+
   const submit = () => {
-    if (saving || receipt) return;
+    if (saving || receipt || quotationReceipt) return;
     if (!lines.length) {
       toast.error("Pehle bill mein items add karein.");
       return;
@@ -289,6 +361,7 @@ export function BillView({
         amountPaid: effectivePaid.toFixed(2),
         cashReceived: paymentMethod === "CASH" && cashReceived ? D(cashReceived).toFixed(2) : null,
         notes: null,
+        quotationId: sourceQuotation?.id ?? null,
       });
       if (result.ok && result.data) {
         setReceipt(result.data);
@@ -359,6 +432,13 @@ export function BillView({
               inputRef={searchInputRef}
               onRequestFocus={focusSearch}
             />
+            {sourceQuotation && (
+              <div className="rounded-md bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 p-2.5 text-sm">
+                <FileClock className="mr-1 inline h-4 w-4" />
+                Quotation <span className="font-mono font-semibold">{sourceQuotation.quotationNumber}</span> se
+                load hua — rates <strong>current</strong> hain, review kar ke bill complete karein.
+              </div>
+            )}
             <div className="hidden md:flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-muted-foreground">
               <span><kbd className="rounded border px-1">F2</kbd> Search</span>
               <span><kbd className="rounded border px-1">F4</kbd> Complete Bill</span>
@@ -392,7 +472,11 @@ export function BillView({
                         <TableCell>
                           <div className="font-medium text-xs truncate max-w-[120px]">{line.name}</div>
                           <div className="text-[10px] text-muted-foreground">
-                            {line.isOpenItem ? "Open item" : line.unitName ?? ""}
+                            {line.isOpenItem
+                              ? "Open item"
+                              : line.isFractional
+                                ? formatQty(line.quantity, line.unitName ?? "")
+                                : (line.unitName ?? "")}
                             {!line.isOpenItem &&
                               line.cataloguePrice &&
                               !D(line.cataloguePrice).eq(D(line.soldPrice)) && (
@@ -406,6 +490,7 @@ export function BillView({
                           <QtyStepper
                             value={line.quantity}
                             label={`${line.name} quantity`}
+                            fractional={line.isFractional}
                             onChange={(quantity) => updateLine(line.key, { quantity })}
                           />
                         </TableCell>
@@ -483,6 +568,7 @@ export function BillView({
                         <QtyStepper
                           value={line.quantity}
                           label={`${line.name} quantity`}
+                          fractional={line.isFractional}
                           onChange={(quantity) => updateLine(line.key, { quantity })}
                         />
                       </div>
@@ -749,6 +835,16 @@ export function BillView({
           <Button className="w-full" size="lg" onClick={submit} disabled={saving || !lines.length}>
             {saving ? "Saving…" : `Complete Bill · ${formatMoney(totals.grand.toFixed(2), currencySymbol)}`}
           </Button>
+          {quotationsEnabled && !sourceQuotation && (
+            <Button
+              variant="outline"
+              className="w-full"
+              disabled={saving || !lines.length}
+              onClick={() => setQuotationDialog(true)}
+            >
+              <FileClock className="h-4 w-4 mr-1" /> Save as Quotation
+            </Button>
+          )}
         </div>
       </div>
 
@@ -819,6 +915,94 @@ export function BillView({
                 <div className="grid grid-cols-2 gap-2">
                   <Button variant="outline" asChild>
                     <Link href={`/bills/${receipt.saleId}`}>View Bill</Link>
+                  </Button>
+                  <Button variant="secondary" onClick={resetBill}>
+                    <Plus className="h-4 w-4 mr-1" /> New Bill
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Save-as-quotation dialog ── */}
+      <Dialog open={quotationDialog} onOpenChange={(o) => !o && setQuotationDialog(false)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Save as Quotation</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 text-sm">
+            <p className="text-muted-foreground">
+              Quotation bill nahi hoti — koi payment ya khata entry nahi banegi. Customer optional
+              hai (payment panel se select karein).
+            </p>
+            <div className="grid gap-1.5">
+              <Label>Validity (din)</Label>
+              <Input
+                inputMode="numeric"
+                value={validityDays}
+                onChange={(e) => setValidityDays(e.target.value)}
+                placeholder={String(defaultValidityDays)}
+              />
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Estimated Total</span>
+              <MoneyDisplay value={totals.grand.toFixed(2)} symbol={currencySymbol} />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="ghost" onClick={() => setQuotationDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={saveQuotation} disabled={saving}>
+              {saving ? "Saving…" : "Save Quotation"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Quotation success dialog ── */}
+      <Dialog open={!!quotationReceipt}>
+        <DialogContent
+          className="sm:max-w-sm"
+          showCloseButton={false}
+          onInteractOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+              Quotation ban gayi
+            </DialogTitle>
+          </DialogHeader>
+          {quotationReceipt && (
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Quotation</span>
+                <span className="font-mono font-medium">{quotationReceipt.quotationNumber}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Estimated Total</span>
+                <MoneyDisplay value={quotationReceipt.grandTotal} symbol={currencySymbol} />
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Valid till</span>
+                <span>{formatDate(quotationReceipt.validUntil)}</span>
+              </div>
+              <div className="space-y-2 pt-2">
+                <Button
+                  className="w-full"
+                  autoFocus
+                  onClick={() =>
+                    window.open(`/quotations/${quotationReceipt.quotationId}/print`, "_blank")
+                  }
+                >
+                  <Printer className="h-4 w-4 mr-1" /> Print Quotation
+                </Button>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button variant="outline" asChild>
+                    <Link href={`/quotations/${quotationReceipt.quotationId}`}>View</Link>
                   </Button>
                   <Button variant="secondary" onClick={resetBill}>
                     <Plus className="h-4 w-4 mr-1" /> New Bill
@@ -1225,49 +1409,85 @@ function QtyStepper({
   value,
   onChange,
   label,
+  fractional = false,
 }: {
   value: string;
   onChange: (value: string) => void;
   label: string;
+  /** Weight/loose units: ±0.5 steps, 0.25 minimum, quick-set chips. */
+  fractional?: boolean;
 }) {
+  const stepSize = fractional ? 0.5 : 1;
+  const min = fractional ? 0.25 : 1;
+
   const step = (delta: number) => {
     const next = D(value).add(delta);
-    onChange(next.lt(1) ? "1" : next.toString());
+    onChange(next.lt(min) ? String(min) : next.toDecimalPlaces(3).toString());
   };
 
   return (
-    <div className="flex items-center gap-0.5">
-      <Button
-        type="button"
-        variant="outline"
-        size="icon"
-        className="h-7 w-7 shrink-0"
-        onClick={() => step(-1)}
-        disabled={D(value).lte(1)}
-        aria-label={`Decrease ${label}`}
-      >
-        <Minus className="h-3 w-3" />
-      </Button>
-      <Input
-        inputMode="decimal"
-        className="h-7 w-12 px-1 text-xs text-center"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onBlur={() => {
-          if (D(value).lte(0)) onChange("1");
-        }}
-        aria-label={label}
-      />
-      <Button
-        type="button"
-        variant="outline"
-        size="icon"
-        className="h-7 w-7 shrink-0"
-        onClick={() => step(1)}
-        aria-label={`Increase ${label}`}
-      >
-        <Plus className="h-3 w-3" />
-      </Button>
+    <div className="space-y-1">
+      <div className="flex items-center gap-0.5">
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="h-7 w-7 shrink-0"
+          onClick={() => step(-stepSize)}
+          disabled={D(value).lte(min)}
+          aria-label={`Decrease ${label}`}
+        >
+          <Minus className="h-3 w-3" />
+        </Button>
+        <Input
+          inputMode="decimal"
+          className="h-7 w-12 px-1 text-xs text-center"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={() => {
+            const v = D(value);
+            if (v.lte(0)) onChange(String(min));
+            else if (fractional) onChange(v.toDecimalPlaces(3).toString());
+            else onChange(v.toDecimalPlaces(0).toString());
+          }}
+          aria-label={label}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="h-7 w-7 shrink-0"
+          onClick={() => step(stepSize)}
+          aria-label={`Increase ${label}`}
+        >
+          <Plus className="h-3 w-3" />
+        </Button>
+      </div>
+      {fractional && (
+        <div className="flex gap-0.5">
+          {[
+            ["0.25", "¼"],
+            ["0.5", "½"],
+            ["1", "1"],
+            ["2", "2"],
+          ].map(([qty, chipLabel]) => (
+            <button
+              key={qty}
+              type="button"
+              onClick={() => onChange(qty)}
+              className={cn(
+                "rounded border px-1 text-[9px] leading-4 transition-colors",
+                value === qty
+                  ? "border-indigo-400 bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40"
+                  : "border-slate-200 text-slate-500 hover:bg-slate-50 dark:border-slate-700"
+              )}
+              aria-label={`Set ${label} to ${qty}`}
+            >
+              {chipLabel}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

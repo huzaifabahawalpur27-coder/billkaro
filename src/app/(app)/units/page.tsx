@@ -3,6 +3,7 @@ import { requireBusiness, hasPermission } from "@/server/auth/guards";
 import { PageHeader } from "@/components/app/page-header";
 import { EntityTable } from "../brands/entity-table";
 import { addUnitAction, renameUnitAction, deleteUnitAction } from "./actions";
+import { FractionalUnitsPanel } from "./fractional-units-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,10 @@ export default async function UnitsPage() {
         onAdd={addUnitAction}
         onRename={renameUnitAction}
         onDelete={deleteUnitAction}
+      />
+      <FractionalUnitsPanel
+        units={units.map((u) => ({ id: u.id, name: u.name, isFractional: u.isFractional }))}
+        canManage={hasPermission(ctx, "EDIT_PRODUCTS")}
       />
     </>
   );

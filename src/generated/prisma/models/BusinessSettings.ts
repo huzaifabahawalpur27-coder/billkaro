@@ -28,10 +28,12 @@ export type AggregateBusinessSettings = {
 
 export type BusinessSettingsAvgAggregateOutputType = {
   defaultTaxRate: runtime.Decimal | null
+  quotationValidityDays: number | null
 }
 
 export type BusinessSettingsSumAggregateOutputType = {
   defaultTaxRate: runtime.Decimal | null
+  quotationValidityDays: number | null
 }
 
 export type BusinessSettingsMinAggregateOutputType = {
@@ -45,6 +47,10 @@ export type BusinessSettingsMinAggregateOutputType = {
   receiptSize: $Enums.ReceiptSize | null
   priceRounding: $Enums.RoundingRule | null
   invoiceFooter: string | null
+  quotationsEnabled: boolean | null
+  quotationPrefix: string | null
+  quotationValidityDays: number | null
+  quotationFooter: string | null
   logoUrl: string | null
   language: string | null
   updatedAt: Date | null
@@ -61,6 +67,10 @@ export type BusinessSettingsMaxAggregateOutputType = {
   receiptSize: $Enums.ReceiptSize | null
   priceRounding: $Enums.RoundingRule | null
   invoiceFooter: string | null
+  quotationsEnabled: boolean | null
+  quotationPrefix: string | null
+  quotationValidityDays: number | null
+  quotationFooter: string | null
   logoUrl: string | null
   language: string | null
   updatedAt: Date | null
@@ -77,6 +87,10 @@ export type BusinessSettingsCountAggregateOutputType = {
   receiptSize: number
   priceRounding: number
   invoiceFooter: number
+  quotationsEnabled: number
+  quotationPrefix: number
+  quotationValidityDays: number
+  quotationFooter: number
   logoUrl: number
   language: number
   updatedAt: number
@@ -86,10 +100,12 @@ export type BusinessSettingsCountAggregateOutputType = {
 
 export type BusinessSettingsAvgAggregateInputType = {
   defaultTaxRate?: true
+  quotationValidityDays?: true
 }
 
 export type BusinessSettingsSumAggregateInputType = {
   defaultTaxRate?: true
+  quotationValidityDays?: true
 }
 
 export type BusinessSettingsMinAggregateInputType = {
@@ -103,6 +119,10 @@ export type BusinessSettingsMinAggregateInputType = {
   receiptSize?: true
   priceRounding?: true
   invoiceFooter?: true
+  quotationsEnabled?: true
+  quotationPrefix?: true
+  quotationValidityDays?: true
+  quotationFooter?: true
   logoUrl?: true
   language?: true
   updatedAt?: true
@@ -119,6 +139,10 @@ export type BusinessSettingsMaxAggregateInputType = {
   receiptSize?: true
   priceRounding?: true
   invoiceFooter?: true
+  quotationsEnabled?: true
+  quotationPrefix?: true
+  quotationValidityDays?: true
+  quotationFooter?: true
   logoUrl?: true
   language?: true
   updatedAt?: true
@@ -135,6 +159,10 @@ export type BusinessSettingsCountAggregateInputType = {
   receiptSize?: true
   priceRounding?: true
   invoiceFooter?: true
+  quotationsEnabled?: true
+  quotationPrefix?: true
+  quotationValidityDays?: true
+  quotationFooter?: true
   logoUrl?: true
   language?: true
   updatedAt?: true
@@ -238,6 +266,10 @@ export type BusinessSettingsGroupByOutputType = {
   receiptSize: $Enums.ReceiptSize
   priceRounding: $Enums.RoundingRule
   invoiceFooter: string
+  quotationsEnabled: boolean
+  quotationPrefix: string
+  quotationValidityDays: number
+  quotationFooter: string
   logoUrl: string | null
   language: string
   updatedAt: Date
@@ -277,6 +309,10 @@ export type BusinessSettingsWhereInput = {
   receiptSize?: Prisma.EnumReceiptSizeFilter<"BusinessSettings"> | $Enums.ReceiptSize
   priceRounding?: Prisma.EnumRoundingRuleFilter<"BusinessSettings"> | $Enums.RoundingRule
   invoiceFooter?: Prisma.StringFilter<"BusinessSettings"> | string
+  quotationsEnabled?: Prisma.BoolFilter<"BusinessSettings"> | boolean
+  quotationPrefix?: Prisma.StringFilter<"BusinessSettings"> | string
+  quotationValidityDays?: Prisma.IntFilter<"BusinessSettings"> | number
+  quotationFooter?: Prisma.StringFilter<"BusinessSettings"> | string
   logoUrl?: Prisma.StringNullableFilter<"BusinessSettings"> | string | null
   language?: Prisma.StringFilter<"BusinessSettings"> | string
   updatedAt?: Prisma.DateTimeFilter<"BusinessSettings"> | Date | string
@@ -294,6 +330,10 @@ export type BusinessSettingsOrderByWithRelationInput = {
   receiptSize?: Prisma.SortOrder
   priceRounding?: Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrder
+  quotationsEnabled?: Prisma.SortOrder
+  quotationPrefix?: Prisma.SortOrder
+  quotationValidityDays?: Prisma.SortOrder
+  quotationFooter?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   language?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -314,6 +354,10 @@ export type BusinessSettingsWhereUniqueInput = Prisma.AtLeast<{
   receiptSize?: Prisma.EnumReceiptSizeFilter<"BusinessSettings"> | $Enums.ReceiptSize
   priceRounding?: Prisma.EnumRoundingRuleFilter<"BusinessSettings"> | $Enums.RoundingRule
   invoiceFooter?: Prisma.StringFilter<"BusinessSettings"> | string
+  quotationsEnabled?: Prisma.BoolFilter<"BusinessSettings"> | boolean
+  quotationPrefix?: Prisma.StringFilter<"BusinessSettings"> | string
+  quotationValidityDays?: Prisma.IntFilter<"BusinessSettings"> | number
+  quotationFooter?: Prisma.StringFilter<"BusinessSettings"> | string
   logoUrl?: Prisma.StringNullableFilter<"BusinessSettings"> | string | null
   language?: Prisma.StringFilter<"BusinessSettings"> | string
   updatedAt?: Prisma.DateTimeFilter<"BusinessSettings"> | Date | string
@@ -331,6 +375,10 @@ export type BusinessSettingsOrderByWithAggregationInput = {
   receiptSize?: Prisma.SortOrder
   priceRounding?: Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrder
+  quotationsEnabled?: Prisma.SortOrder
+  quotationPrefix?: Prisma.SortOrder
+  quotationValidityDays?: Prisma.SortOrder
+  quotationFooter?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   language?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -355,6 +403,10 @@ export type BusinessSettingsScalarWhereWithAggregatesInput = {
   receiptSize?: Prisma.EnumReceiptSizeWithAggregatesFilter<"BusinessSettings"> | $Enums.ReceiptSize
   priceRounding?: Prisma.EnumRoundingRuleWithAggregatesFilter<"BusinessSettings"> | $Enums.RoundingRule
   invoiceFooter?: Prisma.StringWithAggregatesFilter<"BusinessSettings"> | string
+  quotationsEnabled?: Prisma.BoolWithAggregatesFilter<"BusinessSettings"> | boolean
+  quotationPrefix?: Prisma.StringWithAggregatesFilter<"BusinessSettings"> | string
+  quotationValidityDays?: Prisma.IntWithAggregatesFilter<"BusinessSettings"> | number
+  quotationFooter?: Prisma.StringWithAggregatesFilter<"BusinessSettings"> | string
   logoUrl?: Prisma.StringNullableWithAggregatesFilter<"BusinessSettings"> | string | null
   language?: Prisma.StringWithAggregatesFilter<"BusinessSettings"> | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BusinessSettings"> | Date | string
@@ -370,6 +422,10 @@ export type BusinessSettingsCreateInput = {
   receiptSize?: $Enums.ReceiptSize
   priceRounding?: $Enums.RoundingRule
   invoiceFooter?: string
+  quotationsEnabled?: boolean
+  quotationPrefix?: string
+  quotationValidityDays?: number
+  quotationFooter?: string
   logoUrl?: string | null
   language?: string
   updatedAt?: Date | string
@@ -387,6 +443,10 @@ export type BusinessSettingsUncheckedCreateInput = {
   receiptSize?: $Enums.ReceiptSize
   priceRounding?: $Enums.RoundingRule
   invoiceFooter?: string
+  quotationsEnabled?: boolean
+  quotationPrefix?: string
+  quotationValidityDays?: number
+  quotationFooter?: string
   logoUrl?: string | null
   language?: string
   updatedAt?: Date | string
@@ -402,6 +462,10 @@ export type BusinessSettingsUpdateInput = {
   receiptSize?: Prisma.EnumReceiptSizeFieldUpdateOperationsInput | $Enums.ReceiptSize
   priceRounding?: Prisma.EnumRoundingRuleFieldUpdateOperationsInput | $Enums.RoundingRule
   invoiceFooter?: Prisma.StringFieldUpdateOperationsInput | string
+  quotationsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotationPrefix?: Prisma.StringFieldUpdateOperationsInput | string
+  quotationValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  quotationFooter?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -419,6 +483,10 @@ export type BusinessSettingsUncheckedUpdateInput = {
   receiptSize?: Prisma.EnumReceiptSizeFieldUpdateOperationsInput | $Enums.ReceiptSize
   priceRounding?: Prisma.EnumRoundingRuleFieldUpdateOperationsInput | $Enums.RoundingRule
   invoiceFooter?: Prisma.StringFieldUpdateOperationsInput | string
+  quotationsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotationPrefix?: Prisma.StringFieldUpdateOperationsInput | string
+  quotationValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  quotationFooter?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -435,6 +503,10 @@ export type BusinessSettingsCreateManyInput = {
   receiptSize?: $Enums.ReceiptSize
   priceRounding?: $Enums.RoundingRule
   invoiceFooter?: string
+  quotationsEnabled?: boolean
+  quotationPrefix?: string
+  quotationValidityDays?: number
+  quotationFooter?: string
   logoUrl?: string | null
   language?: string
   updatedAt?: Date | string
@@ -450,6 +522,10 @@ export type BusinessSettingsUpdateManyMutationInput = {
   receiptSize?: Prisma.EnumReceiptSizeFieldUpdateOperationsInput | $Enums.ReceiptSize
   priceRounding?: Prisma.EnumRoundingRuleFieldUpdateOperationsInput | $Enums.RoundingRule
   invoiceFooter?: Prisma.StringFieldUpdateOperationsInput | string
+  quotationsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotationPrefix?: Prisma.StringFieldUpdateOperationsInput | string
+  quotationValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  quotationFooter?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -466,6 +542,10 @@ export type BusinessSettingsUncheckedUpdateManyInput = {
   receiptSize?: Prisma.EnumReceiptSizeFieldUpdateOperationsInput | $Enums.ReceiptSize
   priceRounding?: Prisma.EnumRoundingRuleFieldUpdateOperationsInput | $Enums.RoundingRule
   invoiceFooter?: Prisma.StringFieldUpdateOperationsInput | string
+  quotationsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotationPrefix?: Prisma.StringFieldUpdateOperationsInput | string
+  quotationValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  quotationFooter?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -487,6 +567,10 @@ export type BusinessSettingsCountOrderByAggregateInput = {
   receiptSize?: Prisma.SortOrder
   priceRounding?: Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrder
+  quotationsEnabled?: Prisma.SortOrder
+  quotationPrefix?: Prisma.SortOrder
+  quotationValidityDays?: Prisma.SortOrder
+  quotationFooter?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
   language?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -494,6 +578,7 @@ export type BusinessSettingsCountOrderByAggregateInput = {
 
 export type BusinessSettingsAvgOrderByAggregateInput = {
   defaultTaxRate?: Prisma.SortOrder
+  quotationValidityDays?: Prisma.SortOrder
 }
 
 export type BusinessSettingsMaxOrderByAggregateInput = {
@@ -507,6 +592,10 @@ export type BusinessSettingsMaxOrderByAggregateInput = {
   receiptSize?: Prisma.SortOrder
   priceRounding?: Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrder
+  quotationsEnabled?: Prisma.SortOrder
+  quotationPrefix?: Prisma.SortOrder
+  quotationValidityDays?: Prisma.SortOrder
+  quotationFooter?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
   language?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -523,6 +612,10 @@ export type BusinessSettingsMinOrderByAggregateInput = {
   receiptSize?: Prisma.SortOrder
   priceRounding?: Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrder
+  quotationsEnabled?: Prisma.SortOrder
+  quotationPrefix?: Prisma.SortOrder
+  quotationValidityDays?: Prisma.SortOrder
+  quotationFooter?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
   language?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -530,6 +623,7 @@ export type BusinessSettingsMinOrderByAggregateInput = {
 
 export type BusinessSettingsSumOrderByAggregateInput = {
   defaultTaxRate?: Prisma.SortOrder
+  quotationValidityDays?: Prisma.SortOrder
 }
 
 export type BusinessSettingsCreateNestedOneWithoutBusinessInput = {
@@ -580,6 +674,14 @@ export type EnumRoundingRuleFieldUpdateOperationsInput = {
   set?: $Enums.RoundingRule
 }
 
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type BusinessSettingsCreateWithoutBusinessInput = {
   id?: string
   currencyCode?: string
@@ -590,6 +692,10 @@ export type BusinessSettingsCreateWithoutBusinessInput = {
   receiptSize?: $Enums.ReceiptSize
   priceRounding?: $Enums.RoundingRule
   invoiceFooter?: string
+  quotationsEnabled?: boolean
+  quotationPrefix?: string
+  quotationValidityDays?: number
+  quotationFooter?: string
   logoUrl?: string | null
   language?: string
   updatedAt?: Date | string
@@ -605,6 +711,10 @@ export type BusinessSettingsUncheckedCreateWithoutBusinessInput = {
   receiptSize?: $Enums.ReceiptSize
   priceRounding?: $Enums.RoundingRule
   invoiceFooter?: string
+  quotationsEnabled?: boolean
+  quotationPrefix?: string
+  quotationValidityDays?: number
+  quotationFooter?: string
   logoUrl?: string | null
   language?: string
   updatedAt?: Date | string
@@ -636,6 +746,10 @@ export type BusinessSettingsUpdateWithoutBusinessInput = {
   receiptSize?: Prisma.EnumReceiptSizeFieldUpdateOperationsInput | $Enums.ReceiptSize
   priceRounding?: Prisma.EnumRoundingRuleFieldUpdateOperationsInput | $Enums.RoundingRule
   invoiceFooter?: Prisma.StringFieldUpdateOperationsInput | string
+  quotationsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotationPrefix?: Prisma.StringFieldUpdateOperationsInput | string
+  quotationValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  quotationFooter?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -651,6 +765,10 @@ export type BusinessSettingsUncheckedUpdateWithoutBusinessInput = {
   receiptSize?: Prisma.EnumReceiptSizeFieldUpdateOperationsInput | $Enums.ReceiptSize
   priceRounding?: Prisma.EnumRoundingRuleFieldUpdateOperationsInput | $Enums.RoundingRule
   invoiceFooter?: Prisma.StringFieldUpdateOperationsInput | string
+  quotationsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quotationPrefix?: Prisma.StringFieldUpdateOperationsInput | string
+  quotationValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  quotationFooter?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -669,6 +787,10 @@ export type BusinessSettingsSelect<ExtArgs extends runtime.Types.Extensions.Inte
   receiptSize?: boolean
   priceRounding?: boolean
   invoiceFooter?: boolean
+  quotationsEnabled?: boolean
+  quotationPrefix?: boolean
+  quotationValidityDays?: boolean
+  quotationFooter?: boolean
   logoUrl?: boolean
   language?: boolean
   updatedAt?: boolean
@@ -686,6 +808,10 @@ export type BusinessSettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   receiptSize?: boolean
   priceRounding?: boolean
   invoiceFooter?: boolean
+  quotationsEnabled?: boolean
+  quotationPrefix?: boolean
+  quotationValidityDays?: boolean
+  quotationFooter?: boolean
   logoUrl?: boolean
   language?: boolean
   updatedAt?: boolean
@@ -703,6 +829,10 @@ export type BusinessSettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   receiptSize?: boolean
   priceRounding?: boolean
   invoiceFooter?: boolean
+  quotationsEnabled?: boolean
+  quotationPrefix?: boolean
+  quotationValidityDays?: boolean
+  quotationFooter?: boolean
   logoUrl?: boolean
   language?: boolean
   updatedAt?: boolean
@@ -720,12 +850,16 @@ export type BusinessSettingsSelectScalar = {
   receiptSize?: boolean
   priceRounding?: boolean
   invoiceFooter?: boolean
+  quotationsEnabled?: boolean
+  quotationPrefix?: boolean
+  quotationValidityDays?: boolean
+  quotationFooter?: boolean
   logoUrl?: boolean
   language?: boolean
   updatedAt?: boolean
 }
 
-export type BusinessSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "businessId" | "currencyCode" | "currencySymbol" | "invoicePrefix" | "receiptPrefix" | "defaultTaxRate" | "receiptSize" | "priceRounding" | "invoiceFooter" | "logoUrl" | "language" | "updatedAt", ExtArgs["result"]["businessSettings"]>
+export type BusinessSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "businessId" | "currencyCode" | "currencySymbol" | "invoicePrefix" | "receiptPrefix" | "defaultTaxRate" | "receiptSize" | "priceRounding" | "invoiceFooter" | "quotationsEnabled" | "quotationPrefix" | "quotationValidityDays" | "quotationFooter" | "logoUrl" | "language" | "updatedAt", ExtArgs["result"]["businessSettings"]>
 export type BusinessSettingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   business?: boolean | Prisma.BusinessDefaultArgs<ExtArgs>
 }
@@ -752,6 +886,10 @@ export type $BusinessSettingsPayload<ExtArgs extends runtime.Types.Extensions.In
     receiptSize: $Enums.ReceiptSize
     priceRounding: $Enums.RoundingRule
     invoiceFooter: string
+    quotationsEnabled: boolean
+    quotationPrefix: string
+    quotationValidityDays: number
+    quotationFooter: string
     logoUrl: string | null
     language: string
     updatedAt: Date
@@ -1189,6 +1327,10 @@ export interface BusinessSettingsFieldRefs {
   readonly receiptSize: Prisma.FieldRef<"BusinessSettings", 'ReceiptSize'>
   readonly priceRounding: Prisma.FieldRef<"BusinessSettings", 'RoundingRule'>
   readonly invoiceFooter: Prisma.FieldRef<"BusinessSettings", 'String'>
+  readonly quotationsEnabled: Prisma.FieldRef<"BusinessSettings", 'Boolean'>
+  readonly quotationPrefix: Prisma.FieldRef<"BusinessSettings", 'String'>
+  readonly quotationValidityDays: Prisma.FieldRef<"BusinessSettings", 'Int'>
+  readonly quotationFooter: Prisma.FieldRef<"BusinessSettings", 'String'>
   readonly logoUrl: Prisma.FieldRef<"BusinessSettings", 'String'>
   readonly language: Prisma.FieldRef<"BusinessSettings", 'String'>
   readonly updatedAt: Prisma.FieldRef<"BusinessSettings", 'DateTime'>

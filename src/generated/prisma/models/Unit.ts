@@ -28,6 +28,7 @@ export type UnitMinAggregateOutputType = {
   id: string | null
   businessId: string | null
   name: string | null
+  isFractional: boolean | null
   status: $Enums.EntityStatus | null
   createdAt: Date | null
 }
@@ -36,6 +37,7 @@ export type UnitMaxAggregateOutputType = {
   id: string | null
   businessId: string | null
   name: string | null
+  isFractional: boolean | null
   status: $Enums.EntityStatus | null
   createdAt: Date | null
 }
@@ -44,6 +46,7 @@ export type UnitCountAggregateOutputType = {
   id: number
   businessId: number
   name: number
+  isFractional: number
   status: number
   createdAt: number
   _all: number
@@ -54,6 +57,7 @@ export type UnitMinAggregateInputType = {
   id?: true
   businessId?: true
   name?: true
+  isFractional?: true
   status?: true
   createdAt?: true
 }
@@ -62,6 +66,7 @@ export type UnitMaxAggregateInputType = {
   id?: true
   businessId?: true
   name?: true
+  isFractional?: true
   status?: true
   createdAt?: true
 }
@@ -70,6 +75,7 @@ export type UnitCountAggregateInputType = {
   id?: true
   businessId?: true
   name?: true
+  isFractional?: true
   status?: true
   createdAt?: true
   _all?: true
@@ -151,6 +157,7 @@ export type UnitGroupByOutputType = {
   id: string
   businessId: string
   name: string
+  isFractional: boolean
   status: $Enums.EntityStatus
   createdAt: Date
   _count: UnitCountAggregateOutputType | null
@@ -180,6 +187,7 @@ export type UnitWhereInput = {
   id?: Prisma.StringFilter<"Unit"> | string
   businessId?: Prisma.StringFilter<"Unit"> | string
   name?: Prisma.StringFilter<"Unit"> | string
+  isFractional?: Prisma.BoolFilter<"Unit"> | boolean
   status?: Prisma.EnumEntityStatusFilter<"Unit"> | $Enums.EntityStatus
   createdAt?: Prisma.DateTimeFilter<"Unit"> | Date | string
   business?: Prisma.XOR<Prisma.BusinessScalarRelationFilter, Prisma.BusinessWhereInput>
@@ -190,6 +198,7 @@ export type UnitOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   businessId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isFractional?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   business?: Prisma.BusinessOrderByWithRelationInput
@@ -204,6 +213,7 @@ export type UnitWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UnitWhereInput | Prisma.UnitWhereInput[]
   businessId?: Prisma.StringFilter<"Unit"> | string
   name?: Prisma.StringFilter<"Unit"> | string
+  isFractional?: Prisma.BoolFilter<"Unit"> | boolean
   status?: Prisma.EnumEntityStatusFilter<"Unit"> | $Enums.EntityStatus
   createdAt?: Prisma.DateTimeFilter<"Unit"> | Date | string
   business?: Prisma.XOR<Prisma.BusinessScalarRelationFilter, Prisma.BusinessWhereInput>
@@ -214,6 +224,7 @@ export type UnitOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   businessId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isFractional?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.UnitCountOrderByAggregateInput
@@ -228,6 +239,7 @@ export type UnitScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Unit"> | string
   businessId?: Prisma.StringWithAggregatesFilter<"Unit"> | string
   name?: Prisma.StringWithAggregatesFilter<"Unit"> | string
+  isFractional?: Prisma.BoolWithAggregatesFilter<"Unit"> | boolean
   status?: Prisma.EnumEntityStatusWithAggregatesFilter<"Unit"> | $Enums.EntityStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Unit"> | Date | string
 }
@@ -235,6 +247,7 @@ export type UnitScalarWhereWithAggregatesInput = {
 export type UnitCreateInput = {
   id?: string
   name: string
+  isFractional?: boolean
   status?: $Enums.EntityStatus
   createdAt?: Date | string
   business: Prisma.BusinessCreateNestedOneWithoutUnitsInput
@@ -245,6 +258,7 @@ export type UnitUncheckedCreateInput = {
   id?: string
   businessId: string
   name: string
+  isFractional?: boolean
   status?: $Enums.EntityStatus
   createdAt?: Date | string
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutUnitInput
@@ -253,6 +267,7 @@ export type UnitUncheckedCreateInput = {
 export type UnitUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isFractional?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumEntityStatusFieldUpdateOperationsInput | $Enums.EntityStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   business?: Prisma.BusinessUpdateOneRequiredWithoutUnitsNestedInput
@@ -263,6 +278,7 @@ export type UnitUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   businessId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isFractional?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumEntityStatusFieldUpdateOperationsInput | $Enums.EntityStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductUncheckedUpdateManyWithoutUnitNestedInput
@@ -272,6 +288,7 @@ export type UnitCreateManyInput = {
   id?: string
   businessId: string
   name: string
+  isFractional?: boolean
   status?: $Enums.EntityStatus
   createdAt?: Date | string
 }
@@ -279,6 +296,7 @@ export type UnitCreateManyInput = {
 export type UnitUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isFractional?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumEntityStatusFieldUpdateOperationsInput | $Enums.EntityStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -287,6 +305,7 @@ export type UnitUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   businessId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isFractional?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumEntityStatusFieldUpdateOperationsInput | $Enums.EntityStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -310,6 +329,7 @@ export type UnitCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   businessId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isFractional?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -318,6 +338,7 @@ export type UnitMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   businessId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isFractional?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -326,6 +347,7 @@ export type UnitMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   businessId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isFractional?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -396,6 +418,7 @@ export type UnitUpdateOneWithoutProductsNestedInput = {
 export type UnitCreateWithoutBusinessInput = {
   id?: string
   name: string
+  isFractional?: boolean
   status?: $Enums.EntityStatus
   createdAt?: Date | string
   products?: Prisma.ProductCreateNestedManyWithoutUnitInput
@@ -404,6 +427,7 @@ export type UnitCreateWithoutBusinessInput = {
 export type UnitUncheckedCreateWithoutBusinessInput = {
   id?: string
   name: string
+  isFractional?: boolean
   status?: $Enums.EntityStatus
   createdAt?: Date | string
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutUnitInput
@@ -442,6 +466,7 @@ export type UnitScalarWhereInput = {
   id?: Prisma.StringFilter<"Unit"> | string
   businessId?: Prisma.StringFilter<"Unit"> | string
   name?: Prisma.StringFilter<"Unit"> | string
+  isFractional?: Prisma.BoolFilter<"Unit"> | boolean
   status?: Prisma.EnumEntityStatusFilter<"Unit"> | $Enums.EntityStatus
   createdAt?: Prisma.DateTimeFilter<"Unit"> | Date | string
 }
@@ -449,6 +474,7 @@ export type UnitScalarWhereInput = {
 export type UnitCreateWithoutProductsInput = {
   id?: string
   name: string
+  isFractional?: boolean
   status?: $Enums.EntityStatus
   createdAt?: Date | string
   business: Prisma.BusinessCreateNestedOneWithoutUnitsInput
@@ -458,6 +484,7 @@ export type UnitUncheckedCreateWithoutProductsInput = {
   id?: string
   businessId: string
   name: string
+  isFractional?: boolean
   status?: $Enums.EntityStatus
   createdAt?: Date | string
 }
@@ -481,6 +508,7 @@ export type UnitUpdateToOneWithWhereWithoutProductsInput = {
 export type UnitUpdateWithoutProductsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isFractional?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumEntityStatusFieldUpdateOperationsInput | $Enums.EntityStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   business?: Prisma.BusinessUpdateOneRequiredWithoutUnitsNestedInput
@@ -490,6 +518,7 @@ export type UnitUncheckedUpdateWithoutProductsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   businessId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isFractional?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumEntityStatusFieldUpdateOperationsInput | $Enums.EntityStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -497,6 +526,7 @@ export type UnitUncheckedUpdateWithoutProductsInput = {
 export type UnitCreateManyBusinessInput = {
   id?: string
   name: string
+  isFractional?: boolean
   status?: $Enums.EntityStatus
   createdAt?: Date | string
 }
@@ -504,6 +534,7 @@ export type UnitCreateManyBusinessInput = {
 export type UnitUpdateWithoutBusinessInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isFractional?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumEntityStatusFieldUpdateOperationsInput | $Enums.EntityStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductUpdateManyWithoutUnitNestedInput
@@ -512,6 +543,7 @@ export type UnitUpdateWithoutBusinessInput = {
 export type UnitUncheckedUpdateWithoutBusinessInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isFractional?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumEntityStatusFieldUpdateOperationsInput | $Enums.EntityStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductUncheckedUpdateManyWithoutUnitNestedInput
@@ -520,6 +552,7 @@ export type UnitUncheckedUpdateWithoutBusinessInput = {
 export type UnitUncheckedUpdateManyWithoutBusinessInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isFractional?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumEntityStatusFieldUpdateOperationsInput | $Enums.EntityStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -559,6 +592,7 @@ export type UnitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   businessId?: boolean
   name?: boolean
+  isFractional?: boolean
   status?: boolean
   createdAt?: boolean
   business?: boolean | Prisma.BusinessDefaultArgs<ExtArgs>
@@ -570,6 +604,7 @@ export type UnitSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   businessId?: boolean
   name?: boolean
+  isFractional?: boolean
   status?: boolean
   createdAt?: boolean
   business?: boolean | Prisma.BusinessDefaultArgs<ExtArgs>
@@ -579,6 +614,7 @@ export type UnitSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   businessId?: boolean
   name?: boolean
+  isFractional?: boolean
   status?: boolean
   createdAt?: boolean
   business?: boolean | Prisma.BusinessDefaultArgs<ExtArgs>
@@ -588,11 +624,12 @@ export type UnitSelectScalar = {
   id?: boolean
   businessId?: boolean
   name?: boolean
+  isFractional?: boolean
   status?: boolean
   createdAt?: boolean
 }
 
-export type UnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "businessId" | "name" | "status" | "createdAt", ExtArgs["result"]["unit"]>
+export type UnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "businessId" | "name" | "isFractional" | "status" | "createdAt", ExtArgs["result"]["unit"]>
 export type UnitInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   business?: boolean | Prisma.BusinessDefaultArgs<ExtArgs>
   products?: boolean | Prisma.Unit$productsArgs<ExtArgs>
@@ -615,6 +652,7 @@ export type $UnitPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     id: string
     businessId: string
     name: string
+    isFractional: boolean
     status: $Enums.EntityStatus
     createdAt: Date
   }, ExtArgs["result"]["unit"]>
@@ -1045,6 +1083,7 @@ export interface UnitFieldRefs {
   readonly id: Prisma.FieldRef<"Unit", 'String'>
   readonly businessId: Prisma.FieldRef<"Unit", 'String'>
   readonly name: Prisma.FieldRef<"Unit", 'String'>
+  readonly isFractional: Prisma.FieldRef<"Unit", 'Boolean'>
   readonly status: Prisma.FieldRef<"Unit", 'EntityStatus'>
   readonly createdAt: Prisma.FieldRef<"Unit", 'DateTime'>
 }

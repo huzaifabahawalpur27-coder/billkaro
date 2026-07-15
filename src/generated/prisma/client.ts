@@ -161,3 +161,13 @@ export type Announcement = Prisma.AnnouncementModel
  * 
  */
 export type AnnouncementSeen = Prisma.AnnouncementSeenModel
+/**
+ * Model Quotation
+ * 
+ */
+export type Quotation = Prisma.QuotationModel
+/**
+ * Model QuotationItem
+ * 
+ */
+export type QuotationItem = Prisma.QuotationItemModel

@@ -35,6 +35,10 @@ export default async function SettingsPage() {
             priceRounding: settings.priceRounding,
             invoiceFooter: settings.invoiceFooter,
             language: settings.language,
+            quotationsEnabled: settings.quotationsEnabled,
+            quotationPrefix: settings.quotationPrefix,
+            quotationValidityDays: String(settings.quotationValidityDays),
+            quotationFooter: settings.quotationFooter,
           }}
         />
       </div>

@@ -12,6 +12,11 @@ import {
   quickCreateCustomer,
 } from "@/server/services/customers";
 import { SubscriptionExpiredError } from "@/server/auth/guards";
+import {
+  createQuotation,
+  QuotationError,
+  type CreateQuotationInput,
+} from "@/server/services/quotations";
 
 export interface ActionResult<T = undefined> {
   ok: boolean;
@@ -68,6 +73,7 @@ const saleSchema = z.object({
   amountPaid: decimalStr.or(z.literal("")).transform((v) => v || "0"),
   cashReceived: decimalStr.nullable().optional().or(z.literal("")),
   notes: z.string().max(500).nullable().optional(),
+  quotationId: z.string().nullable().optional(),
 });
 
 export interface SaleReceipt {
@@ -92,6 +98,60 @@ const SALE_ERRORS: Record<string, string> = {
   DISCOUNT_NOT_ALLOWED: "Aap ko discount dene ki ijazat nahi hai.",
   INVALID_AMOUNT_PAID: "Received amount sahi nahi hai.",
 };
+
+const quotationSchema = z.object({
+  items: saleSchema.shape.items,
+  discountType: z.enum(["NONE", "FIXED", "PERCENT"]),
+  discountValue: decimalStr.or(z.literal("")).transform((v) => v || "0"),
+  customerId: z.string().nullable().optional(),
+  customerName: z.string().trim().max(120).nullable().optional(),
+  validityDays: z.coerce.number().int().min(1).max(365).optional(),
+  notes: z.string().max(500).nullable().optional(),
+});
+
+export interface QuotationReceipt {
+  quotationId: string;
+  quotationNumber: string;
+  grandTotal: string;
+  validUntil: string;
+  customerName: string | null;
+}
+
+const QUOTATION_ERRORS: Record<string, string> = {
+  QUOTATIONS_DISABLED: "Quotation feature settings se on karein.",
+  EMPTY_QUOTATION: "Quotation mein koi item nahi hai.",
+  INVALID_QUANTITY: "Quantity sahi nahi hai.",
+  INVALID_PRICE: "Price sahi nahi hai.",
+  PRODUCT_NOT_FOUND: "Koi product nahi mila — dubara try karein.",
+  OPEN_ITEM_NAME_REQUIRED: "Open item ka naam zaroori hai.",
+  CUSTOMER_NOT_FOUND: "Customer nahi mila.",
+};
+
+export async function createQuotationAction(
+  input: unknown
+): Promise<ActionResult<QuotationReceipt>> {
+  const parsed = quotationSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: "Quotation ki details sahi nahi hain." };
+  }
+
+  try {
+    const receipt = await createQuotation(parsed.data as CreateQuotationInput);
+    return { ok: true, error: null, data: receipt };
+  } catch (e) {
+    if (e instanceof QuotationError) {
+      return { ok: false, error: QUOTATION_ERRORS[e.code] ?? "Quotation save nahi ho saki." };
+    }
+    if (e instanceof SubscriptionExpiredError) {
+      return {
+        ok: false,
+        error: "Subscription khatam ho gayi hai — abhi sirf dekh sakte hain.",
+      };
+    }
+    console.error("createQuotationAction failed:", e);
+    return { ok: false, error: "Quotation save nahi ho saki. Dubara try karein." };
+  }
+}
 
 export async function createSaleAction(input: unknown): Promise<ActionResult<SaleReceipt>> {
   const parsed = saleSchema.safeParse(input);
