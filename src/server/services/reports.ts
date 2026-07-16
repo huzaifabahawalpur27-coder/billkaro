@@ -156,3 +156,42 @@ export async function getDashboardSummary() {
     udhaarCustomerCount: pendingUdhaar._count,
   };
 }
+
+export async function getSalesSummaryForDates(fromStr: string, toStr: string) {
+  const ctx = await requirePermission("VIEW_REPORTS");
+
+  const from = new Date(fromStr);
+  from.setHours(0, 0, 0, 0);
+
+  const to = new Date(toStr);
+  to.setHours(23, 59, 59, 999);
+
+  const sales = await db.sale.findMany({
+    where: {
+      businessId: ctx.business.id,
+      status: "COMPLETED",
+      createdAt: { gte: from, lte: to },
+    },
+    select: {
+      grandTotal: true,
+      amountPaid: true,
+      amountDue: true,
+      paymentStatus: true,
+    },
+  });
+
+  const totalSales = sales.reduce((s, x) => s.add(D(x.grandTotal)), D(0));
+  const totalReceived = sales.reduce((s, x) => s.add(D(x.amountPaid)), D(0));
+  const totalUdhaar = sales.reduce((s, x) => s.add(D(x.amountDue)), D(0));
+  const billCount = sales.length;
+  const udhaarBills = sales.filter((s) => D(s.amountDue).gt(0)).length;
+
+  return {
+    totalSales: totalSales.toFixed(2),
+    totalReceived: totalReceived.toFixed(2),
+    totalUdhaar: totalUdhaar.toFixed(2),
+    billCount,
+    udhaarBills,
+    period: "CUSTOM" as const,
+  };
+}

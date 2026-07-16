@@ -79,11 +79,41 @@ export async function getBill(saleId: string) {
   });
   if (!sale) throw new Error("BILL_NOT_FOUND");
 
+  let originalSaleSnapshot: any = null;
+  if (sale.notes && sale.notes.includes("Revised from bill ")) {
+    const prefix = "Revised from bill ";
+    const index = sale.notes.indexOf(prefix);
+    const invoiceNum = sale.notes.slice(index + prefix.length).trim().split(" ")[0];
+    if (invoiceNum) {
+      const orig = await db.sale.findFirst({
+        where: { invoiceNumber: invoiceNum, businessId: ctx.business.id },
+        include: {
+          items: { orderBy: { id: "asc" } },
+        },
+      });
+      if (orig) {
+        originalSaleSnapshot = {
+          id: orig.id,
+          invoiceNumber: orig.invoiceNumber,
+          grandTotal: orig.grandTotal.toString(),
+          items: orig.items.map((item) => ({
+            productId: item.productId,
+            name: item.productNameSnapshot,
+            soldPrice: item.soldPrice.toString(),
+            quantity: item.quantity.toString(),
+            isOpenItem: item.isOpenItem,
+          })),
+        };
+      }
+    }
+  }
+
   return {
     sale,
     canCancel: sale.status === "COMPLETED" && hasPermission(ctx, "CANCEL_BILLS"),
     settings: ctx.settings,
     business: ctx.business,
+    originalSaleSnapshot,
   };
 }
 
@@ -154,4 +184,38 @@ export async function cancelBill(saleId: string, reason: string) {
       },
     });
   });
+}
+
+export async function getBillForPos(saleId: string) {
+  const ctx = await requirePermission("CREATE_BILLS"); // Editing a bill requires bill creation permissions
+  const sale = await db.sale.findFirst({
+    where: { id: saleId, businessId: ctx.business.id },
+    include: {
+      items: { orderBy: { id: "asc" } },
+      customer: { select: { id: true, name: true, phone: true } },
+    },
+  });
+  if (!sale || sale.status !== "COMPLETED") return null;
+  return {
+    id: sale.id,
+    invoiceNumber: sale.invoiceNumber,
+    customerId: sale.customerId,
+    discountType: sale.discountType,
+    discountValue: sale.discountValue.toString(),
+    paymentMethod: sale.paymentMethod,
+    amountPaid: sale.amountPaid.toString(),
+    notes: sale.notes,
+    customer: sale.customer ? {
+      id: sale.customer.id,
+      name: sale.customer.name,
+      phone: sale.customer.phone,
+    } : null,
+    items: sale.items.map(item => ({
+      productId: item.productId,
+      name: item.productNameSnapshot,
+      soldPrice: item.soldPrice.toString(),
+      quantity: item.quantity.toString(),
+      isOpenItem: item.isOpenItem,
+    })),
+  };
 }

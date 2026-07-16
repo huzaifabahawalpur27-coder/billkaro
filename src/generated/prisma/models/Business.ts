@@ -249,6 +249,8 @@ export type BusinessWhereInput = {
   counters?: Prisma.DocumentCounterListRelationFilter
   quotations?: Prisma.QuotationListRelationFilter
   quotationItems?: Prisma.QuotationItemListRelationFilter
+  cashBookEntries?: Prisma.CashBookEntryListRelationFilter
+  staff?: Prisma.StaffListRelationFilter
 }
 
 export type BusinessOrderByWithRelationInput = {
@@ -282,6 +284,8 @@ export type BusinessOrderByWithRelationInput = {
   counters?: Prisma.DocumentCounterOrderByRelationAggregateInput
   quotations?: Prisma.QuotationOrderByRelationAggregateInput
   quotationItems?: Prisma.QuotationItemOrderByRelationAggregateInput
+  cashBookEntries?: Prisma.CashBookEntryOrderByRelationAggregateInput
+  staff?: Prisma.StaffOrderByRelationAggregateInput
 }
 
 export type BusinessWhereUniqueInput = Prisma.AtLeast<{
@@ -318,6 +322,8 @@ export type BusinessWhereUniqueInput = Prisma.AtLeast<{
   counters?: Prisma.DocumentCounterListRelationFilter
   quotations?: Prisma.QuotationListRelationFilter
   quotationItems?: Prisma.QuotationItemListRelationFilter
+  cashBookEntries?: Prisma.CashBookEntryListRelationFilter
+  staff?: Prisma.StaffListRelationFilter
 }, "id">
 
 export type BusinessOrderByWithAggregationInput = {
@@ -385,6 +391,8 @@ export type BusinessCreateInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateInput = {
@@ -418,6 +426,8 @@ export type BusinessUncheckedCreateInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUpdateInput = {
@@ -451,6 +461,8 @@ export type BusinessUpdateInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateInput = {
@@ -484,6 +496,8 @@ export type BusinessUncheckedUpdateInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateManyInput = {
@@ -849,6 +863,34 @@ export type BusinessUpdateOneRequiredWithoutQuotationItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BusinessUpdateToOneWithWhereWithoutQuotationItemsInput, Prisma.BusinessUpdateWithoutQuotationItemsInput>, Prisma.BusinessUncheckedUpdateWithoutQuotationItemsInput>
 }
 
+export type BusinessCreateNestedOneWithoutCashBookEntriesInput = {
+  create?: Prisma.XOR<Prisma.BusinessCreateWithoutCashBookEntriesInput, Prisma.BusinessUncheckedCreateWithoutCashBookEntriesInput>
+  connectOrCreate?: Prisma.BusinessCreateOrConnectWithoutCashBookEntriesInput
+  connect?: Prisma.BusinessWhereUniqueInput
+}
+
+export type BusinessUpdateOneRequiredWithoutCashBookEntriesNestedInput = {
+  create?: Prisma.XOR<Prisma.BusinessCreateWithoutCashBookEntriesInput, Prisma.BusinessUncheckedCreateWithoutCashBookEntriesInput>
+  connectOrCreate?: Prisma.BusinessCreateOrConnectWithoutCashBookEntriesInput
+  upsert?: Prisma.BusinessUpsertWithoutCashBookEntriesInput
+  connect?: Prisma.BusinessWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BusinessUpdateToOneWithWhereWithoutCashBookEntriesInput, Prisma.BusinessUpdateWithoutCashBookEntriesInput>, Prisma.BusinessUncheckedUpdateWithoutCashBookEntriesInput>
+}
+
+export type BusinessCreateNestedOneWithoutStaffInput = {
+  create?: Prisma.XOR<Prisma.BusinessCreateWithoutStaffInput, Prisma.BusinessUncheckedCreateWithoutStaffInput>
+  connectOrCreate?: Prisma.BusinessCreateOrConnectWithoutStaffInput
+  connect?: Prisma.BusinessWhereUniqueInput
+}
+
+export type BusinessUpdateOneRequiredWithoutStaffNestedInput = {
+  create?: Prisma.XOR<Prisma.BusinessCreateWithoutStaffInput, Prisma.BusinessUncheckedCreateWithoutStaffInput>
+  connectOrCreate?: Prisma.BusinessCreateOrConnectWithoutStaffInput
+  upsert?: Prisma.BusinessUpsertWithoutStaffInput
+  connect?: Prisma.BusinessWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BusinessUpdateToOneWithWhereWithoutStaffInput, Prisma.BusinessUpdateWithoutStaffInput>, Prisma.BusinessUncheckedUpdateWithoutStaffInput>
+}
+
 export type BusinessCreateWithoutMembersInput = {
   id?: string
   name: string
@@ -879,6 +921,8 @@ export type BusinessCreateWithoutMembersInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutMembersInput = {
@@ -911,6 +955,8 @@ export type BusinessUncheckedCreateWithoutMembersInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutMembersInput = {
@@ -959,6 +1005,8 @@ export type BusinessUpdateWithoutMembersInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutMembersInput = {
@@ -991,6 +1039,8 @@ export type BusinessUncheckedUpdateWithoutMembersInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutRolesInput = {
@@ -1023,6 +1073,8 @@ export type BusinessCreateWithoutRolesInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutRolesInput = {
@@ -1055,6 +1107,8 @@ export type BusinessUncheckedCreateWithoutRolesInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutRolesInput = {
@@ -1103,6 +1157,8 @@ export type BusinessUpdateWithoutRolesInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutRolesInput = {
@@ -1135,6 +1191,8 @@ export type BusinessUncheckedUpdateWithoutRolesInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutSettingsInput = {
@@ -1167,6 +1225,8 @@ export type BusinessCreateWithoutSettingsInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutSettingsInput = {
@@ -1199,6 +1259,8 @@ export type BusinessUncheckedCreateWithoutSettingsInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutSettingsInput = {
@@ -1247,6 +1309,8 @@ export type BusinessUpdateWithoutSettingsInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutSettingsInput = {
@@ -1279,6 +1343,8 @@ export type BusinessUncheckedUpdateWithoutSettingsInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutCountersInput = {
@@ -1311,6 +1377,8 @@ export type BusinessCreateWithoutCountersInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutCountersInput = {
@@ -1343,6 +1411,8 @@ export type BusinessUncheckedCreateWithoutCountersInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutCountersInput = {
@@ -1391,6 +1461,8 @@ export type BusinessUpdateWithoutCountersInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutCountersInput = {
@@ -1423,6 +1495,8 @@ export type BusinessUncheckedUpdateWithoutCountersInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutBrandsInput = {
@@ -1455,6 +1529,8 @@ export type BusinessCreateWithoutBrandsInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutBrandsInput = {
@@ -1487,6 +1563,8 @@ export type BusinessUncheckedCreateWithoutBrandsInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutBrandsInput = {
@@ -1535,6 +1613,8 @@ export type BusinessUpdateWithoutBrandsInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutBrandsInput = {
@@ -1567,6 +1647,8 @@ export type BusinessUncheckedUpdateWithoutBrandsInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutCategoriesInput = {
@@ -1599,6 +1681,8 @@ export type BusinessCreateWithoutCategoriesInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutCategoriesInput = {
@@ -1631,6 +1715,8 @@ export type BusinessUncheckedCreateWithoutCategoriesInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutCategoriesInput = {
@@ -1679,6 +1765,8 @@ export type BusinessUpdateWithoutCategoriesInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutCategoriesInput = {
@@ -1711,6 +1799,8 @@ export type BusinessUncheckedUpdateWithoutCategoriesInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutUnitsInput = {
@@ -1743,6 +1833,8 @@ export type BusinessCreateWithoutUnitsInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutUnitsInput = {
@@ -1775,6 +1867,8 @@ export type BusinessUncheckedCreateWithoutUnitsInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutUnitsInput = {
@@ -1823,6 +1917,8 @@ export type BusinessUpdateWithoutUnitsInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutUnitsInput = {
@@ -1855,6 +1951,8 @@ export type BusinessUncheckedUpdateWithoutUnitsInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutProductsInput = {
@@ -1887,6 +1985,8 @@ export type BusinessCreateWithoutProductsInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutProductsInput = {
@@ -1919,6 +2019,8 @@ export type BusinessUncheckedCreateWithoutProductsInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutProductsInput = {
@@ -1967,6 +2069,8 @@ export type BusinessUpdateWithoutProductsInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutProductsInput = {
@@ -1999,6 +2103,8 @@ export type BusinessUncheckedUpdateWithoutProductsInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutPriceHistoryInput = {
@@ -2031,6 +2137,8 @@ export type BusinessCreateWithoutPriceHistoryInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutPriceHistoryInput = {
@@ -2063,6 +2171,8 @@ export type BusinessUncheckedCreateWithoutPriceHistoryInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutPriceHistoryInput = {
@@ -2111,6 +2221,8 @@ export type BusinessUpdateWithoutPriceHistoryInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutPriceHistoryInput = {
@@ -2143,6 +2255,8 @@ export type BusinessUncheckedUpdateWithoutPriceHistoryInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutCustomersInput = {
@@ -2175,6 +2289,8 @@ export type BusinessCreateWithoutCustomersInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutCustomersInput = {
@@ -2207,6 +2323,8 @@ export type BusinessUncheckedCreateWithoutCustomersInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutCustomersInput = {
@@ -2255,6 +2373,8 @@ export type BusinessUpdateWithoutCustomersInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutCustomersInput = {
@@ -2287,6 +2407,8 @@ export type BusinessUncheckedUpdateWithoutCustomersInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutSalesInput = {
@@ -2319,6 +2441,8 @@ export type BusinessCreateWithoutSalesInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutSalesInput = {
@@ -2351,6 +2475,8 @@ export type BusinessUncheckedCreateWithoutSalesInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutSalesInput = {
@@ -2399,6 +2525,8 @@ export type BusinessUpdateWithoutSalesInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutSalesInput = {
@@ -2431,6 +2559,8 @@ export type BusinessUncheckedUpdateWithoutSalesInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutSaleItemsInput = {
@@ -2463,6 +2593,8 @@ export type BusinessCreateWithoutSaleItemsInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutSaleItemsInput = {
@@ -2495,6 +2627,8 @@ export type BusinessUncheckedCreateWithoutSaleItemsInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutSaleItemsInput = {
@@ -2543,6 +2677,8 @@ export type BusinessUpdateWithoutSaleItemsInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutSaleItemsInput = {
@@ -2575,6 +2711,8 @@ export type BusinessUncheckedUpdateWithoutSaleItemsInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutPaymentsInput = {
@@ -2607,6 +2745,8 @@ export type BusinessCreateWithoutPaymentsInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutPaymentsInput = {
@@ -2639,6 +2779,8 @@ export type BusinessUncheckedCreateWithoutPaymentsInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutPaymentsInput = {
@@ -2687,6 +2829,8 @@ export type BusinessUpdateWithoutPaymentsInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutPaymentsInput = {
@@ -2719,6 +2863,8 @@ export type BusinessUncheckedUpdateWithoutPaymentsInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutLedgerEntriesInput = {
@@ -2751,6 +2897,8 @@ export type BusinessCreateWithoutLedgerEntriesInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutLedgerEntriesInput = {
@@ -2783,6 +2931,8 @@ export type BusinessUncheckedCreateWithoutLedgerEntriesInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutLedgerEntriesInput = {
@@ -2831,6 +2981,8 @@ export type BusinessUpdateWithoutLedgerEntriesInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutLedgerEntriesInput = {
@@ -2863,6 +3015,8 @@ export type BusinessUncheckedUpdateWithoutLedgerEntriesInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutImportJobsInput = {
@@ -2895,6 +3049,8 @@ export type BusinessCreateWithoutImportJobsInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutImportJobsInput = {
@@ -2927,6 +3083,8 @@ export type BusinessUncheckedCreateWithoutImportJobsInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutImportJobsInput = {
@@ -2975,6 +3133,8 @@ export type BusinessUpdateWithoutImportJobsInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutImportJobsInput = {
@@ -3007,6 +3167,8 @@ export type BusinessUncheckedUpdateWithoutImportJobsInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutAuditLogsInput = {
@@ -3039,6 +3201,8 @@ export type BusinessCreateWithoutAuditLogsInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutAuditLogsInput = {
@@ -3071,6 +3235,8 @@ export type BusinessUncheckedCreateWithoutAuditLogsInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutAuditLogsInput = {
@@ -3119,6 +3285,8 @@ export type BusinessUpdateWithoutAuditLogsInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutAuditLogsInput = {
@@ -3151,6 +3319,8 @@ export type BusinessUncheckedUpdateWithoutAuditLogsInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutSubscriptionInput = {
@@ -3183,6 +3353,8 @@ export type BusinessCreateWithoutSubscriptionInput = {
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutSubscriptionInput = {
@@ -3215,6 +3387,8 @@ export type BusinessUncheckedCreateWithoutSubscriptionInput = {
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutSubscriptionInput = {
@@ -3263,6 +3437,8 @@ export type BusinessUpdateWithoutSubscriptionInput = {
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutSubscriptionInput = {
@@ -3295,6 +3471,8 @@ export type BusinessUncheckedUpdateWithoutSubscriptionInput = {
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutQuotationsInput = {
@@ -3327,6 +3505,8 @@ export type BusinessCreateWithoutQuotationsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutQuotationsInput = {
@@ -3359,6 +3539,8 @@ export type BusinessUncheckedCreateWithoutQuotationsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutQuotationsInput = {
@@ -3407,6 +3589,8 @@ export type BusinessUpdateWithoutQuotationsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutQuotationsInput = {
@@ -3439,6 +3623,8 @@ export type BusinessUncheckedUpdateWithoutQuotationsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessCreateWithoutQuotationItemsInput = {
@@ -3471,6 +3657,8 @@ export type BusinessCreateWithoutQuotationItemsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessUncheckedCreateWithoutQuotationItemsInput = {
@@ -3503,6 +3691,8 @@ export type BusinessUncheckedCreateWithoutQuotationItemsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
   counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
   quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
 }
 
 export type BusinessCreateOrConnectWithoutQuotationItemsInput = {
@@ -3551,6 +3741,8 @@ export type BusinessUpdateWithoutQuotationItemsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
 }
 
 export type BusinessUncheckedUpdateWithoutQuotationItemsInput = {
@@ -3583,6 +3775,312 @@ export type BusinessUncheckedUpdateWithoutQuotationItemsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
   counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
   quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
+}
+
+export type BusinessCreateWithoutCashBookEntriesInput = {
+  id?: string
+  name: string
+  ownerName: string
+  phone?: string | null
+  address?: string | null
+  businessType?: string | null
+  status?: $Enums.BusinessStatus
+  suspendedAt?: Date | string | null
+  suspendedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  settings?: Prisma.BusinessSettingsCreateNestedOneWithoutBusinessInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutBusinessInput
+  members?: Prisma.BusinessUserCreateNestedManyWithoutBusinessInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBusinessInput
+  brands?: Prisma.BrandCreateNestedManyWithoutBusinessInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutBusinessInput
+  units?: Prisma.UnitCreateNestedManyWithoutBusinessInput
+  products?: Prisma.ProductCreateNestedManyWithoutBusinessInput
+  priceHistory?: Prisma.PriceHistoryCreateNestedManyWithoutBusinessInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutBusinessInput
+  sales?: Prisma.SaleCreateNestedManyWithoutBusinessInput
+  saleItems?: Prisma.SaleItemCreateNestedManyWithoutBusinessInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutBusinessInput
+  ledgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutBusinessInput
+  importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
+  counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffCreateNestedManyWithoutBusinessInput
+}
+
+export type BusinessUncheckedCreateWithoutCashBookEntriesInput = {
+  id?: string
+  name: string
+  ownerName: string
+  phone?: string | null
+  address?: string | null
+  businessType?: string | null
+  status?: $Enums.BusinessStatus
+  suspendedAt?: Date | string | null
+  suspendedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  settings?: Prisma.BusinessSettingsUncheckedCreateNestedOneWithoutBusinessInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutBusinessInput
+  members?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutBusinessInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBusinessInput
+  brands?: Prisma.BrandUncheckedCreateNestedManyWithoutBusinessInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutBusinessInput
+  units?: Prisma.UnitUncheckedCreateNestedManyWithoutBusinessInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutBusinessInput
+  priceHistory?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutBusinessInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutBusinessInput
+  sales?: Prisma.SaleUncheckedCreateNestedManyWithoutBusinessInput
+  saleItems?: Prisma.SaleItemUncheckedCreateNestedManyWithoutBusinessInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBusinessInput
+  ledgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutBusinessInput
+  importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
+  counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutBusinessInput
+}
+
+export type BusinessCreateOrConnectWithoutCashBookEntriesInput = {
+  where: Prisma.BusinessWhereUniqueInput
+  create: Prisma.XOR<Prisma.BusinessCreateWithoutCashBookEntriesInput, Prisma.BusinessUncheckedCreateWithoutCashBookEntriesInput>
+}
+
+export type BusinessUpsertWithoutCashBookEntriesInput = {
+  update: Prisma.XOR<Prisma.BusinessUpdateWithoutCashBookEntriesInput, Prisma.BusinessUncheckedUpdateWithoutCashBookEntriesInput>
+  create: Prisma.XOR<Prisma.BusinessCreateWithoutCashBookEntriesInput, Prisma.BusinessUncheckedCreateWithoutCashBookEntriesInput>
+  where?: Prisma.BusinessWhereInput
+}
+
+export type BusinessUpdateToOneWithWhereWithoutCashBookEntriesInput = {
+  where?: Prisma.BusinessWhereInput
+  data: Prisma.XOR<Prisma.BusinessUpdateWithoutCashBookEntriesInput, Prisma.BusinessUncheckedUpdateWithoutCashBookEntriesInput>
+}
+
+export type BusinessUpdateWithoutCashBookEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.BusinessSettingsUpdateOneWithoutBusinessNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutBusinessNestedInput
+  members?: Prisma.BusinessUserUpdateManyWithoutBusinessNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBusinessNestedInput
+  brands?: Prisma.BrandUpdateManyWithoutBusinessNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutBusinessNestedInput
+  units?: Prisma.UnitUpdateManyWithoutBusinessNestedInput
+  products?: Prisma.ProductUpdateManyWithoutBusinessNestedInput
+  priceHistory?: Prisma.PriceHistoryUpdateManyWithoutBusinessNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutBusinessNestedInput
+  sales?: Prisma.SaleUpdateManyWithoutBusinessNestedInput
+  saleItems?: Prisma.SaleItemUpdateManyWithoutBusinessNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutBusinessNestedInput
+  ledgerEntries?: Prisma.LedgerEntryUpdateManyWithoutBusinessNestedInput
+  importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
+  counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUpdateManyWithoutBusinessNestedInput
+}
+
+export type BusinessUncheckedUpdateWithoutCashBookEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.BusinessSettingsUncheckedUpdateOneWithoutBusinessNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutBusinessNestedInput
+  members?: Prisma.BusinessUserUncheckedUpdateManyWithoutBusinessNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBusinessNestedInput
+  brands?: Prisma.BrandUncheckedUpdateManyWithoutBusinessNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutBusinessNestedInput
+  units?: Prisma.UnitUncheckedUpdateManyWithoutBusinessNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutBusinessNestedInput
+  priceHistory?: Prisma.PriceHistoryUncheckedUpdateManyWithoutBusinessNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutBusinessNestedInput
+  sales?: Prisma.SaleUncheckedUpdateManyWithoutBusinessNestedInput
+  saleItems?: Prisma.SaleItemUncheckedUpdateManyWithoutBusinessNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutBusinessNestedInput
+  ledgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
+  counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutBusinessNestedInput
+}
+
+export type BusinessCreateWithoutStaffInput = {
+  id?: string
+  name: string
+  ownerName: string
+  phone?: string | null
+  address?: string | null
+  businessType?: string | null
+  status?: $Enums.BusinessStatus
+  suspendedAt?: Date | string | null
+  suspendedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  settings?: Prisma.BusinessSettingsCreateNestedOneWithoutBusinessInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutBusinessInput
+  members?: Prisma.BusinessUserCreateNestedManyWithoutBusinessInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBusinessInput
+  brands?: Prisma.BrandCreateNestedManyWithoutBusinessInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutBusinessInput
+  units?: Prisma.UnitCreateNestedManyWithoutBusinessInput
+  products?: Prisma.ProductCreateNestedManyWithoutBusinessInput
+  priceHistory?: Prisma.PriceHistoryCreateNestedManyWithoutBusinessInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutBusinessInput
+  sales?: Prisma.SaleCreateNestedManyWithoutBusinessInput
+  saleItems?: Prisma.SaleItemCreateNestedManyWithoutBusinessInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutBusinessInput
+  ledgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutBusinessInput
+  importJobs?: Prisma.ImportJobCreateNestedManyWithoutBusinessInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBusinessInput
+  counters?: Prisma.DocumentCounterCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryCreateNestedManyWithoutBusinessInput
+}
+
+export type BusinessUncheckedCreateWithoutStaffInput = {
+  id?: string
+  name: string
+  ownerName: string
+  phone?: string | null
+  address?: string | null
+  businessType?: string | null
+  status?: $Enums.BusinessStatus
+  suspendedAt?: Date | string | null
+  suspendedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  settings?: Prisma.BusinessSettingsUncheckedCreateNestedOneWithoutBusinessInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutBusinessInput
+  members?: Prisma.BusinessUserUncheckedCreateNestedManyWithoutBusinessInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBusinessInput
+  brands?: Prisma.BrandUncheckedCreateNestedManyWithoutBusinessInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutBusinessInput
+  units?: Prisma.UnitUncheckedCreateNestedManyWithoutBusinessInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutBusinessInput
+  priceHistory?: Prisma.PriceHistoryUncheckedCreateNestedManyWithoutBusinessInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutBusinessInput
+  sales?: Prisma.SaleUncheckedCreateNestedManyWithoutBusinessInput
+  saleItems?: Prisma.SaleItemUncheckedCreateNestedManyWithoutBusinessInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBusinessInput
+  ledgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutBusinessInput
+  importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutBusinessInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBusinessInput
+  counters?: Prisma.DocumentCounterUncheckedCreateNestedManyWithoutBusinessInput
+  quotations?: Prisma.QuotationUncheckedCreateNestedManyWithoutBusinessInput
+  quotationItems?: Prisma.QuotationItemUncheckedCreateNestedManyWithoutBusinessInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedCreateNestedManyWithoutBusinessInput
+}
+
+export type BusinessCreateOrConnectWithoutStaffInput = {
+  where: Prisma.BusinessWhereUniqueInput
+  create: Prisma.XOR<Prisma.BusinessCreateWithoutStaffInput, Prisma.BusinessUncheckedCreateWithoutStaffInput>
+}
+
+export type BusinessUpsertWithoutStaffInput = {
+  update: Prisma.XOR<Prisma.BusinessUpdateWithoutStaffInput, Prisma.BusinessUncheckedUpdateWithoutStaffInput>
+  create: Prisma.XOR<Prisma.BusinessCreateWithoutStaffInput, Prisma.BusinessUncheckedCreateWithoutStaffInput>
+  where?: Prisma.BusinessWhereInput
+}
+
+export type BusinessUpdateToOneWithWhereWithoutStaffInput = {
+  where?: Prisma.BusinessWhereInput
+  data: Prisma.XOR<Prisma.BusinessUpdateWithoutStaffInput, Prisma.BusinessUncheckedUpdateWithoutStaffInput>
+}
+
+export type BusinessUpdateWithoutStaffInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.BusinessSettingsUpdateOneWithoutBusinessNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutBusinessNestedInput
+  members?: Prisma.BusinessUserUpdateManyWithoutBusinessNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBusinessNestedInput
+  brands?: Prisma.BrandUpdateManyWithoutBusinessNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutBusinessNestedInput
+  units?: Prisma.UnitUpdateManyWithoutBusinessNestedInput
+  products?: Prisma.ProductUpdateManyWithoutBusinessNestedInput
+  priceHistory?: Prisma.PriceHistoryUpdateManyWithoutBusinessNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutBusinessNestedInput
+  sales?: Prisma.SaleUpdateManyWithoutBusinessNestedInput
+  saleItems?: Prisma.SaleItemUpdateManyWithoutBusinessNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutBusinessNestedInput
+  ledgerEntries?: Prisma.LedgerEntryUpdateManyWithoutBusinessNestedInput
+  importJobs?: Prisma.ImportJobUpdateManyWithoutBusinessNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBusinessNestedInput
+  counters?: Prisma.DocumentCounterUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUpdateManyWithoutBusinessNestedInput
+}
+
+export type BusinessUncheckedUpdateWithoutStaffInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.BusinessSettingsUncheckedUpdateOneWithoutBusinessNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutBusinessNestedInput
+  members?: Prisma.BusinessUserUncheckedUpdateManyWithoutBusinessNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBusinessNestedInput
+  brands?: Prisma.BrandUncheckedUpdateManyWithoutBusinessNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutBusinessNestedInput
+  units?: Prisma.UnitUncheckedUpdateManyWithoutBusinessNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutBusinessNestedInput
+  priceHistory?: Prisma.PriceHistoryUncheckedUpdateManyWithoutBusinessNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutBusinessNestedInput
+  sales?: Prisma.SaleUncheckedUpdateManyWithoutBusinessNestedInput
+  saleItems?: Prisma.SaleItemUncheckedUpdateManyWithoutBusinessNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutBusinessNestedInput
+  ledgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutBusinessNestedInput
+  importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutBusinessNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBusinessNestedInput
+  counters?: Prisma.DocumentCounterUncheckedUpdateManyWithoutBusinessNestedInput
+  quotations?: Prisma.QuotationUncheckedUpdateManyWithoutBusinessNestedInput
+  quotationItems?: Prisma.QuotationItemUncheckedUpdateManyWithoutBusinessNestedInput
+  cashBookEntries?: Prisma.CashBookEntryUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 
@@ -3608,6 +4106,8 @@ export type BusinessCountOutputType = {
   counters: number
   quotations: number
   quotationItems: number
+  cashBookEntries: number
+  staff: number
 }
 
 export type BusinessCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3628,6 +4128,8 @@ export type BusinessCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   counters?: boolean | BusinessCountOutputTypeCountCountersArgs
   quotations?: boolean | BusinessCountOutputTypeCountQuotationsArgs
   quotationItems?: boolean | BusinessCountOutputTypeCountQuotationItemsArgs
+  cashBookEntries?: boolean | BusinessCountOutputTypeCountCashBookEntriesArgs
+  staff?: boolean | BusinessCountOutputTypeCountStaffArgs
 }
 
 /**
@@ -3759,6 +4261,20 @@ export type BusinessCountOutputTypeCountQuotationItemsArgs<ExtArgs extends runti
   where?: Prisma.QuotationItemWhereInput
 }
 
+/**
+ * BusinessCountOutputType without action
+ */
+export type BusinessCountOutputTypeCountCashBookEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CashBookEntryWhereInput
+}
+
+/**
+ * BusinessCountOutputType without action
+ */
+export type BusinessCountOutputTypeCountStaffArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StaffWhereInput
+}
+
 
 export type BusinessSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3791,6 +4307,8 @@ export type BusinessSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   counters?: boolean | Prisma.Business$countersArgs<ExtArgs>
   quotations?: boolean | Prisma.Business$quotationsArgs<ExtArgs>
   quotationItems?: boolean | Prisma.Business$quotationItemsArgs<ExtArgs>
+  cashBookEntries?: boolean | Prisma.Business$cashBookEntriesArgs<ExtArgs>
+  staff?: boolean | Prisma.Business$staffArgs<ExtArgs>
   _count?: boolean | Prisma.BusinessCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["business"]>
 
@@ -3857,6 +4375,8 @@ export type BusinessInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   counters?: boolean | Prisma.Business$countersArgs<ExtArgs>
   quotations?: boolean | Prisma.Business$quotationsArgs<ExtArgs>
   quotationItems?: boolean | Prisma.Business$quotationItemsArgs<ExtArgs>
+  cashBookEntries?: boolean | Prisma.Business$cashBookEntriesArgs<ExtArgs>
+  staff?: boolean | Prisma.Business$staffArgs<ExtArgs>
   _count?: boolean | Prisma.BusinessCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BusinessIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3884,6 +4404,8 @@ export type $BusinessPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     counters: Prisma.$DocumentCounterPayload<ExtArgs>[]
     quotations: Prisma.$QuotationPayload<ExtArgs>[]
     quotationItems: Prisma.$QuotationItemPayload<ExtArgs>[]
+    cashBookEntries: Prisma.$CashBookEntryPayload<ExtArgs>[]
+    staff: Prisma.$StaffPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4310,6 +4832,8 @@ export interface Prisma__BusinessClient<T, Null = never, ExtArgs extends runtime
   counters<T extends Prisma.Business$countersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$countersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentCounterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   quotations<T extends Prisma.Business$quotationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$quotationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuotationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   quotationItems<T extends Prisma.Business$quotationItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$quotationItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuotationItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  cashBookEntries<T extends Prisma.Business$cashBookEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$cashBookEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CashBookEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  staff<T extends Prisma.Business$staffArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$staffArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5186,6 +5710,54 @@ export type Business$quotationItemsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.QuotationItemScalarFieldEnum | Prisma.QuotationItemScalarFieldEnum[]
+}
+
+/**
+ * Business.cashBookEntries
+ */
+export type Business$cashBookEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CashBookEntry
+   */
+  select?: Prisma.CashBookEntrySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CashBookEntry
+   */
+  omit?: Prisma.CashBookEntryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CashBookEntryInclude<ExtArgs> | null
+  where?: Prisma.CashBookEntryWhereInput
+  orderBy?: Prisma.CashBookEntryOrderByWithRelationInput | Prisma.CashBookEntryOrderByWithRelationInput[]
+  cursor?: Prisma.CashBookEntryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CashBookEntryScalarFieldEnum | Prisma.CashBookEntryScalarFieldEnum[]
+}
+
+/**
+ * Business.staff
+ */
+export type Business$staffArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Staff
+   */
+  select?: Prisma.StaffSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Staff
+   */
+  omit?: Prisma.StaffOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StaffInclude<ExtArgs> | null
+  where?: Prisma.StaffWhereInput
+  orderBy?: Prisma.StaffOrderByWithRelationInput | Prisma.StaffOrderByWithRelationInput[]
+  cursor?: Prisma.StaffWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StaffScalarFieldEnum | Prisma.StaffScalarFieldEnum[]
 }
 
 /**

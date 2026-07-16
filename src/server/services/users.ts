@@ -122,3 +122,80 @@ export async function setMemberStatus(memberId: string, active: boolean) {
     }),
   ]);
 }
+
+export async function listRolesWithPermissions() {
+  const ctx = await requirePermission("MANAGE_USERS", { read: true });
+  const roles = await db.role.findMany({
+    where: { businessId: ctx.business.id },
+    orderBy: { createdAt: "asc" },
+  });
+  return roles.map(r => ({
+    id: r.id,
+    name: r.name,
+    isSystem: r.isSystem,
+    permissions: r.permissions,
+  }));
+}
+
+export async function createCustomRole(name: string, permissions: any[]) {
+  const ctx = await requirePermission("MANAGE_USERS");
+
+  const cleanName = name.trim();
+  if (!cleanName) throw new Error("Role name is required");
+
+  // Check if role name already exists
+  const existing = await db.role.findFirst({
+    where: { businessId: ctx.business.id, name: { equals: cleanName, mode: "insensitive" } },
+  });
+  if (existing) throw new Error("Role name already exists");
+
+  const role = await db.role.create({
+    data: {
+      businessId: ctx.business.id,
+      name: cleanName,
+      isSystem: false,
+      permissions,
+    },
+  });
+
+  await db.auditLog.create({
+    data: {
+      businessId: ctx.business.id,
+      userId: ctx.user.id,
+      action: "ROLE_CREATED",
+      entityType: "Role",
+      entityId: role.id,
+      metadata: { name: cleanName },
+    },
+  });
+
+  return role;
+}
+
+export async function updateRolePermissions(roleId: string, permissions: any[]) {
+  const ctx = await requirePermission("MANAGE_USERS");
+
+  const role = await db.role.findFirst({
+    where: { id: roleId, businessId: ctx.business.id },
+  });
+  if (!role) throw new Error("Role not found");
+  if (role.name === "Owner") throw new Error("Cannot modify Owner permissions");
+
+  const updated = await db.role.update({
+    where: { id: roleId },
+    data: { permissions },
+  });
+
+  await db.auditLog.create({
+    data: {
+      businessId: ctx.business.id,
+      userId: ctx.user.id,
+      action: "ROLE_PERMISSIONS_UPDATED",
+      entityType: "Role",
+      entityId: roleId,
+      metadata: { name: role.name },
+    },
+  });
+
+  return updated;
+}

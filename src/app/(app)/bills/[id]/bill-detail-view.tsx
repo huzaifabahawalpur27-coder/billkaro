@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Printer, XCircle, ArrowLeft, ChevronRight } from "lucide-react";
+import { Printer, XCircle, ArrowLeft, ChevronRight, Undo2 } from "lucide-react";
 import { toast } from "sonner";
 import { cancelBillAction } from "../../khata/actions";
 import { Button } from "@/components/ui/button";
@@ -76,14 +76,31 @@ const METHOD_LABELS: Record<string, string> = {
   OTHER: "Other",
 };
 
+export interface OriginalSaleItem {
+  productId: string | null;
+  name: string;
+  soldPrice: string;
+  quantity: string;
+  isOpenItem: boolean;
+}
+
+export interface OriginalSaleSnapshot {
+  id: string;
+  invoiceNumber: string;
+  grandTotal: string;
+  items: OriginalSaleItem[];
+}
+
 export function BillDetailView({
   sale,
+  originalSaleSnapshot = null,
   canCancel,
   currencySymbol,
   business,
   footer,
 }: {
   sale: SaleDetail;
+  originalSaleSnapshot?: OriginalSaleSnapshot | null;
   canCancel: boolean;
   currencySymbol: string;
   business: { name: string; address: string | null; phone: string | null };
@@ -93,6 +110,55 @@ export function BillDetailView({
   const [cancelDialog, setCancelDialog] = useState(false);
   const [reason, setReason] = useState("");
   const [pending, startTransition] = useTransition();
+
+  // Compute Returned and Exchanged Items
+  const returnedItems = [];
+  const addedItems = [];
+
+  if (originalSaleSnapshot) {
+    // 1. Find Returned Items (in original, but decreased/removed in revised)
+    for (const orig of originalSaleSnapshot.items) {
+      const curr = sale.items.find((i) =>
+        orig.productId
+          ? i.sku === orig.productId || i.id === orig.productId || i.name === orig.name
+          : i.name === orig.name
+      );
+      const origQty = parseFloat(orig.quantity);
+      const currQty = curr ? parseFloat(curr.quantity) : 0;
+      const returnedQty = origQty - currQty;
+      if (returnedQty > 0) {
+        returnedItems.push({
+          name: orig.name,
+          quantity: returnedQty,
+          soldPrice: orig.soldPrice,
+          totalRefund: returnedQty * parseFloat(orig.soldPrice),
+        });
+      }
+    }
+
+    // 2. Find Added Items (in revised, but not in original or increased)
+    for (const curr of sale.items) {
+      const orig = originalSaleSnapshot.items.find((i) =>
+        curr.sku
+          ? i.productId === curr.sku || i.productId === curr.id || i.name === curr.name
+          : i.name === curr.name
+      );
+      const currQty = parseFloat(curr.quantity);
+      const origQty = orig ? parseFloat(orig.quantity) : 0;
+      const addedQty = currQty - origQty;
+      if (addedQty > 0) {
+        addedItems.push({
+          name: curr.name,
+          quantity: addedQty,
+          soldPrice: curr.soldPrice,
+          totalCost: addedQty * parseFloat(curr.soldPrice),
+        });
+      }
+    }
+  }
+
+  const totalReturned = returnedItems.reduce((acc, i) => acc + i.totalRefund, 0);
+  const totalAdded = addedItems.reduce((acc, i) => acc + i.totalCost, 0);
 
   function handleCancel() {
     startTransition(async () => {
@@ -111,13 +177,36 @@ export function BillDetailView({
 
   return (
     <div className="space-y-5 max-w-2xl">
-      {/* Navigation */}
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Link href="/bills" className="hover:text-slate-900 flex items-center gap-1">
-          <ArrowLeft className="h-3.5 w-3.5" /> Bills
-        </Link>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <span className="font-mono">{sale.invoiceNumber}</span>
+      {/* Navigation & Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 print:hidden">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Link href="/bills" className="hover:text-slate-900 flex items-center gap-1">
+            <ArrowLeft className="h-3.5 w-3.5" /> Bills
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <span className="font-mono">{sale.invoiceNumber}</span>
+        </div>
+
+        {/* Actions */}
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" asChild className="h-8 text-xs">
+            <a href={`/bills/${sale.id}/print`} target="_blank" rel="noopener noreferrer">
+              <Printer className="h-3.5 w-3.5 mr-1.5" /> Print Receipt
+            </a>
+          </Button>
+          {!isCancelled && (
+            <Button variant="outline" size="sm" asChild className="h-8 text-xs border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350">
+              <Link href={`/bill?edit=${sale.id}`}>
+                <Undo2 className="h-3.5 w-3.5 mr-1.5 text-indigo-650" /> Modify / Return Items
+              </Link>
+            </Button>
+          )}
+          {canCancel && !isCancelled && (
+            <Button variant="destructive" size="sm" className="h-8 text-xs" onClick={() => setCancelDialog(true)}>
+              <XCircle className="h-3.5 w-3.5 mr-1.5" /> Cancel Bill
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Header card */}
@@ -165,6 +254,74 @@ export function BillDetailView({
           </div>
         )}
       </div>
+
+      {/* Return & Exchange Summary Panel */}
+      {originalSaleSnapshot && (returnedItems.length > 0 || addedItems.length > 0) && (
+        <div className="rounded-xl border border-indigo-100 bg-indigo-50/40 p-4 dark:border-indigo-950/20 dark:border-indigo-950/25 space-y-3 print:border print:border-slate-350 print:bg-white print:p-3 print:text-black">
+          <div className="flex items-center gap-2 pb-1.5 border-b border-indigo-100/60 dark:border-indigo-900/50 print:border-b-black print:pb-1">
+            <Undo2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400 print:text-black shrink-0" />
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200 print:text-black uppercase tracking-wider text-[11px]">
+              Return & Exchange Summary (Wapsi detail)
+            </span>
+            <span className="ml-auto text-[10px] text-slate-400 dark:text-slate-500 font-mono print:text-black">
+              Original Ref: {originalSaleSnapshot.invoiceNumber}
+            </span>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 text-xs">
+            {/* Left Column: Returned Items */}
+            {returnedItems.length > 0 && (
+              <div className="space-y-1.5">
+                <span className="font-bold text-red-600 dark:text-red-400 uppercase tracking-wide text-[9.5px] block">
+                  Wapas kiyay huay items (Returned)
+                </span>
+                <ul className="space-y-1">
+                  {returnedItems.map((item, idx) => (
+                    <li key={idx} className="flex justify-between items-center text-slate-650 dark:text-slate-350 print:text-black font-medium">
+                      <span className="truncate max-w-[160px]">{item.name} <span className="text-[10px] text-slate-400">({item.quantity} pcs)</span></span>
+                      <span className="text-red-650 dark:text-red-450 font-mono font-semibold print:text-black">
+                        -{currencySymbol} {item.totalRefund.toFixed(0)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Right Column: Added Items */}
+            {addedItems.length > 0 && (
+              <div className="space-y-1.5">
+                <span className="font-bold text-emerald-650 dark:text-emerald-400 uppercase tracking-wide text-[9.5px] block">
+                  Naye khridi huay items (Exchanged)
+                </span>
+                <ul className="space-y-1">
+                  {addedItems.map((item, idx) => (
+                    <li key={idx} className="flex justify-between items-center text-slate-650 dark:text-slate-350 print:text-black font-medium">
+                      <span className="truncate max-w-[160px]">{item.name} <span className="text-[10px] text-slate-400">({item.quantity} pcs)</span></span>
+                      <span className="text-emerald-650 dark:text-emerald-450 font-mono font-semibold print:text-black">
+                        +{currencySymbol} {item.totalCost.toFixed(0)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-between items-center pt-2.5 border-t border-indigo-100/60 dark:border-indigo-900/50 print:border-t-black font-bold">
+            <span className="text-slate-700 dark:text-slate-300 print:text-black text-xs">
+              Adjustment Total ({totalAdded >= totalReturned ? "Customer paid" : "Shopkeeper returned"})
+            </span>
+            <span className={cn(
+              "text-sm font-extrabold font-mono",
+              totalAdded >= totalReturned ? "text-emerald-650 dark:text-emerald-400" : "text-red-650 dark:text-red-400",
+              "print:text-black"
+            )}>
+              {totalAdded >= totalReturned ? "+" : "-"}{currencySymbol} {Math.abs(totalAdded - totalReturned).toFixed(0)}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Items */}
       <div className="rounded-lg border overflow-hidden">
@@ -252,19 +409,7 @@ export function BillDetailView({
       <p className="text-center text-xs text-muted-foreground">{footer}</p>
       <p className="text-center text-xs text-muted-foreground">Cashier: {sale.cashierName}</p>
 
-      {/* Actions */}
-      <div className="flex flex-wrap gap-2 print:hidden">
-        <Button variant="outline" asChild>
-          <a href={`/bills/${sale.id}/print`} target="_blank" rel="noopener noreferrer">
-            <Printer className="h-4 w-4 mr-1" /> Print Receipt
-          </a>
-        </Button>
-        {canCancel && !isCancelled && (
-          <Button variant="destructive" onClick={() => setCancelDialog(true)}>
-            <XCircle className="h-4 w-4 mr-1" /> Cancel Bill
-          </Button>
-        )}
-      </div>
+
 
       {/* Cancel Dialog */}
       <Dialog open={cancelDialog} onOpenChange={setCancelDialog}>

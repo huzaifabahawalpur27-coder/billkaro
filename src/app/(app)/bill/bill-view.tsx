@@ -23,6 +23,7 @@ import {
   searchCustomersAction,
   quickAddCustomerAction,
   createSaleAction,
+  modifySaleAction,
   createQuotationAction,
   type SaleReceipt,
   type QuotationReceipt,
@@ -122,7 +123,83 @@ const D = (v: string | number) => {
   }
 };
 
+const CATEGORY_COLORS = [
+  {
+    active: "bg-rose-600 border-rose-600 text-white dark:bg-rose-500 dark:border-rose-500",
+    inactive: "border-rose-200 bg-rose-50/50 text-rose-700 hover:bg-rose-100/70 dark:border-rose-900/40 dark:bg-rose-950/20 dark:text-rose-400"
+  },
+  {
+    active: "bg-amber-600 border-amber-600 text-white dark:bg-amber-500 dark:border-amber-500",
+    inactive: "border-amber-200 bg-amber-50/50 text-amber-700 hover:bg-amber-100/70 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-400"
+  },
+  {
+    active: "bg-emerald-600 border-emerald-600 text-white dark:bg-emerald-500 dark:border-emerald-500",
+    inactive: "border-emerald-200 bg-emerald-50/50 text-emerald-700 hover:bg-emerald-100/70 dark:border-emerald-900/40 dark:bg-emerald-950/20 dark:text-emerald-400"
+  },
+  {
+    active: "bg-sky-600 border-sky-600 text-white dark:bg-sky-500 dark:border-sky-500",
+    inactive: "border-sky-200 bg-sky-50/50 text-sky-700 hover:bg-sky-100/70 dark:border-sky-900/40 dark:bg-sky-950/20 dark:text-sky-400"
+  },
+  {
+    active: "bg-violet-600 border-violet-600 text-white dark:bg-violet-500 dark:border-violet-500",
+    inactive: "border-violet-200 bg-violet-50/50 text-violet-700 hover:bg-violet-100/70 dark:border-violet-900/40 dark:bg-violet-950/20 dark:text-violet-400"
+  },
+  {
+    active: "bg-teal-600 border-teal-600 text-white dark:bg-teal-500 dark:border-teal-500",
+    inactive: "border-teal-200 bg-teal-50/50 text-teal-700 hover:bg-teal-100/70 dark:border-teal-900/40 dark:bg-teal-950/20 dark:text-teal-400"
+  },
+  {
+    active: "bg-orange-600 border-orange-600 text-white dark:bg-orange-500 dark:border-orange-500",
+    inactive: "border-orange-200 bg-orange-50/50 text-orange-700 hover:bg-orange-100/70 dark:border-orange-900/40 dark:bg-orange-950/20 dark:text-orange-400"
+  },
+  {
+    active: "bg-pink-600 border-pink-600 text-white dark:bg-pink-500 dark:border-pink-500",
+    inactive: "border-pink-200 bg-pink-50/50 text-pink-700 hover:bg-pink-100/70 dark:border-pink-900/40 dark:bg-pink-950/20 dark:text-pink-400"
+  },
+  {
+    active: "bg-cyan-600 border-cyan-600 text-white dark:bg-cyan-500 dark:border-cyan-500",
+    inactive: "border-cyan-200 bg-cyan-50/50 text-cyan-700 hover:bg-cyan-100/70 dark:border-cyan-900/40 dark:bg-cyan-950/20 dark:text-cyan-400"
+  },
+  {
+    active: "bg-fuchsia-600 border-fuchsia-600 text-white dark:bg-fuchsia-500 dark:border-fuchsia-500",
+    inactive: "border-fuchsia-200 bg-fuchsia-50/50 text-fuchsia-700 hover:bg-fuchsia-100/70 dark:border-fuchsia-900/40 dark:bg-fuchsia-950/20 dark:text-fuchsia-400"
+  }
+];
+
+const ACCENT_COLORS = [
+  "border-l-rose-500",
+  "border-l-amber-500",
+  "border-l-emerald-500",
+  "border-l-sky-500",
+  "border-l-indigo-500",
+  "border-l-violet-500",
+  "border-l-teal-500",
+  "border-l-orange-500",
+  "border-l-pink-500",
+  "border-l-cyan-500",
+  "border-l-fuchsia-500"
+];
+
 // ── Component ────────────────────────────────────────────────
+
+export interface EditSale {
+  id: string;
+  invoiceNumber: string;
+  customerId: string | null;
+  discountType: string;
+  discountValue: string;
+  paymentMethod: string;
+  amountPaid: string;
+  notes: string | null;
+  customer: { id: string; name: string; phone: string | null } | null;
+  items: {
+    productId: string | null;
+    name: string;
+    soldPrice: string;
+    quantity: string;
+    isOpenItem: boolean;
+  }[];
+}
 
 export function BillView({
   initialProducts = [],
@@ -132,6 +209,7 @@ export function BillView({
   quotationsEnabled = false,
   defaultValidityDays = 7,
   sourceQuotation = null,
+  initialEditSale = null,
   can,
 }: {
   initialProducts?: (ProductHit & { categoryId: string | null })[];
@@ -141,22 +219,71 @@ export function BillView({
   quotationsEnabled?: boolean;
   defaultValidityDays?: number;
   sourceQuotation?: SourceQuotation | null;
+  initialEditSale?: EditSale | null;
   can: Can;
 }) {
-  const [lines, setLines] = useState<CartLine[]>(() =>
-    (sourceQuotation?.lines ?? []).map((l, i) => ({ ...l, key: i + 1 }))
-  );
-  const [discountType, setDiscountType] = useState<"NONE" | "FIXED" | "PERCENT">("NONE");
-  const [discountValue, setDiscountValue] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("CASH");
-  const [amountPaid, setAmountPaid] = useState("");
-  const [paidTouched, setPaidTouched] = useState(false);
+  const [lines, setLines] = useState<CartLine[]>(() => {
+    if (initialEditSale) {
+      return initialEditSale.items.map((item, i) => {
+        const prod = item.productId ? initialProducts.find(p => p.id === item.productId) : null;
+        return {
+          key: i + 1,
+          productId: item.productId,
+          name: item.name,
+          unitName: prod?.unitName ?? null,
+          isFractional: prod?.isFractional ?? false,
+          cataloguePrice: prod?.salePrice ?? null,
+          soldPrice: item.soldPrice,
+          quantity: item.quantity,
+          isOpenItem: item.isOpenItem,
+        };
+      });
+    }
+    return (sourceQuotation?.lines ?? []).map((l, i) => ({ ...l, key: i + 1 }));
+  });
+
+  const [discountType, setDiscountType] = useState<"NONE" | "FIXED" | "PERCENT">(() => {
+    if (initialEditSale) return initialEditSale.discountType as any;
+    return "NONE";
+  });
+
+  const [discountValue, setDiscountValue] = useState(() => {
+    if (initialEditSale) {
+      return parseFloat(initialEditSale.discountValue) > 0 ? initialEditSale.discountValue : "";
+    }
+    return "";
+  });
+
+  const [paymentMethod, setPaymentMethod] = useState(() => {
+    if (initialEditSale) return initialEditSale.paymentMethod;
+    return "CASH";
+  });
+
+  const [amountPaid, setAmountPaid] = useState(() => {
+    if (initialEditSale) return initialEditSale.amountPaid;
+    return "";
+  });
+
+  const [paidTouched, setPaidTouched] = useState(() => {
+    if (initialEditSale) return true;
+    return false;
+  });
+
   const [cashReceived, setCashReceived] = useState("");
-  const [customer, setCustomer] = useState<CustomerHit | null>(
-    sourceQuotation?.customer ?? null
-  );
+
+  const [customer, setCustomer] = useState<CustomerHit | null>(() => {
+    if (initialEditSale) {
+      return initialEditSale.customer ? {
+        id: initialEditSale.customer.id,
+        name: initialEditSale.customer.name,
+        phone: initialEditSale.customer.phone,
+        currentBalance: "0",
+      } : null;
+    }
+    return sourceQuotation?.customer ?? null;
+  });
+
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  // One query drives both the grid filter and the search dropdown.
   const [query, setQuery] = useState("");
   const [openItemMode, setOpenItemMode] = useState(false);
   const [activeTab, setActiveTab] = useState<"PRODUCTS" | "CART">("PRODUCTS");
@@ -347,7 +474,7 @@ export function BillView({
       return;
     }
     startSaving(async () => {
-      const result = await createSaleAction({
+      const payload = {
         items: lines.map((l) => ({
           productId: l.productId,
           name: l.isOpenItem ? l.name : undefined,
@@ -360,9 +487,19 @@ export function BillView({
         paymentMethod,
         amountPaid: effectivePaid.toFixed(2),
         cashReceived: paymentMethod === "CASH" && cashReceived ? D(cashReceived).toFixed(2) : null,
-        notes: null,
-        quotationId: sourceQuotation?.id ?? null,
-      });
+        notes: initialEditSale ? `Revised from invoice ${initialEditSale.invoiceNumber}` : null,
+      };
+
+      const result = initialEditSale
+        ? await modifySaleAction({
+            originalSaleId: initialEditSale.id,
+            saleData: payload,
+          })
+        : await createSaleAction({
+            ...payload,
+            quotationId: sourceQuotation?.id ?? null,
+          });
+
       if (result.ok && result.data) {
         setReceipt(result.data);
       } else {
@@ -391,6 +528,27 @@ export function BillView({
 
   return (
     <div className="space-y-3">
+      {initialEditSale && (
+        <div className="bg-indigo-55/60 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm animate-fade-in">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-650 text-white shadow-md">
+              <ReceiptText className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                Bill tabdeel ya wapas ho raha hai — <span className="font-mono">{initialEditSale.invoiceNumber}</span>
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
+                Cart items tabdeel karein. Save karne par purana bill cancel ho kar revised bill banega.
+              </p>
+            </div>
+          </div>
+          <Button variant="outline" size="sm" asChild className="shrink-0 self-end sm:self-auto border-slate-200 hover:bg-slate-100">
+            <Link href={`/bills/${initialEditSale.id}`}>Cancel Edit</Link>
+          </Button>
+        </div>
+      )}
+
       {/* Mobile Tab Header Switcher */}
       <div className="flex md:hidden border rounded-lg overflow-hidden bg-white mb-2 shadow-sm text-xs font-semibold">
         <button
@@ -417,10 +575,10 @@ export function BillView({
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
         {/* ── Left: split column into Cart + Product grid ── */}
-        <div className="grid gap-6 md:grid-cols-[1.1fr_0.9fr] min-w-0">
+        <div className="grid gap-6 md:grid-cols-[1.3fr_0.7fr] min-w-0">
           
           {/* Cart items list */}
-          <div className={cn("space-y-4 min-w-0", activeTab === "PRODUCTS" ? "hidden md:block" : "block")}>
+          <div className={cn("space-y-4 min-w-0 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-4 shadow-sm", activeTab === "PRODUCTS" ? "hidden md:block" : "block")}>
             <ProductSearch
               query={query}
               onQueryChange={setQuery}
@@ -439,39 +597,55 @@ export function BillView({
                 load hua — rates <strong>current</strong> hain, review kar ke bill complete karein.
               </div>
             )}
-            <div className="hidden md:flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-muted-foreground">
-              <span><kbd className="rounded border px-1">F2</kbd> Search</span>
-              <span><kbd className="rounded border px-1">F4</kbd> Complete Bill</span>
-              <span><kbd className="rounded border px-1">F6</kbd> Open Item</span>
-              <span><kbd className="rounded border px-1">F8</kbd> Received</span>
+            <div className="hidden md:flex items-center flex-wrap gap-x-4 gap-y-1.5 text-[10.5px] text-slate-500 dark:text-slate-400">
+              <span className="flex items-center gap-1.5">
+                <kbd className="bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-300 dark:border-slate-700 text-slate-750 dark:text-slate-300 rounded px-1.5 py-0.5 font-sans font-semibold text-[10px] shadow-sm tracking-wide">F2</kbd>
+                <span>Search</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <kbd className="bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-300 dark:border-slate-700 text-slate-750 dark:text-slate-300 rounded px-1.5 py-0.5 font-sans font-semibold text-[10px] shadow-sm tracking-wide">F4</kbd>
+                <span>Complete Bill</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <kbd className="bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-300 dark:border-slate-700 text-slate-750 dark:text-slate-300 rounded px-1.5 py-0.5 font-sans font-semibold text-[10px] shadow-sm tracking-wide">F6</kbd>
+                <span>Open Item</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <kbd className="bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-300 dark:border-slate-700 text-slate-750 dark:text-slate-300 rounded px-1.5 py-0.5 font-sans font-semibold text-[10px] shadow-sm tracking-wide">F8</kbd>
+                <span>Received</span>
+              </span>
             </div>
 
           {lines.length === 0 ? (
-            <EmptyState
-              icon={ReceiptText}
-              title="Bill khali hai"
-              description="Product search karein ya open item add karein."
-            />
+            <div className="flex flex-col items-center justify-center p-8 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-900/30 min-h-[300px]">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 mb-4 shadow-inner">
+                <ReceiptText className="h-7 w-7" />
+              </div>
+              <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-base">Apka bill abhi khali hai</h3>
+              <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500 max-w-[260px] leading-relaxed">
+                Rate list se products select karein, upar search karein ya barcode scan karein.
+              </p>
+            </div>
           ) : (
             <>
               {/* Desktop Table View */}
-              <div className="hidden md:block rounded-lg border overflow-x-auto bg-white dark:bg-slate-900">
-                <Table>
+              <div className="hidden md:block overflow-x-auto border-t border-slate-100 dark:border-slate-800 pt-3">
+                <Table className="w-full [&_td]:px-1 [&_th]:px-1 [&_td]:py-1.5 [&_th]:py-1.5">
                   <TableHeader>
                     <TableRow>
                       <TableHead>Item</TableHead>
-                      <TableHead className="w-20">Qty</TableHead>
-                      <TableHead className="w-24">Price</TableHead>
-                      <TableHead className="w-24 text-right">Total</TableHead>
-                      <TableHead className="w-10" />
+                      <TableHead className="w-[102px]">Qty</TableHead>
+                      <TableHead className="w-[55px] text-center">Price</TableHead>
+                      <TableHead className="w-[55px] text-right">Total</TableHead>
+                      <TableHead className="w-[30px]" />
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {lines.map((line) => (
                       <TableRow key={line.key}>
                         <TableCell>
-                          <div className="font-medium text-xs truncate max-w-[120px]">{line.name}</div>
-                          <div className="text-[10px] text-muted-foreground">
+                          <div className="font-semibold text-slate-800 dark:text-slate-200 text-xs leading-tight break-words line-clamp-2">{line.name}</div>
+                          <div className="text-[9.5px] text-muted-foreground">
                             {line.isOpenItem
                               ? "Open item"
                               : line.isFractional
@@ -480,7 +654,7 @@ export function BillView({
                             {!line.isOpenItem &&
                               line.cataloguePrice &&
                               !D(line.cataloguePrice).eq(D(line.soldPrice)) && (
-                                <span className="ml-1">
+                                <span className="ml-1 text-[9px]">
                                   · list {formatMoney(line.cataloguePrice, currencySymbol)}
                                 </span>
                               )}
@@ -497,7 +671,7 @@ export function BillView({
                         <TableCell>
                           <Input
                             inputMode="decimal"
-                            className="h-7 px-1.5 text-xs text-center"
+                            className="h-7 w-11 px-0.5 text-xs text-center border-slate-200 dark:border-slate-800 focus-visible:ring-1 focus-visible:ring-indigo-500 mx-auto"
                             value={line.soldPrice}
                             disabled={!line.isOpenItem && !can.changePrice}
                             aria-invalid={D(line.soldPrice).lte(0)}
@@ -510,17 +684,17 @@ export function BillView({
                             aria-label={`${line.name} price`}
                           />
                         </TableCell>
-                        <TableCell className="text-right text-xs">
+                        <TableCell className="text-right text-xs font-semibold text-slate-700 dark:text-slate-300">
                           <MoneyDisplay
                             value={D(line.soldPrice).mul(D(line.quantity)).toFixed(2)}
                             symbol={currencySymbol}
                           />
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-right">
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-muted-foreground hover:text-red-600"
+                            className="h-7 w-7 text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
                             onClick={() => removeLine(line.key)}
                             aria-label={`Remove ${line.name}`}
                           >
@@ -608,7 +782,7 @@ export function BillView({
         </div>
 
         {/* Product Grid panel */}
-        <div className={cn("rounded-lg border p-4 bg-white dark:bg-slate-900 flex flex-col space-y-3 max-h-[640px] overflow-hidden", activeTab === "CART" ? "hidden md:flex" : "flex")}>
+        <div className={cn("rounded-xl border border-slate-200/80 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 shadow-sm flex flex-col space-y-3 max-h-[640px] overflow-hidden", activeTab === "CART" ? "hidden md:flex" : "flex")}>
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-xs text-slate-800 dark:text-slate-200 uppercase tracking-wide">Rate List Grid</h3>
             <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-muted-foreground">
@@ -623,29 +797,31 @@ export function BillView({
                 type="button"
                 onClick={() => setSelectedCategory(null)}
                 className={cn(
-                  "rounded-full px-2.5 py-0.5 font-medium transition-colors border whitespace-nowrap",
+                  "rounded-full px-2.5 py-0.5 font-semibold transition-all duration-200 border whitespace-nowrap",
                   selectedCategory === null
-                    ? "bg-indigo-600 border-indigo-600 text-white"
-                    : "border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-400"
+                    ? "bg-slate-800 border-slate-800 text-white dark:bg-slate-200 dark:border-slate-200 dark:text-slate-900"
+                    : "border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400"
                 )}
               >
                 Sab (All)
               </button>
-              {categories.map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => setSelectedCategory(c.id)}
-                  className={cn(
-                    "rounded-full px-2.5 py-0.5 font-medium transition-colors border whitespace-nowrap",
-                    selectedCategory === c.id
-                      ? "bg-indigo-600 border-indigo-600 text-white"
-                      : "border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-400"
-                  )}
-                >
-                  {c.name}
-                </button>
-              ))}
+              {categories.map((c, index) => {
+                const colors = CATEGORY_COLORS[index % CATEGORY_COLORS.length];
+                const isActive = selectedCategory === c.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setSelectedCategory(c.id)}
+                    className={cn(
+                      "rounded-full px-2.5 py-0.5 font-semibold transition-all duration-200 border whitespace-nowrap",
+                      isActive ? colors.active : colors.inactive
+                    )}
+                  >
+                    {c.name}
+                  </button>
+                );
+              })}
             </div>
           )}
 
@@ -657,6 +833,8 @@ export function BillView({
               <div className="grid grid-cols-2 gap-2">
                 {filteredProducts.map((p) => {
                   const qty = cartQuantities.get(p.id) ?? 0;
+                  const categoryIndex = p.categoryId ? categories.findIndex((cat) => cat.id === p.categoryId) : -1;
+                  const accentClass = categoryIndex >= 0 ? ACCENT_COLORS[categoryIndex % ACCENT_COLORS.length] : "border-l-slate-350 dark:border-l-slate-600";
                   return (
                     <button
                       key={p.id}
@@ -666,25 +844,26 @@ export function BillView({
                         focusSearch();
                       }}
                       className={cn(
-                        "flex flex-col text-left p-2.5 rounded-lg border transition-all text-xs relative group",
+                        "flex flex-col text-left p-2.5 rounded-lg border border-l-4 transition-all duration-200 ease-out text-xs relative group hover:-translate-y-0.5 hover:shadow-md",
+                        accentClass,
                         qty > 0
                           ? "border-indigo-300 bg-indigo-50/50 dark:border-indigo-900/50 dark:bg-indigo-950/20 shadow-sm"
-                          : "border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
+                          : "border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
                       )}
                     >
                       {qty > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-indigo-600 text-white rounded-full text-[9px] font-bold h-4 min-w-4 px-1 flex items-center justify-center border border-white animate-scale-in">
+                        <span className="absolute -top-1.5 -right-1.5 bg-indigo-600 text-white rounded-full text-[9px] font-bold h-4.5 min-w-4.5 px-1.5 flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-md animate-scale-in">
                           {qty}
                         </span>
                       )}
-                      <span className="font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 h-7 leading-tight mb-1">
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 h-7 leading-tight mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                         {p.name}
                       </span>
                       <div className="mt-auto flex items-baseline justify-between w-full">
-                        <span className="text-[9px] text-muted-foreground">
+                        <span className="text-[9px] text-muted-foreground font-medium">
                           {p.unitName ?? "pcs"}
                         </span>
-                        <span className="font-bold text-indigo-600 dark:text-indigo-400">
+                        <span className="font-bold text-indigo-600 dark:text-indigo-400 text-sm">
                           {currencySymbol} {parseFloat(p.salePrice).toFixed(0)}
                         </span>
                       </div>
@@ -700,7 +879,7 @@ export function BillView({
 
       {/* ── Right: totals + payment ── */}
       <div className={cn("space-y-4", activeTab === "PRODUCTS" ? "hidden md:block" : "block")}>
-        <div className="rounded-lg border p-4 space-y-3">
+        <div className="rounded-xl border border-slate-200/80 bg-white dark:bg-slate-900 p-4 shadow-sm space-y-3">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Subtotal</span>
             <MoneyDisplay value={totals.subtotal.toFixed(2)} symbol={currencySymbol} />
@@ -746,18 +925,26 @@ export function BillView({
             </div>
           )}
 
-          <Separator />
-          <div className="flex justify-between text-lg font-semibold">
-            <span>Total</span>
-            <MoneyDisplay value={totals.grand.toFixed(2)} symbol={currencySymbol} />
+          <div className="rounded-xl bg-slate-50 dark:bg-slate-900/50 p-4 border border-slate-100 dark:border-slate-800/60 mt-4 flex items-center justify-between">
+            <div className="space-y-0.5">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Total Amount</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 block">incl. all taxes & discounts</span>
+            </div>
+            <div className="text-right">
+              <MoneyDisplay
+                value={totals.grand.toFixed(2)}
+                symbol={currencySymbol}
+                className="text-2xl font-extrabold tracking-tight text-indigo-600 dark:text-indigo-400"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="rounded-lg border p-4 space-y-3">
+        <div className="rounded-xl border border-slate-200/80 bg-white dark:bg-slate-900 p-5 shadow-sm space-y-4">
           <div className="grid gap-1.5">
-            <Label>Payment method</Label>
+            <Label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Payment method</Label>
             <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-              <SelectTrigger className="h-9">
+              <SelectTrigger className="h-9 border-slate-200 dark:border-slate-800 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -771,10 +958,11 @@ export function BillView({
           </div>
 
           <div className="grid gap-1.5">
-            <Label>Received now</Label>
+            <Label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Received now</Label>
             <Input
               ref={receivedInputRef}
               inputMode="decimal"
+              className="h-9 border-slate-200 dark:border-slate-800 focus-visible:ring-1 focus-visible:ring-indigo-500 text-xs sm:text-sm font-semibold"
               value={paidTouched ? amountPaid : totals.grand.toFixed(2)}
               onChange={(e) => {
                 setPaidTouched(true);
@@ -800,9 +988,10 @@ export function BillView({
 
           {paymentMethod === "CASH" && !isUdhaar && (
             <div className="grid gap-1.5">
-              <Label>Cash tendered (optional)</Label>
+              <Label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Cash tendered (optional)</Label>
               <Input
                 inputMode="decimal"
+                className="h-9 border-slate-200 dark:border-slate-800 focus-visible:ring-1 focus-visible:ring-indigo-500 text-xs sm:text-sm"
                 placeholder="e.g. 1000"
                 value={cashReceived}
                 onChange={(e) => setCashReceived(e.target.value)}
@@ -832,19 +1021,31 @@ export function BillView({
             required={isUdhaar}
           />
 
-          <Button className="w-full" size="lg" onClick={submit} disabled={saving || !lines.length}>
-            {saving ? "Saving…" : `Complete Bill · ${formatMoney(totals.grand.toFixed(2), currencySymbol)}`}
-          </Button>
-          {quotationsEnabled && !sourceQuotation && (
+          <div className="pt-2 space-y-2">
             <Button
-              variant="outline"
-              className="w-full"
+              className={cn(
+                "w-full font-bold tracking-wide transition-all duration-200 py-6 text-sm",
+                lines.length > 0
+                  ? "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/35 hover:scale-[1.01] active:scale-[0.99]"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed"
+              )}
+              size="lg"
+              onClick={submit}
               disabled={saving || !lines.length}
-              onClick={() => setQuotationDialog(true)}
             >
-              <FileClock className="h-4 w-4 mr-1" /> Save as Quotation
+              {saving ? "Saving…" : `Complete Bill · ${formatMoney(totals.grand.toFixed(2), currencySymbol)}`}
             </Button>
-          )}
+            {quotationsEnabled && !sourceQuotation && (
+              <Button
+                variant="outline"
+                className="w-full border-slate-200 hover:bg-slate-50 text-slate-700 dark:border-slate-800 dark:text-slate-350 dark:hover:bg-slate-800 transition-colors font-medium text-xs py-5"
+                disabled={saving || !lines.length}
+                onClick={() => setQuotationDialog(true)}
+              >
+                <FileClock className="h-4 w-4 mr-1.5 text-indigo-500" /> Save as Quotation
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -863,10 +1064,9 @@ export function BillView({
 
     {/* ── Success dialog — explicit buttons are the only way out, so an
          accidental backdrop click can't wipe the receipt ── */}
-      <Dialog open={!!receipt}>
+      <Dialog open={!!receipt} onOpenChange={(open) => !open && resetBill()}>
         <DialogContent
           className="sm:max-w-sm"
-          showCloseButton={false}
           onInteractOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
         >
@@ -920,6 +1120,9 @@ export function BillView({
                     <Plus className="h-4 w-4 mr-1" /> New Bill
                   </Button>
                 </div>
+                <Button variant="ghost" className="w-full" onClick={resetBill}>
+                  Close
+                </Button>
               </div>
             </div>
           )}
@@ -963,10 +1166,9 @@ export function BillView({
       </Dialog>
 
       {/* ── Quotation success dialog ── */}
-      <Dialog open={!!quotationReceipt}>
+      <Dialog open={!!quotationReceipt} onOpenChange={(open) => !open && resetBill()}>
         <DialogContent
           className="sm:max-w-sm"
-          showCloseButton={false}
           onInteractOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
         >
@@ -1008,6 +1210,9 @@ export function BillView({
                     <Plus className="h-4 w-4 mr-1" /> New Bill
                   </Button>
                 </div>
+                <Button variant="ghost" className="w-full" onClick={resetBill}>
+                  Close
+                </Button>
               </div>
             </div>
           )}
@@ -1149,11 +1354,11 @@ function ProductSearch({
     <div className="relative">
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
           <Input
             ref={inputRef}
-            className="pl-8"
-            placeholder="Product ka naam, SKU ya barcode… (scanner bhi chalega)"
+            className="pl-9 h-11 text-sm sm:text-base focus-visible:ring-2"
+            placeholder="Search product, SKU, barcode..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
@@ -1184,34 +1389,35 @@ function ProductSearch({
           <>
             <Input
               inputMode="decimal"
-              className="w-28"
+              className="w-28 h-11 text-sm sm:text-base"
               placeholder="Price"
               value={openPrice}
               onChange={(e) => setOpenPrice(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && submitOpenItem()}
               aria-label="Open item price"
             />
-            <Button onClick={submitOpenItem}>Add</Button>
+            <Button onClick={submitOpenItem} className="h-11 px-4 font-bold">Add</Button>
             <Button
               variant="ghost"
               size="icon"
+              className="h-11 w-11 shrink-0"
               onClick={() => onOpenItemModeChange(false)}
               aria-label="Cancel open item"
             >
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5" />
             </Button>
           </>
         ) : (
-          <Button variant="outline" onClick={() => onOpenItemModeChange(true)}>
-            <Plus className="h-4 w-4 mr-1" /> Open Item
+          <Button variant="outline" onClick={() => onOpenItemModeChange(true)} className="h-11 px-4 font-bold">
+            <Plus className="h-4 w-4 mr-1.5" /> Open Item
           </Button>
         )}
       </div>
 
       {open && (
-        <div className="absolute z-20 mt-1 w-full rounded-md border bg-popover shadow-md max-h-80 overflow-y-auto">
+        <div className="absolute z-20 mt-1.5 w-full rounded-lg border bg-popover shadow-lg max-h-80 overflow-y-auto">
           {merged.length === 0 ? (
-            <div className="p-3 text-sm text-muted-foreground">
+            <div className="p-4 text-sm text-muted-foreground">
               Koi product nahi mila. &ldquo;Open Item&rdquo; use karein.
             </div>
           ) : (
@@ -1220,17 +1426,17 @@ function ProductSearch({
                 key={p.id}
                 type="button"
                 className={cn(
-                  "flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-accent",
+                  "flex w-full items-center justify-between px-4 py-3.5 text-left text-sm hover:bg-accent transition-colors",
                   i === highlight && "bg-accent"
                 )}
                 onMouseEnter={() => setHighlight(i)}
                 onClick={() => pick(p)}
               >
-                <span>
-                  <span className="font-medium">{p.name}</span>
-                  {p.sku && <span className="ml-2 text-xs text-muted-foreground">{p.sku}</span>}
+                <span className="flex flex-col">
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">{p.name}</span>
+                  {p.sku && <span className="text-[10px] text-muted-foreground mt-0.5">SKU: {p.sku}</span>}
                 </span>
-                <MoneyDisplay value={p.salePrice} />
+                <MoneyDisplay value={p.salePrice} className="font-bold text-slate-900" />
               </button>
             ))
           )}
@@ -1382,16 +1588,40 @@ function CustomerPicker({
                   </button>
                 ))}
                 {hits.length === 0 && (
-                  <p className="px-2 py-1.5 text-sm text-muted-foreground">Koi customer nahi mila.</p>
+                  <div className="px-2 py-2 space-y-2">
+                    <p className="text-sm text-muted-foreground">Koi customer nahi mila.</p>
+                    {canAdd && query.trim() && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="secondary"
+                        className="w-full justify-start text-xs h-7"
+                        onClick={() => {
+                          setNewName(query.trim());
+                          setAdding(true);
+                        }}
+                      >
+                        <Plus className="h-3.5 w-3.5 mr-1" /> &quot;{query.trim()}&quot; ko quick add karein
+                      </Button>
+                    )}
+                  </div>
                 )}
               </div>
               <div className="flex gap-2">
                 {canAdd && (
-                  <Button size="sm" variant="outline" onClick={() => setAdding(true)}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    type="button"
+                    onClick={() => {
+                      setNewName(query.trim());
+                      setAdding(true);
+                    }}
+                  >
                     <Plus className="h-4 w-4 mr-1" /> Naya customer
                   </Button>
                 )}
-                <Button size="sm" variant="ghost" onClick={() => setOpen(false)}>
+                <Button size="sm" variant="ghost" type="button" onClick={() => setOpen(false)}>
                   Close
                 </Button>
               </div>
@@ -1427,12 +1657,12 @@ function QtyStepper({
 
   return (
     <div className="space-y-1">
-      <div className="flex items-center gap-0.5">
+      <div className="flex items-center gap-1">
         <Button
           type="button"
           variant="outline"
           size="icon"
-          className="h-7 w-7 shrink-0"
+          className="h-7 w-7 rounded-full border-slate-200 dark:border-slate-800 hover:bg-slate-100 hover:text-indigo-650 dark:hover:bg-slate-800 transition-all duration-150 active:scale-90"
           onClick={() => step(-stepSize)}
           disabled={D(value).lte(min)}
           aria-label={`Decrease ${label}`}
@@ -1441,7 +1671,7 @@ function QtyStepper({
         </Button>
         <Input
           inputMode="decimal"
-          className="h-7 w-12 px-1 text-xs text-center"
+          className="h-7 w-9 px-0.5 text-[11px] text-center font-bold focus-visible:ring-1 focus-visible:ring-indigo-500 rounded-md border-slate-200 dark:border-slate-800"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onBlur={() => {
@@ -1456,7 +1686,7 @@ function QtyStepper({
           type="button"
           variant="outline"
           size="icon"
-          className="h-7 w-7 shrink-0"
+          className="h-7 w-7 rounded-full border-slate-200 dark:border-slate-800 hover:bg-slate-100 hover:text-indigo-650 dark:hover:bg-slate-800 transition-all duration-150 active:scale-90"
           onClick={() => step(stepSize)}
           aria-label={`Increase ${label}`}
         >
@@ -1464,7 +1694,7 @@ function QtyStepper({
         </Button>
       </div>
       {fractional && (
-        <div className="flex gap-0.5">
+        <div className="flex gap-1.5 pt-0.5">
           {[
             ["0.25", "¼"],
             ["0.5", "½"],
@@ -1476,10 +1706,10 @@ function QtyStepper({
               type="button"
               onClick={() => onChange(qty)}
               className={cn(
-                "rounded border px-1 text-[9px] leading-4 transition-colors",
+                "rounded-md border px-2.5 py-1 text-xs font-bold leading-none transition-all duration-150 active:scale-95",
                 value === qty
-                  ? "border-indigo-400 bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40"
-                  : "border-slate-200 text-slate-500 hover:bg-slate-50 dark:border-slate-700"
+                  ? "border-indigo-400 bg-indigo-50 text-indigo-750 font-extrabold dark:bg-indigo-950/40"
+                  : "border-slate-200 text-slate-650 hover:bg-slate-50 dark:border-slate-700"
               )}
               aria-label={`Set ${label} to ${qty}`}
             >

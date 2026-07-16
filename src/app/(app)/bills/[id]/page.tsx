@@ -12,7 +12,7 @@ export default async function BillDetailPage({
 }) {
   const { id } = await params;
   const ctx = await requireBusiness();
-  const { sale, canCancel, settings, business } = await getBill(id);
+  const { sale, canCancel, settings, business, originalSaleSnapshot } = await getBill(id);
 
   return (
     <>
@@ -65,6 +65,7 @@ export default async function BillDetailPage({
             paymentDate: p.paymentDate.toISOString(),
           })),
         }}
+        originalSaleSnapshot={originalSaleSnapshot}
         canCancel={canCancel}
         currencySymbol={settings.currencySymbol}
         business={{ name: business.name, address: business.address, phone: business.phone }}

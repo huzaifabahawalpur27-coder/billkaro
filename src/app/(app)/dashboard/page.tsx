@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ReceiptText, Users, Package, BookOpenText, ArrowRight } from "lucide-react";
+import { ReceiptText, Users, Package, BookOpenText, ArrowRight, Plus } from "lucide-react";
 import { requireBusiness, hasPermission } from "@/server/auth/guards";
 import {
   getSalesSummary,
@@ -43,6 +43,30 @@ export default async function DashboardPage() {
   return (
     <>
       <PageHeader title={ctx.business.name} subtitle={`Khush amadeed, ${ctx.user.name}!`} />
+
+      {/* Large Touchscreen-Friendly Naya Bill Card in the Center */}
+      <div className="mb-6">
+        <Link
+          href="/bill"
+          className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border border-indigo-200 bg-indigo-50/50 p-6 hover:bg-indigo-50 hover:shadow-md transition-all duration-300 group"
+        >
+          <div className="flex items-center gap-4 text-center sm:text-left">
+            <div className="flex size-14 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-200 group-hover:scale-105 transition-transform duration-300 shrink-0">
+              <ReceiptText className="h-7 w-7" />
+            </div>
+            <div>
+              <h2 className="text-lg font-black text-indigo-950">Naya Bill Banayein (نیا بل بنائیں)</h2>
+              <p className="text-xs text-indigo-700/80 font-semibold mt-0.5">
+                Touchscreen friendly POS screen to create bills and print receipts instantly.
+              </p>
+            </div>
+          </div>
+          <div className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-sm px-6 py-4.5 rounded-xl shadow-md cursor-pointer text-center select-none active:scale-95 transition-all shrink-0">
+            <Plus className="h-5 w-5 mr-1" />
+            <span>New Bill (نیا بل)</span>
+          </div>
+        </Link>
+      </div>
 
       {canReports && today && week && month && summary && (
         <DashboardKpis

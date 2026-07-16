@@ -3,13 +3,14 @@ import { PageHeader } from "@/components/app/page-header";
 import { BillView } from "./bill-view";
 import { listProducts, listCategoryOptions } from "@/server/services/catalogue";
 import { getQuotationForPos } from "@/server/services/quotations";
+import { getBillForPos } from "@/server/services/bills";
 
 export const dynamic = "force-dynamic";
 
 export default async function BillPage({
   searchParams,
 }: {
-  searchParams: Promise<{ quotation?: string }>;
+  searchParams: Promise<{ quotation?: string; edit?: string }>;
 }) {
   const ctx = await requireBusiness();
   const params = await searchParams;
@@ -26,6 +27,9 @@ export default async function BillPage({
       ? await getQuotationForPos(params.quotation)
       : null;
 
+  // Return/exchange: prefill from an existing completed sale.
+  const editSale = params.edit ? await getBillForPos(params.edit) : null;
+
   const mappedProducts = products.map((p) => ({
     id: p.id,
     name: p.name,
@@ -39,7 +43,10 @@ export default async function BillPage({
 
   return (
     <>
-      <PageHeader title="New Bill" subtitle="Naya bill banayein — cash, partial ya udhaar" />
+      <PageHeader
+        title={editSale ? `Edit Bill ${editSale.invoiceNumber}` : "New Bill"}
+        subtitle={editSale ? "Wapas ya exchange handles karein" : "Naya bill banayein — cash, partial ya udhaar"}
+      />
       <BillView
         initialProducts={mappedProducts}
         categories={categories.map((c) => ({ id: c.id, name: c.name }))}
@@ -48,6 +55,7 @@ export default async function BillPage({
         quotationsEnabled={ctx.settings.quotationsEnabled}
         defaultValidityDays={ctx.settings.quotationValidityDays}
         sourceQuotation={sourceQuotation}
+        initialEditSale={editSale}
         can={{
           createBill: hasPermission(ctx, "CREATE_BILLS"),
           discount: hasPermission(ctx, "APPLY_DISCOUNTS"),

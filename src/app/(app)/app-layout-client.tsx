@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, Plus, LogOut, Settings } from "lucide-react";
+import { Menu, Plus, LogOut, Settings, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { logoutAction } from "@/app/(auth)/actions";
 import type { MyAnnouncement } from "@/server/services/announcements";
@@ -29,6 +29,7 @@ interface AppLayoutClientProps {
   announcements?: MyAnnouncement[];
   markAnnouncementsSeen?: (ids: string[]) => Promise<void>;
   quotationsEnabled?: boolean;
+  language?: string;
   children: React.ReactNode;
 }
 
@@ -42,9 +43,11 @@ export function AppLayoutClient({
   announcements = [],
   markAnnouncementsSeen,
   quotationsEnabled = false,
+  language = "en",
   children,
 }: AppLayoutClientProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const initials = userName
     .split(/\s+/)
@@ -76,8 +79,9 @@ export function AppLayoutClient({
       {/* Sidebar wrapper */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-[240px] transform flex-col transition-transform duration-300 md:static md:translate-x-0",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-y-0 left-0 z-50 flex w-[240px] transform flex-col transition-all duration-300 ease-in-out md:relative md:translate-x-0",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full",
+          sidebarCollapsed ? "md:-ml-[240px]" : "md:ml-0"
         )}
       >
         <AppSidebar
@@ -85,8 +89,21 @@ export function AppLayoutClient({
           userName={userName}
           roleName={roleName}
           quotationsEnabled={quotationsEnabled}
+          language={language}
           onClose={() => setSidebarOpen(false)}
         />
+        {/* Toggle Button for Desktop */}
+        <button
+          type="button"
+          onClick={() => setSidebarCollapsed((c) => !c)}
+          className={cn(
+            "hidden md:flex absolute top-24 -translate-y-1/2 z-50 h-8 w-8 items-center justify-center rounded-full border border-indigo-700 bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer pointer-events-auto",
+            sidebarCollapsed ? "-right-8" : "-right-4"
+          )}
+          title={sidebarCollapsed ? "Sidebar dikhayein" : "Sidebar chupayein"}
+        >
+          <ChevronLeft className={cn("h-5 w-5 transition-transform duration-300", sidebarCollapsed && "rotate-180")} />
+        </button>
       </div>
 
       {/* Main content wrapper */}
@@ -120,8 +137,15 @@ export function AppLayoutClient({
         )}
 
         {/* Desktop Top Bar */}
-        <header className="hidden md:flex h-14 items-center justify-between border-b border-slate-200 bg-white px-6 shrink-0 print:hidden">
+        <header className="hidden md:flex h-14 items-center justify-between border-b border-slate-200 bg-white px-6 shrink-0 print:hidden relative">
           <div className="text-sm text-muted-foreground">{formatDate(new Date())}</div>
+          
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+            <span className="font-semibold text-slate-800 text-sm tracking-wide block">{businessName}</span>
+            <span className="text-[10px] text-slate-400 block -mt-0.5 font-normal">
+              powered by <span className="font-semibold text-indigo-600">BillKaro</span>
+            </span>
+          </div>
           <div className="flex items-center gap-2">
             {desktopBell}
             <DropdownMenu>
@@ -194,7 +218,14 @@ export function AppLayoutClient({
 
         {/* Page content scroll container */}
         <main className="flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-[1200px] px-4 py-4 md:px-6 md:py-6">{children}</div>
+          <div
+            className={cn(
+              "mx-auto w-full px-4 py-4 md:py-6 transition-all duration-300",
+              sidebarCollapsed ? "max-w-none md:pl-8 md:pr-6" : "max-w-[1200px] md:px-6"
+            )}
+          >
+            {children}
+          </div>
         </main>
       </div>
     </div>

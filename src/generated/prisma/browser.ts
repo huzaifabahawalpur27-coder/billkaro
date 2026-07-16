@@ -147,3 +147,23 @@ export type Quotation = Prisma.QuotationModel
  * 
  */
 export type QuotationItem = Prisma.QuotationItemModel
+/**
+ * Model CashBookEntry
+ * 
+ */
+export type CashBookEntry = Prisma.CashBookEntryModel
+/**
+ * Model Staff
+ * 
+ */
+export type Staff = Prisma.StaffModel
+/**
+ * Model StaffAttendance
+ * 
+ */
+export type StaffAttendance = Prisma.StaffAttendanceModel
+/**
+ * Model StaffTransaction
+ * 
+ */
+export type StaffTransaction = Prisma.StaffTransactionModel

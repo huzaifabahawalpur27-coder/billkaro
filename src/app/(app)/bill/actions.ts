@@ -4,6 +4,7 @@ import { z } from "zod";
 import {
   searchProductsForBilling,
   createSale,
+  modifySale,
   SaleValidationError,
   type CreateSaleInput,
 } from "@/server/services/billing";
@@ -179,3 +180,38 @@ export async function createSaleAction(input: unknown): Promise<ActionResult<Sal
     return { ok: false, error: "Bill save nahi ho saka. Dubara try karein." };
   }
 }
+
+export async function modifySaleAction(input: unknown): Promise<ActionResult<SaleReceipt>> {
+  const parsed = z.object({
+    originalSaleId: z.string(),
+    saleData: saleSchema,
+  }).safeParse(input);
+
+  if (!parsed.success) {
+    return { ok: false, error: "Bill ki details sahi nahi hain. Dubara check karein." };
+  }
+
+  try {
+    const receipt = await modifySale(
+      parsed.data.originalSaleId,
+      {
+        ...parsed.data.saleData,
+        cashReceived: parsed.data.saleData.cashReceived || null,
+      } as CreateSaleInput
+    );
+    return { ok: true, error: null, data: receipt };
+  } catch (e) {
+    if (e instanceof SaleValidationError) {
+      return { ok: false, error: SALE_ERRORS[e.code] ?? e.message ?? "Bill save nahi ho saka." };
+    }
+    if (e instanceof SubscriptionExpiredError) {
+      return {
+        ok: false,
+        error: "Subscription khatam ho gayi hai — abhi sirf dekh sakte hain. Renew karne ke liye rabta karein.",
+      };
+    }
+    console.error("modifySaleAction failed:", e);
+    return { ok: false, error: "Bill modify nahi ho saka. Dubara try karein." };
+  }
+}
+

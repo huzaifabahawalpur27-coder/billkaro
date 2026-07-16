@@ -23,6 +23,7 @@ export default async function AppLayout({
       quotationsEnabled={ctx.settings.quotationsEnabled}
       impersonating={ctx.impersonating}
       exitImpersonation={exitImpersonationAction}
+      language={ctx.settings.language}
       subscriptionBanner={
         sub && (sub.status === "GRACE" || sub.status === "EXPIRED")
           ? { status: sub.status, daysLeft: sub.daysLeft ?? 0 }

@@ -76,7 +76,11 @@ export const ModelName = {
   Announcement: 'Announcement',
   AnnouncementSeen: 'AnnouncementSeen',
   Quotation: 'Quotation',
-  QuotationItem: 'QuotationItem'
+  QuotationItem: 'QuotationItem',
+  CashBookEntry: 'CashBookEntry',
+  Staff: 'Staff',
+  StaffAttendance: 'StaffAttendance',
+  StaffTransaction: 'StaffTransaction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -520,6 +524,59 @@ export const QuotationItemScalarFieldEnum = {
 } as const
 
 export type QuotationItemScalarFieldEnum = (typeof QuotationItemScalarFieldEnum)[keyof typeof QuotationItemScalarFieldEnum]
+
+
+export const CashBookEntryScalarFieldEnum = {
+  id: 'id',
+  businessId: 'businessId',
+  amount: 'amount',
+  type: 'type',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CashBookEntryScalarFieldEnum = (typeof CashBookEntryScalarFieldEnum)[keyof typeof CashBookEntryScalarFieldEnum]
+
+
+export const StaffScalarFieldEnum = {
+  id: 'id',
+  businessId: 'businessId',
+  name: 'name',
+  phone: 'phone',
+  salary: 'salary',
+  salaryType: 'salaryType',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StaffScalarFieldEnum = (typeof StaffScalarFieldEnum)[keyof typeof StaffScalarFieldEnum]
+
+
+export const StaffAttendanceScalarFieldEnum = {
+  id: 'id',
+  staffId: 'staffId',
+  date: 'date',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt'
+} as const
+
+export type StaffAttendanceScalarFieldEnum = (typeof StaffAttendanceScalarFieldEnum)[keyof typeof StaffAttendanceScalarFieldEnum]
+
+
+export const StaffTransactionScalarFieldEnum = {
+  id: 'id',
+  staffId: 'staffId',
+  amount: 'amount',
+  type: 'type',
+  description: 'description',
+  date: 'date',
+  createdAt: 'createdAt'
+} as const
+
+export type StaffTransactionScalarFieldEnum = (typeof StaffTransactionScalarFieldEnum)[keyof typeof StaffTransactionScalarFieldEnum]
 
 
 export const SortOrder = {

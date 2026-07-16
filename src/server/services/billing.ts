@@ -309,3 +309,268 @@ export async function createSale(input: CreateSaleInput) {
     customerName: customer?.name ?? null,
   };
 }
+
+export async function modifySale(originalSaleId: string, input: CreateSaleInput) {
+  const ctx = await requirePermission("CREATE_BILLS");
+  if (!hasPermission(ctx, "CANCEL_BILLS")) {
+    throw new SaleValidationError("CANCEL_NOT_ALLOWED", "Aap ke role mein bill cancel/modify karne ki permission nahi hai.");
+  }
+  const businessId = ctx.business.id;
+
+  const originalSale = await db.sale.findFirst({
+    where: { id: originalSaleId, businessId },
+    include: {
+      customer: true,
+      items: true,
+    },
+  });
+  if (!originalSale) throw new SaleValidationError("BILL_NOT_FOUND", "Original bill nahi mila.");
+  if (originalSale.status !== "COMPLETED") throw new SaleValidationError("ALREADY_CANCELLED", "Original bill pehle se cancel ho chuka hai.");
+
+  if (!input.items.length) throw new SaleValidationError("EMPTY_BILL");
+  if (input.items.length > 200) throw new SaleValidationError("TOO_MANY_ITEMS");
+
+  const discounting = input.discountType !== "NONE" && D(input.discountValue).gt(0);
+  if (discounting && !hasPermission(ctx, "APPLY_DISCOUNTS")) {
+    throw new SaleValidationError("DISCOUNT_NOT_ALLOWED");
+  }
+  const canChangePrice = hasPermission(ctx, "CHANGE_SALE_PRICE");
+
+  const productIds = [
+    ...new Set(input.items.map((i) => i.productId).filter((id): id is string => !!id)),
+  ];
+  const products = await db.product.findMany({
+    where: { id: { in: productIds }, businessId, status: "ACTIVE" },
+  });
+  const productMap = new Map(products.map((p) => [p.id, p]));
+
+  const items = input.items.map((item) => {
+    const qty = D(item.quantity);
+    if (qty.lte(0) || qty.gt(100000)) throw new SaleValidationError("INVALID_QUANTITY");
+
+    if (item.productId) {
+      const product = productMap.get(item.productId);
+      if (!product) throw new SaleValidationError("PRODUCT_NOT_FOUND");
+      const catalogue = D(product.salePrice);
+      const sold = canChangePrice ? D(item.soldPrice) : catalogue;
+      if (sold.lt(0)) throw new SaleValidationError("INVALID_PRICE");
+      return {
+        productId: product.id,
+        productNameSnapshot: product.name,
+        skuSnapshot: product.sku,
+        cataloguePrice: catalogue.toFixed(2),
+        soldPrice: sold.toFixed(2),
+        quantity: qty.toFixed(3),
+        lineTotal: lineTotal(sold, qty).toFixed(2),
+        isOpenItem: false,
+      };
+    }
+
+    const name = item.name?.trim();
+    if (!name) throw new SaleValidationError("OPEN_ITEM_NAME_REQUIRED");
+    const sold = D(item.soldPrice);
+    if (sold.lte(0)) throw new SaleValidationError("INVALID_PRICE");
+    return {
+      productId: null,
+      productNameSnapshot: name,
+      skuSnapshot: null,
+      cataloguePrice: null,
+      soldPrice: sold.toFixed(2),
+      quantity: qty.toFixed(3),
+      lineTotal: lineTotal(sold, qty).toFixed(2),
+      isOpenItem: true,
+    };
+  });
+
+  const totals = calculateBill({
+    items: items.map((i) => ({ soldPrice: i.soldPrice, quantity: i.quantity })),
+    discountType: input.discountType,
+    discountValue: discounting ? input.discountValue : 0,
+    taxRate: ctx.settings.defaultTaxRate,
+  });
+
+  if (totals.grandTotal.lte(0)) throw new SaleValidationError("EMPTY_BILL");
+
+  let amountPaid = round2(D(input.amountPaid));
+  if (amountPaid.lt(0)) throw new SaleValidationError("INVALID_AMOUNT_PAID");
+  if (amountPaid.gt(totals.grandTotal)) amountPaid = totals.grandTotal;
+  const amountDue = totals.grandTotal.sub(amountPaid);
+
+  let customer = null;
+  if (input.customerId) {
+    customer = await db.customer.findFirst({
+      where: { id: input.customerId, businessId, status: "ACTIVE" },
+    });
+    if (!customer) throw new SaleValidationError("CUSTOMER_NOT_FOUND");
+  }
+  if (amountDue.gt(0) && !customer) throw new SaleValidationError("CUSTOMER_REQUIRED");
+
+  const paymentStatus = amountDue.lte(0) ? "PAID" : amountPaid.gt(0) ? "PARTIAL" : "UDHAAR";
+
+  let cashReceived: string | null = null;
+  let changeDue: string | null = null;
+  if (input.paymentMethod === "CASH" && input.cashReceived) {
+    const tendered = round2(D(input.cashReceived));
+    if (tendered.gte(amountPaid)) {
+      cashReceived = tendered.toFixed(2);
+      changeDue = tendered.sub(amountPaid).toFixed(2);
+    }
+  }
+
+  // Versioned Invoice Number: INV-000102 -> INV-000102-R1 -> INV-000102-R2
+  let invoiceNumber = originalSale.invoiceNumber;
+  const match = invoiceNumber.match(/-R(\d+)$/);
+  if (match) {
+    const version = parseInt(match[1], 10) + 1;
+    invoiceNumber = invoiceNumber.replace(/-R\d+$/, `-R${version}`);
+  } else {
+    invoiceNumber = `${invoiceNumber}-R1`;
+  }
+
+  const newSale = await db.$transaction(async (tx) => {
+    // 1. Cancel original sale
+    await tx.sale.update({
+      where: { id: originalSale.id },
+      data: {
+        status: "CANCELLED",
+        cancelledAt: new Date(),
+        cancelledById: ctx.user.id,
+        cancelReason: `Modified/Returned — Replaced by revised invoice ${invoiceNumber}`,
+      },
+    });
+
+    // 2. Revert original credit/udhaar ledger entry
+    const hadUdhaar = D(originalSale.amountDue).gt(0) && originalSale.customerId;
+    if (hadUdhaar && originalSale.customer) {
+      const currentBalance = D(originalSale.customer.currentBalance);
+      const reversal = D(originalSale.amountDue);
+      const newBalance = currentBalance.sub(reversal);
+
+      await tx.ledgerEntry.create({
+        data: {
+          businessId,
+          customerId: originalSale.customer.id,
+          type: "SALE_CANCELLED_REVERSAL",
+          amount: reversal.neg().toFixed(2),
+          balanceAfter: newBalance.toFixed(2),
+          saleId: originalSale.id,
+          description: `Bill modify reversal — ${originalSale.invoiceNumber}`,
+          createdById: ctx.user.id,
+        },
+      });
+
+      await tx.customer.update({
+        where: { id: originalSale.customer.id },
+        data: { currentBalance: newBalance.toFixed(2) },
+      });
+    }
+
+    // 3. Create revised sale
+    const sale = await tx.sale.create({
+      data: {
+        businessId,
+        invoiceNumber,
+        customerId: customer?.id ?? null,
+        cashierId: ctx.user.id,
+        status: "COMPLETED",
+        paymentStatus,
+        paymentMethod: input.paymentMethod,
+        subtotal: totals.subtotal.toFixed(2),
+        discountType: discounting ? input.discountType : "NONE",
+        discountValue: discounting ? round2(D(input.discountValue)).toFixed(2) : "0",
+        discountAmount: totals.discountAmount.toFixed(2),
+        taxRate: ctx.settings.defaultTaxRate,
+        taxAmount: totals.taxAmount.toFixed(2),
+        grandTotal: totals.grandTotal.toFixed(2),
+        amountPaid: amountPaid.toFixed(2),
+        amountDue: amountDue.toFixed(2),
+        cashReceived,
+        changeDue,
+        notes: input.notes?.trim() || `Revised from bill ${originalSale.invoiceNumber}`,
+        items: { create: items.map((i) => ({ ...i, businessId })) },
+      },
+    });
+
+    // 4. Record payment (if paid)
+    if (amountPaid.gt(0)) {
+      await tx.payment.create({
+        data: {
+          businessId,
+          saleId: sale.id,
+          customerId: customer?.id ?? null,
+          amount: amountPaid.toFixed(2),
+          method: input.paymentMethod,
+          receivedById: ctx.user.id,
+        },
+      });
+    }
+
+    // 5. Post new credit/udhaar to ledger
+    if (amountDue.gt(0) && customer) {
+      const dbCustomer = await tx.customer.findUnique({ where: { id: customer.id } });
+      const currentBalance = D(dbCustomer?.currentBalance ?? 0);
+      const balanceAfter = currentBalance.add(amountDue);
+
+      await tx.ledgerEntry.create({
+        data: {
+          businessId,
+          customerId: customer.id,
+          type: "SALE_CREDIT",
+          amount: amountDue.toFixed(2),
+          balanceAfter: balanceAfter.toFixed(2),
+          saleId: sale.id,
+          description: `Bill revised ${invoiceNumber}`,
+          createdById: ctx.user.id,
+        },
+      });
+
+      await tx.customer.update({
+        where: { id: customer.id },
+        data: {
+          currentBalance: balanceAfter.toFixed(2),
+          lastTransactionAt: new Date(),
+        },
+      });
+    } else if (customer) {
+      await tx.customer.update({
+        where: { id: customer.id },
+        data: { lastTransactionAt: new Date() },
+      });
+    }
+
+    await tx.auditLog.create({
+      data: {
+        businessId,
+        userId: ctx.user.id,
+        action: "SALE_MODIFIED",
+        entityType: "Sale",
+        entityId: sale.id,
+        metadata: {
+          originalInvoiceNumber: originalSale.invoiceNumber,
+          newInvoiceNumber: invoiceNumber,
+          originalSaleId,
+          newSaleId: sale.id,
+          grandTotal: totals.grandTotal.toFixed(2),
+          amountPaid: amountPaid.toFixed(2),
+          amountDue: amountDue.toFixed(2),
+          paymentStatus,
+          customer: customer?.name ?? null,
+        },
+      },
+    });
+
+    return sale;
+  });
+
+  return {
+    saleId: newSale.id,
+    invoiceNumber: newSale.invoiceNumber,
+    grandTotal: newSale.grandTotal.toFixed(2),
+    amountPaid: newSale.amountPaid.toFixed(2),
+    amountDue: newSale.amountDue.toFixed(2),
+    changeDue: newSale.changeDue?.toFixed(2) ?? null,
+    paymentStatus,
+    customerName: customer?.name ?? null,
+  };
+}
+

@@ -262,6 +262,34 @@ export function SettingsView({ settings: initial }: { settings: Settings }) {
         </div>
       </section>
 
+      <Separator />
+
+      {/* Language */}
+      <section className="space-y-4">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Language (زبان)</h2>
+        <div className="space-y-1.5">
+          <Label>Interface Language</Label>
+          <RadioGroup
+            value={s.language}
+            onValueChange={(v) => update("language", v)}
+            className="grid grid-cols-2 gap-2"
+          >
+            {[
+              ["en", "English"],
+              ["ur", "اردو (Urdu)"],
+            ].map(([value, label]) => (
+              <Label
+                key={value}
+                className="flex cursor-pointer items-center gap-2 rounded-md border border-slate-200 px-3 py-2 text-sm font-normal has-[[data-state=checked]]:border-indigo-300 has-[[data-state=checked]]:bg-indigo-50"
+              >
+                <RadioGroupItem value={value} />
+                {label}
+              </Label>
+            ))}
+          </RadioGroup>
+        </div>
+      </section>
+
       <div className="pt-2">
         <Button onClick={save} disabled={pending || !dirty} className="w-full sm:w-auto">
           {pending ? "Saving…" : "Save Settings"}

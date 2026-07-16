@@ -49,6 +49,7 @@ export default async function KhataDetailPage({
         summary={summary}
         entries={ledgerRows}
         currencySymbol={ctx.settings.currencySymbol}
+        businessName={ctx.business.name}
         can={{
           receivePayment: hasPermission(ctx, "RECEIVE_PAYMENTS"),
           adjustLedger: hasPermission(ctx, "ADJUST_LEDGER"),

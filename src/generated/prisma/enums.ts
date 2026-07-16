@@ -210,3 +210,39 @@ export const AnnouncementType = {
 } as const
 
 export type AnnouncementType = (typeof AnnouncementType)[keyof typeof AnnouncementType]
+
+
+export const CashBookEntryType = {
+  CASH_IN: 'CASH_IN',
+  CASH_OUT: 'CASH_OUT'
+} as const
+
+export type CashBookEntryType = (typeof CashBookEntryType)[keyof typeof CashBookEntryType]
+
+
+export const StaffStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type StaffStatus = (typeof StaffStatus)[keyof typeof StaffStatus]
+
+
+export const AttendanceStatus = {
+  PRESENT: 'PRESENT',
+  HALF_DAY: 'HALF_DAY',
+  ABSENT: 'ABSENT',
+  LEAVE: 'LEAVE'
+} as const
+
+export type AttendanceStatus = (typeof AttendanceStatus)[keyof typeof AttendanceStatus]
+
+
+export const StaffTransactionType = {
+  ADVANCE: 'ADVANCE',
+  SALARY_PAYMENT: 'SALARY_PAYMENT',
+  BONUS: 'BONUS',
+  DEDUCTION: 'DEDUCTION'
+} as const
+
+export type StaffTransactionType = (typeof StaffTransactionType)[keyof typeof StaffTransactionType]

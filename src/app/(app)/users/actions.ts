@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { createMember, updateMemberRole, setMemberStatus } from "@/server/services/users";
+import { createMember, updateMemberRole, setMemberStatus, createCustomRole, updateRolePermissions } from "@/server/services/users";
 
 export interface ActionResult {
   ok: boolean;
@@ -60,4 +60,24 @@ export async function toggleUserAction(memberId: string, active: boolean): Promi
   }
   revalidatePath("/users");
   return { ok: true, error: null };
+}
+
+export async function createCustomRoleAction(name: string, permissions: string[]): Promise<ActionResult> {
+  try {
+    await createCustomRole(name, permissions);
+    revalidatePath("/users");
+    return { ok: true, error: null };
+  } catch (e: any) {
+    return { ok: false, error: e.message || "Custom role create nahi ho saka." };
+  }
+}
+
+export async function updateRolePermissionsAction(roleId: string, permissions: string[]): Promise<ActionResult> {
+  try {
+    await updateRolePermissions(roleId, permissions);
+    revalidatePath("/users");
+    return { ok: true, error: null };
+  } catch (e: any) {
+    return { ok: false, error: e.message || "Permissions save nahi ho sake." };
+  }
 }

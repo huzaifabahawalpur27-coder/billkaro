@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, Banknote, SlidersHorizontal, Wallet,
-  ReceiptText, ArrowUpCircle, ArrowDownCircle,
+  ReceiptText, ArrowUpCircle, ArrowDownCircle, MessageSquare,
 } from "lucide-react";
 import { toast } from "sonner";
 import { receivePaymentAction, setOpeningBalanceAction, adjustBalanceAction } from "../actions";
@@ -61,12 +61,14 @@ export function KhataDetailView({
   summary,
   entries,
   currencySymbol,
+  businessName,
   can,
 }: {
   customer: CustomerInfo;
   summary: { totalBilled: string; billCount: number; totalPaid: string };
   entries: LedgerEntryRow[];
   currencySymbol: string;
+  businessName: string;
   can: { receivePayment: boolean; adjustLedger: boolean; viewBills: boolean };
 }) {
   const router = useRouter();
@@ -84,6 +86,26 @@ export function KhataDetailView({
 
   const [pending, startTransition] = useTransition();
   const balance = parseFloat(customer.currentBalance);
+
+  function sendWhatsAppReminder() {
+    const cleanPhone = customer.phone ? customer.phone.replace(/[^0-9]/g, "") : "";
+    let formattedPhone = cleanPhone;
+    if (cleanPhone.startsWith("0")) {
+      formattedPhone = "92" + cleanPhone.slice(1);
+    } else if (cleanPhone && !cleanPhone.startsWith("92")) {
+      formattedPhone = "92" + cleanPhone;
+    }
+
+    const message = `Assalam-o-Alaikum, ${customer.name}.
+    
+Aap ka "${businessName}" par ${currencySymbol} ${Math.abs(balance).toLocaleString("en-PK")} ka pending udhaar khata baqi hai. Bara-e-meherbani jald az jald ada karein.
+
+Shukriya,
+${businessName}`;
+
+    const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+  }
 
   function handlePayment() {
     startTransition(async () => {
@@ -176,6 +198,15 @@ export function KhataDetailView({
         {can.receivePayment && balance > 0 && (
           <Button onClick={() => setPayDialog(true)}>
             <Banknote className="h-4 w-4 mr-1" /> Payment Lein
+          </Button>
+        )}
+        {customer.phone && balance > 0 && (
+          <Button
+            variant="outline"
+            className="border-emerald-600 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 dark:hover:bg-emerald-950/20"
+            onClick={sendWhatsAppReminder}
+          >
+            <MessageSquare className="h-4 w-4 mr-1 text-emerald-600" /> WhatsApp Reminder
           </Button>
         )}
         {can.adjustLedger && (
